@@ -189,7 +189,7 @@ free_atfork (void *mem, const void *caller)
 
   ar_ptr = arena_for_chunk (p);
   tsd_getspecific (arena_key, vptr);
-  _int_free (ar_ptr, p, vptr == ATFORK_ARENA_PTR);
+  _int_free(ar_ptr, p, vptr == ATFORK_ARENA_PTR, 1);
 }
 
 

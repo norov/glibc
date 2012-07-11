@@ -321,7 +321,7 @@ free_check (void *mem, const void *caller)
       munmap_chunk (p);
       return;
     }
-  _int_free (&main_arena, p, 1);
+  _int_free (&main_arena, p, 1, 1);
   (void) mutex_unlock (&main_arena.mutex);
 }
 
