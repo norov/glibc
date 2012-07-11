@@ -1053,7 +1053,7 @@ typedef struct malloc_chunk* mchunkptr;
 /* Internal routines.  */
 
 static void*  _int_malloc(mstate, size_t);
-static void     _int_free(mstate, mchunkptr, int);
+static void     _int_free(mstate, mchunkptr, int, int);
 static void*  _int_realloc(mstate, mchunkptr, INTERNAL_SIZE_T,
 			   INTERNAL_SIZE_T);
 static void*  _int_memalign(mstate, size_t, size_t);
@@ -2430,7 +2430,7 @@ sysmalloc (INTERNAL_SIZE_T nb, mstate av)
               set_head (chunk_at_offset (old_top, old_size), (2 * SIZE_SZ) | PREV_INUSE);
               set_foot (chunk_at_offset (old_top, old_size), (2 * SIZE_SZ));
               set_head (old_top, old_size | PREV_INUSE | NON_MAIN_ARENA);
-              _int_free (av, old_top, 1);
+              _int_free (av, old_top, 1, 1);
             }
           else
             {
@@ -2706,7 +2706,7 @@ sysmalloc (INTERNAL_SIZE_T nb, mstate av)
                       /* If possible, release the rest. */
                       if (old_size >= MINSIZE)
                         {
-                          _int_free (av, old_top, 1);
+                          _int_free (av, old_top, 1, 0);
                         }
                     }
                 }
@@ -2959,7 +2959,7 @@ __libc_free (void *mem)
     }
 
   ar_ptr = arena_for_chunk (p);
-  _int_free (ar_ptr, p, 0);
+  _int_free (ar_ptr, p, 0, 1);
 }
 libc_hidden_def (__libc_free)
 
@@ -3050,7 +3050,7 @@ __libc_realloc (void *oldmem, size_t bytes)
       if (newp != NULL)
         {
           memcpy (newp, oldmem, oldsize - SIZE_SZ);
-          _int_free (ar_ptr, oldp, 0);
+          _int_free (ar_ptr, oldp, 0, 1);
         }
     }
 
@@ -3831,7 +3831,7 @@ _int_malloc (mstate av, size_t bytes)
  */
 
 static void
-_int_free (mstate av, mchunkptr p, int have_lock)
+_int_free (mstate av, mchunkptr p, int have_lock, int trim)
 {
   INTERNAL_SIZE_T size;        /* its size */
   mfastbinptr *fb;             /* associated fastbin */
@@ -4070,8 +4070,9 @@ _int_free (mstate av, mchunkptr p, int have_lock)
 
       if (av == &main_arena) {
 #ifndef MORECORE_CANNOT_TRIM
-	if ((unsigned long)(chunksize(av->top)) >=
-	    (unsigned long)(mp_.trim_threshold))
+	if (trim
+	    && ((unsigned long)(chunksize(av->top)) >=
+	    (unsigned long)(mp_.trim_threshold)))
 	  systrim(mp_.top_pad, av);
 #endif
       } else {
@@ -4349,7 +4350,7 @@ _int_realloc(mstate av, mchunkptr oldp, INTERNAL_SIZE_T oldsize,
                     }
                 }
 
-              _int_free (av, oldp, 1);
+              _int_free (av, oldp, 1, 1);
               check_inuse_chunk (av, newp);
               return chunk2mem (newp);
             }
@@ -4375,7 +4376,7 @@ _int_realloc(mstate av, mchunkptr oldp, INTERNAL_SIZE_T oldsize,
                 (av != &main_arena ? NON_MAIN_ARENA : 0));
       /* Mark remainder as inuse so free() won't complain */
       set_inuse_bit_at_offset (remainder, remainder_size);
-      _int_free (av, remainder, 1);
+      _int_free (av, remainder, 1, 1);
     }
 
   check_inuse_chunk (av, newp);
@@ -4450,7 +4451,7 @@ _int_memalign (mstate av, size_t alignment, size_t bytes)
                 (av != &main_arena ? NON_MAIN_ARENA : 0));
       set_inuse_bit_at_offset (newp, newsize);
       set_head_size (p, leadsize | (av != &main_arena ? NON_MAIN_ARENA : 0));
-      _int_free (av, p, 1);
+      _int_free (av, p, 1, 1);
       p = newp;
 
       assert (newsize >= nb &&
@@ -4468,7 +4469,7 @@ _int_memalign (mstate av, size_t alignment, size_t bytes)
           set_head (remainder, remainder_size | PREV_INUSE |
                     (av != &main_arena ? NON_MAIN_ARENA : 0));
           set_head_size (p, nb);
-          _int_free (av, remainder, 1);
+          _int_free (av, remainder, 1, 1);
         }
     }
 
