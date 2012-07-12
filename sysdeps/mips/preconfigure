@@ -18,7 +18,15 @@ mips64*)	base_machine=mips64
 		64) machine=mips/mips64/n64 ;;
 		32) machine=mips/mips32/kern64 ;;
 		esac
-		machine=$machine/$config_machine
+
+		# Add octeon2 so that we set libdir and slibdir to the
+		# octeon2 directories.
+		case "$CC $CFLAGS $CPPFLAGS " in
+		*" -march=octeon2 "*) mips_arch=mips64octeon2 ;;
+		*) mips_arch=@config_machine ;;
+		esac
+
+		machine=$machine/$mips_arch
 		if test $mips_config_abi != $mips_cc_abi; then
 		  # This won't make it to config.make, but we want to
 		  # set this in case configure tests depend on it.
