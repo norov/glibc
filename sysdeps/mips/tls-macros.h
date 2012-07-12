@@ -58,6 +58,7 @@
 	  ADDU " %0,%0,$3"				\
 	  : "+r" (__result) : : "$3");			\
      __result; })
+# if !_MIPS_ARCH_OCTEON
 # define TLS_IE(x)					\
   ({ void *__result, *__tmp;				\
      asm (".set push\n\t.set mips32r2\n\t"		\
