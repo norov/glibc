@@ -1,5 +1,10 @@
 2012-07-11  Andrew Pinski  <apinski@cavium.com>
 
+	Bug #4078
+	* ports/sysdeps/mips/preconfigure (libc_commonpagesize): Set to 64k.
+
+2012-07-11  Andrew Pinski  <apinski@cavium.com>
+
 	* ports/sysdeps/unix/sysv/linux/mips/nptl/sem_post.c: New file.
 
 2012-07-11  Andrew Pinski  <apinski@cavium.com>

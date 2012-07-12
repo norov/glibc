@@ -24,6 +24,8 @@ mips64*)	base_machine=mips64
 		  # set this in case configure tests depend on it.
 		  CPPFLAGS="$CPPFLAGS -mabi=$mips_config_abi"
 		fi
+		#64k pages
+		libc_commonpagesize=0x10000
 		;;
 mips*)		base_machine=mips
 		case "$CC $CFLAGS $CPPFLAGS " in
