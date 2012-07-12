@@ -61,12 +61,12 @@ LIBC_CONFIG_VAR([default-abi],
 case "$prefix" in
 /usr | /usr/)
   # 64-bit libraries on bi-arch platforms go in /lib64 instead of /lib.
-  # Allow earlier configure scripts to handle libc_cv_slibdir, libdir,
+  # Allow earlier configure scripts to handle slibdir, libdir,
   # and libc_cv_localedir.
-  test -n "$libc_cv_slibdir" || \
+  test -n "$slibdir" || \
   case $machine in
   mips/mips64/n64/* )
-    libc_cv_slibdir="/lib64"
+    slibdir="/lib64"
     if test "$libdir" = '${exec_prefix}/lib'; then
       libdir='${exec_prefix}/lib64';
       # Locale data can be shared between 32bit and 64bit libraries
@@ -74,7 +74,7 @@ case "$prefix" in
     fi
     ;;
   mips/mips64/n32/* )
-    libc_cv_slibdir="/lib32"
+    slibdir="/lib32"
     if test "$libdir" = '${exec_prefix}/lib'; then
       libdir='${exec_prefix}/lib32';
       # Locale data can be shared between 32bit and 64bit libraries
@@ -82,7 +82,7 @@ case "$prefix" in
     fi
     ;;
   *)
-    libc_cv_slibdir="/lib"
+    slibdir="/lib"
     ;;
   esac
 esac

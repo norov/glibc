@@ -1,0 +1,5 @@
+2012-07-11  Adam Nemet  <anemet@caviumnetworks.com>
+
+	Bug #1494
+	* sysdeps/unix/sysv/linux/mips/configure.in: Rename libc_cv_slibdir to slibdir.
+	* sysdeps/unix/sysv/linux/mips/configure: Regenerate
