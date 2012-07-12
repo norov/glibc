@@ -1,5 +1,9 @@
 2012-07-11  Andrew Pinski  <apinski@cavium.com>
 
+	* ports/sysdeps/unix/sysv/linux/mips/nptl/sem_post.c: New file.
+
+2012-07-11  Andrew Pinski  <apinski@cavium.com>
+
 	Bug #2964
 	* ports/sysdeps/unix/sysv/linux/mips/sys/user.h (PAGE_SHIFT): Delete.
 	(PAGE_SIZE): Delete.
