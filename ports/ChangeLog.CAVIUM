@@ -1,3 +1,8 @@
+2012-07-26  Chandrakala Chavva  <cchavva@caviumnetworks.com>
+
+	* ports/sysdeps/unix/sysv/linux/mips/register-dump.h: Added
+	support to dump 64-bit registers.
+
 2012-07-11  Andrew Pinski  <apinski@cavium.com>
 
 	Bug #4078
