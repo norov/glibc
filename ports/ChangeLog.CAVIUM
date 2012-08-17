@@ -1,3 +1,9 @@
+2012-08-16  Andrew Pinski  <apinski@cavium.com>
+
+	* ports/sysdeps/unix/sysv/linux/mips/nptl/lowlevellock.h (__libc_lock_trylock):
+	Optimize also for Octeon2 which has instructions for atomically incrementing
+	and swapping.
+
 2012-07-26  Chandrakala Chavva  <cchavva@caviumnetworks.com>
 
 	* ports/sysdeps/unix/sysv/linux/mips/register-dump.h: Added
