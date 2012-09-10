@@ -623,7 +623,8 @@ extern char *fgets (char *__restrict __s, int __n, FILE *__restrict __stream)
      __wur;
 
 #if !defined __USE_ISOC11 \
-    || (defined __cplusplus && __cplusplus <= 201103L)
+    || (defined __cplusplus && __cplusplus <= 201103L) \
+    || (defined __USE_GNU && !defined __cplusplus)
 /* Get a newline-terminated string from stdin, removing the newline.
    DO NOT USE THIS FUNCTION!!  There is no limit on how much it will read.
 
@@ -632,6 +633,10 @@ extern char *fgets (char *__restrict __s, int __n, FILE *__restrict __stream)
    available when explicitly using an old ISO C, Unix, or POSIX standard.
    GCC defines _GNU_SOURCE when building C++ code and the function is still
    in C++11, so it is also available for C++.
+
+   REMOVE ME AFTER CGE7 goes out:
+   This breaks too many packages from removing it from the GNU feature list
+   so don't remove it.
 
    This function is a possible cancellation point and therefore not
    marked with __THROW.  */
