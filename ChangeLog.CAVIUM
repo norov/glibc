@@ -1,3 +1,8 @@
+2012-09-10  Andrew Pinski  <apinski@cavium.com>
+
+	Bug #4632
+	* libio/stdio.h (gets): Declare it for __USE_GNU also.
+
 2012-07-26  Chandrakala Chavva  <cchavva@caviumnetworks.com>
 
 	Patch from NSN
