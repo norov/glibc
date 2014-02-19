@@ -1,3 +1,25 @@
+This file describes changes to the MIPS port while it was in the ports
+add-on directory.  This port is no longer part of an add-on and so
+future changes to it should be listed in the top-level ChangeLog file,
+not here.
+
+
+
+2014-02-10  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/mips: Move directory to ../sysdeps/mips.
+	* sysdeps/unix/mips: Move directory to ../sysdeps/unix/mips.
+	* sysdeps/unix/sysv/linux/mips: Move directory to
+	../sysdeps/unix/sysv/linux/mips.
+
+	* sysdeps/unix/sysv/linux/mips/mips64/umount.c: Move from
+	sysdeps/unix/sysv/linux/hppa/umount.c instead of #include of that
+	file.
+
+	* sysdeps/unix/sysv/linux/mips/ipc_priv.h: Directly include
+	sysdeps/unix/sysv/linux/powerpc/ipc_priv.h instead of via
+	sysdeps/unix/sysv/linux/alpha/ipc_priv.h.
+
 2014-01-07  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/unix/sysv/linux/mips/mips32/nptl/libc.abilist: Move to
@@ -122,7 +144,7 @@
 	* sysdeps/mips/mips64/memset.S: Remove.
 
 2013-09-18  Maciej W. Rozycki  <macro@codesourcery.com>
-            Thomas Schwinge  <thomas@codesourcery.com>
+	    Thomas Schwinge  <thomas@codesourcery.com>
 
 	* sysdeps/mips/dl-machine.h (ELF_MACHINE_NAN2008): New macro.
 	(elf_machine_matches_host): Reject objects that use a different

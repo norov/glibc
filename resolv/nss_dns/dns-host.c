@@ -298,13 +298,14 @@ _nss_dns_gethostbyname4_r (const char *name, struct gaih_addrtuple **pat,
 	name = cp;
     }
 
+  int anslen = 2048;
   union
   {
     querybuf *buf;
     u_char *ptr;
   } host_buffer;
   querybuf *orig_host_buffer;
-  host_buffer.buf = orig_host_buffer = (querybuf *) alloca (2048);
+  host_buffer.buf = orig_host_buffer = (querybuf *) alloca (anslen);
   u_char *ans2p = NULL;
   int nans2p = 0;
   int resplen2 = 0;
@@ -312,9 +313,15 @@ _nss_dns_gethostbyname4_r (const char *name, struct gaih_addrtuple **pat,
   int olderr = errno;
   enum nss_status status;
   int n = __libc_res_nsearch (&_res, name, C_IN, T_UNSPEC,
-			      host_buffer.buf->buf, 2048, &host_buffer.ptr,
+			      host_buffer.buf->buf, anslen, &host_buffer.ptr,
 			      &ans2p, &nans2p, &resplen2);
-  if (n < 0)
+  if (n >= 0)
+    {
+      status = gaih_getanswer (host_buffer.buf, n, (const querybuf *) ans2p,
+			       resplen2, name, pat, buffer, buflen,
+			       errnop, herrnop, ttlp);
+    }
+  else
     {
       switch (errno)
 	{
@@ -341,16 +348,14 @@ _nss_dns_gethostbyname4_r (const char *name, struct gaih_addrtuple **pat,
 	*errnop = EAGAIN;
       else
 	__set_errno (olderr);
-
-      if (host_buffer.buf != orig_host_buffer)
-	free (host_buffer.buf);
-
-      return status;
     }
 
-  status = gaih_getanswer(host_buffer.buf, n, (const querybuf *) ans2p,
-			  resplen2, name, pat, buffer, buflen,
-			  errnop, herrnop, ttlp);
+  /* Check whether ans2p was separately allocated.  */
+  if (host_buffer.buf != orig_host_buffer)
+    anslen = MAXPACKET;
+  if (ans2p != NULL
+      && (ans2p < host_buffer.ptr || ans2p >= host_buffer.ptr + anslen))
+    free (ans2p);
 
   if (host_buffer.buf != orig_host_buffer)
     free (host_buffer.buf);
@@ -398,7 +403,7 @@ _nss_dns_gethostbyaddr2_r (const void *addr, socklen_t len, int af,
  buffer += pad;
  buflen = buflen > pad ? buflen - pad : 0;
 
- if (__builtin_expect (buflen < sizeof (struct host_data), 0))
+ if (__glibc_unlikely (buflen < sizeof (struct host_data)))
    {
      *errnop = ERANGE;
      *h_errnop = NETDB_INTERNAL;
@@ -452,7 +457,7 @@ _nss_dns_gethostbyaddr2_r (const void *addr, socklen_t len, int af,
       break;
     case AF_INET6:
       /* Only lookup with the byte string format if the user wants it.  */
-      if (__builtin_expect (_res.options & RES_USEBSTRING, 0))
+      if (__glibc_unlikely (_res.options & RES_USEBSTRING))
 	{
 	  qp = stpcpy (qbuf, "\\[x");
 	  for (n = 0; n < IN6ADDRSZ; ++n)
@@ -613,7 +618,7 @@ getanswer_r (const querybuf *answer, int anslen, const char *qname, int qtype,
   int have_to_map = 0;
   uintptr_t pad = -(uintptr_t) buffer % __alignof__ (struct host_data);
   buffer += pad;
-  if (__builtin_expect (buflen < sizeof (struct host_data) + pad, 0))
+  if (__glibc_unlikely (buflen < sizeof (struct host_data) + pad))
     {
       /* The buffer is too small.  */
     too_small:
@@ -727,14 +732,14 @@ getanswer_r (const querybuf *answer, int anslen, const char *qname, int qtype,
 	  n = -1;
 	}
 
-      if (__builtin_expect (n < 0 || (*name_ok) (bp) == 0, 0))
+      if (__glibc_unlikely (n < 0 || (*name_ok) (bp) == 0))
 	{
 	  ++had_error;
 	  continue;
 	}
       cp += n;				/* name */
 
-      if (__builtin_expect (cp + 10 > end_of_message, 0))
+      if (__glibc_unlikely (cp + 10 > end_of_message))
 	{
 	  ++had_error;
 	  continue;
@@ -748,7 +753,7 @@ getanswer_r (const querybuf *answer, int anslen, const char *qname, int qtype,
       cp += INT32SZ;			/* TTL */
       n = __ns_get16 (cp);
       cp += INT16SZ;			/* len */
-      if (__builtin_expect (class != C_IN, 0))
+      if (__glibc_unlikely (class != C_IN))
 	{
 	  /* XXX - debug? syslog? */
 	  cp += n;
@@ -764,7 +769,7 @@ getanswer_r (const querybuf *answer, int anslen, const char *qname, int qtype,
 	  if (ap >= &host_data->aliases[MAX_NR_ALIASES - 1])
 	    continue;
 	  n = dn_expand (answer->buf, end_of_message, cp, tbuf, sizeof tbuf);
-	  if (__builtin_expect (n < 0 || (*name_ok) (tbuf) == 0, 0))
+	  if (__glibc_unlikely (n < 0 || (*name_ok) (tbuf) == 0))
 	    {
 	      ++had_error;
 	      continue;
@@ -782,7 +787,7 @@ getanswer_r (const querybuf *answer, int anslen, const char *qname, int qtype,
 	  linebuflen -= n;
 	  /* Get canonical name.  */
 	  n = strlen (tbuf) + 1;	/* For the \0.  */
-	  if (__builtin_expect (n > linebuflen, 0))
+	  if (__glibc_unlikely (n > linebuflen))
 	    goto too_small;
 	  if (__builtin_expect (n, 0) >= MAXHOSTNAMELEN)
 	    {
@@ -798,7 +803,7 @@ getanswer_r (const querybuf *answer, int anslen, const char *qname, int qtype,
       if (qtype == T_PTR && type == T_CNAME)
 	{
 	  n = dn_expand (answer->buf, end_of_message, cp, tbuf, sizeof tbuf);
-	  if (__builtin_expect (n < 0 || res_dnok (tbuf) == 0, 0))
+	  if (__glibc_unlikely (n < 0 || res_dnok (tbuf) == 0))
 	    {
 	      ++had_error;
 	      continue;
@@ -806,7 +811,7 @@ getanswer_r (const querybuf *answer, int anslen, const char *qname, int qtype,
 	  cp += n;
 	  /* Get canonical name.  */
 	  n = strlen (tbuf) + 1;   /* For the \0.  */
-	  if (__builtin_expect (n > linebuflen, 0))
+	  if (__glibc_unlikely (n > linebuflen))
 	    goto too_small;
 	  if (__builtin_expect (n, 0) >= MAXHOSTNAMELEN)
 	    {
@@ -833,7 +838,7 @@ getanswer_r (const querybuf *answer, int anslen, const char *qname, int qtype,
 
       if (type == T_A && qtype == T_AAAA && map)
 	have_to_map = 1;
-      else if (__builtin_expect (type != qtype, 0))
+      else if (__glibc_unlikely (type != qtype))
 	{
 	  syslog (LOG_NOTICE | LOG_AUTH,
 	       "gethostby*.getanswer: asked for \"%s %s %s\", got type \"%s\"",
@@ -845,7 +850,7 @@ getanswer_r (const querybuf *answer, int anslen, const char *qname, int qtype,
       switch (type)
 	{
 	case T_PTR:
-	  if (__builtin_expect (strcasecmp (tname, bp) != 0, 0))
+	  if (__glibc_unlikely (strcasecmp (tname, bp) != 0))
 	    {
 	      syslog (LOG_NOTICE | LOG_AUTH, AskedForGot, qname, bp);
 	      cp += n;
@@ -862,7 +867,7 @@ getanswer_r (const querybuf *answer, int anslen, const char *qname, int qtype,
 	      n = -1;
 	    }
 
-	  if (__builtin_expect (n < 0 || res_hnok (bp) == 0, 0))
+	  if (__glibc_unlikely (n < 0 || res_hnok (bp) == 0))
 	    {
 	      ++had_error;
 	      break;
@@ -892,7 +897,7 @@ getanswer_r (const querybuf *answer, int anslen, const char *qname, int qtype,
 	  if (have_to_map)
 	    {
 	      n = strlen (bp) + 1;	/* for the \0 */
-	      if (__builtin_expect (n >= MAXHOSTNAMELEN, 0))
+	      if (__glibc_unlikely (n >= MAXHOSTNAMELEN))
 		{
 		  ++had_error;
 		  break;
@@ -938,7 +943,7 @@ getanswer_r (const querybuf *answer, int anslen, const char *qname, int qtype,
 	  linebuflen -= sizeof (align) - ((u_long) bp % sizeof (align));
 	  bp += sizeof (align) - ((u_long) bp % sizeof (align));
 
-	  if (__builtin_expect (n > linebuflen, 0))
+	  if (__glibc_unlikely (n > linebuflen))
 	    goto too_small;
 	  bp = __mempcpy (*hap++ = bp, cp, n);
 	  cp += n;
@@ -1009,7 +1014,7 @@ gaih_getanswer_slice (const querybuf *answer, int anslen, const char *qname,
   int qdcount = ntohs (hp->qdcount);
   const u_char *cp = answer->buf + HFIXEDSZ;
   const u_char *end_of_message = answer->buf + anslen;
-  if (__builtin_expect (qdcount != 1, 0))
+  if (__glibc_unlikely (qdcount != 1))
     {
       *h_errnop = NO_RECOVERY;
       return NSS_STATUS_UNAVAIL;
@@ -1063,7 +1068,7 @@ gaih_getanswer_slice (const querybuf *answer, int anslen, const char *qname,
 
 	  n = -1;
 	}
-      if (__builtin_expect (n < 0 || res_hnok (buffer) == 0, 0))
+      if (__glibc_unlikely (n < 0 || res_hnok (buffer) == 0))
 	{
 	  ++had_error;
 	  continue;
@@ -1077,7 +1082,7 @@ gaih_getanswer_slice (const querybuf *answer, int anslen, const char *qname,
 
       cp += n;				/* name */
 
-      if (__builtin_expect (cp + 10 > end_of_message, 0))
+      if (__glibc_unlikely (cp + 10 > end_of_message))
 	{
 	  ++had_error;
 	  continue;
@@ -1107,7 +1112,7 @@ gaih_getanswer_slice (const querybuf *answer, int anslen, const char *qname,
 	      *ttlp = ttl;
 
 	  n = dn_expand (answer->buf, end_of_message, cp, tbuf, sizeof tbuf);
-	  if (__builtin_expect (n < 0 || res_hnok (tbuf) == 0, 0))
+	  if (__glibc_unlikely (n < 0 || res_hnok (tbuf) == 0))
 	    {
 	      ++had_error;
 	      continue;
@@ -1124,9 +1129,9 @@ gaih_getanswer_slice (const querybuf *answer, int anslen, const char *qname,
 		}
 
 	      n = strlen (tbuf) + 1;
-	      if (__builtin_expect (n > buflen, 0))
+	      if (__glibc_unlikely (n > buflen))
 		goto too_small;
-	      if (__builtin_expect (n >= MAXHOSTNAMELEN, 0))
+	      if (__glibc_unlikely (n >= MAXHOSTNAMELEN))
 		{
 		  ++had_error;
 		  continue;
@@ -1143,7 +1148,7 @@ gaih_getanswer_slice (const querybuf *answer, int anslen, const char *qname,
       // We should not see any types other than those explicitly listed
       // below.  Some types sent by server seem missing, though.  Just
       // collect the data for now.
-      if (__builtin_expect (type != T_A && type != T_AAAA, 0))
+      if (__glibc_unlikely (type != T_A && type != T_AAAA))
 #else
       if (__builtin_expect (type == T_SIG, 0)
 	  || __builtin_expect (type == T_KEY, 0)
