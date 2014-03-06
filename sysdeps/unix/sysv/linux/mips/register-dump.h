@@ -60,7 +60,6 @@
 The FPU registers will not be printed.
 */
 
-#if _MIPS_SIM == _ABIO32
 static void
 hexvalue (_ITOA_WORD_TYPE value, char *buf, size_t len)
 {
@@ -69,6 +68,7 @@ hexvalue (_ITOA_WORD_TYPE value, char *buf, size_t len)
     *--cp = '0';
 }
 
+#if _MIPS_SIM == _ABIO32
 static void
 register_dump (int fd, CTX_TYPE ctx)
 {
