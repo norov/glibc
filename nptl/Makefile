@@ -20,6 +20,8 @@
 #
 subdir	:= nptl
 
+include ../Makeconfig
+
 headers := pthread.h semaphore.h bits/semaphore.h
 
 extra-libs := libpthread
@@ -282,8 +284,6 @@ LDFLAGS-pthread.so = -Wl,--enable-new-dtags,-z,nodelete,-z,initfirst
 CFLAGS-tst-cleanup2.c = -fno-builtin
 CFLAGS-tst-cleanupx2.c = -fno-builtin
 
-include ../Makeconfig
-
 ifeq ($(have-forced-unwind),yes)
 tests += tst-cancelx2 tst-cancelx3 tst-cancelx4 tst-cancelx5 \
 	 tst-cancelx6 tst-cancelx7 tst-cancelx8 tst-cancelx9 tst-cancelx10 \
@@ -338,7 +338,7 @@ $(objpfx)multidir.mk: $(common-objpfx)config.make
 crti-objs := crti.o
 crtn-objs := crtn.o
 ifneq (,$(patsubst .,,$(multidir)))
-generated-dirs := $(firstword $(subst /, , $(multidir)))
+generated-dirs += $(firstword $(subst /, , $(multidir)))
 crti-objs += $(multidir)/crti.o
 crtn-objs += $(multidir)/crtn.o
 $(objpfx)$(multidir):
@@ -366,6 +366,14 @@ xtests-static += tst-setuid1-static
 
 # These tests are linked with libc before libpthread
 tests-reverse += tst-cancel5 tst-cancel23 tst-vfork1x tst-vfork2x
+
+ifeq ($(run-built-tests),yes)
+tests-special += $(objpfx)tst-stack3-mem.out $(objpfx)tst-oddstacklimit.out
+ifeq ($(build-shared),yes)
+tests-special += $(objpfx)tst-tls6.out $(objpfx)tst-cleanup0-cmp.out \
+		 $(objpfx)tst-cancel-wrappers.out
+endif
+endif
 
 include ../Rules
 
@@ -457,13 +465,11 @@ LDFLAGS-tst-atfork2 = -rdynamic
 tst-atfork2-ENV = MALLOC_TRACE=$(objpfx)tst-atfork2.mtrace
 $(objpfx)tst-atfork2mod.so: $(shared-thread-library)
 
-ifeq ($(run-built-tests),yes)
-tests: $(objpfx)tst-stack3-mem
-endif
 tst-stack3-ENV = MALLOC_TRACE=$(objpfx)tst-stack3.mtrace
-$(objpfx)tst-stack3-mem: $(objpfx)tst-stack3.out
-	$(common-objpfx)malloc/mtrace $(objpfx)tst-stack3.mtrace > $@
-generated += tst-stack3-mem tst-stack3.mtrace
+$(objpfx)tst-stack3-mem.out: $(objpfx)tst-stack3.out
+	$(common-objpfx)malloc/mtrace $(objpfx)tst-stack3.mtrace > $@; \
+	$(evaluate-test)
+generated += tst-stack3-mem.out tst-stack3.mtrace
 
 $(objpfx)tst-cleanup4: $(objpfx)tst-cleanup4aux.o $(shared-thread-library)
 $(objpfx)tst-cleanupx4: $(objpfx)tst-cleanup4aux.o $(shared-thread-library)
@@ -481,15 +487,13 @@ LDFLAGS-tst-tls5 = $(no-as-needed)
 LDFLAGS-tst-tls5mod.so = -Wl,-soname,tst-tls5mod.so
 
 ifeq ($(build-shared),yes)
-ifeq ($(run-built-tests),yes)
-tests: $(objpfx)tst-tls6.out
-endif
 $(objpfx)tst-tls6.out: tst-tls6.sh $(objpfx)tst-tls5 \
 		       $(objpfx)tst-tls5moda.so $(objpfx)tst-tls5modb.so \
 		       $(objpfx)tst-tls5modc.so $(objpfx)tst-tls5modd.so \
 		       $(objpfx)tst-tls5mode.so $(objpfx)tst-tls5modf.so
 	$(BASH) $< $(common-objpfx) '$(test-via-rtld-prefix)' \
-	  '$(test-wrapper-env)'
+	  '$(test-wrapper-env)'; \
+	$(evaluate-test)
 endif
 
 $(objpfx)tst-dlsym1: $(libdl) $(shared-thread-library)
@@ -542,13 +546,12 @@ endif
 ifeq ($(build-shared),yes)
 
 $(objpfx)tst-cleanup0.out: /dev/null $(objpfx)tst-cleanup0
-	$(make-test-out) > $@ 2>&1
+	$(make-test-out) > $@ 2>&1; \
+	$(evaluate-test)
 
-ifeq ($(run-built-tests),yes)
-tests: $(objpfx)tst-cleanup0-cmp.out
-endif
 $(objpfx)tst-cleanup0-cmp.out: tst-cleanup0.expect $(objpfx)tst-cleanup0.out
-	cmp $^ > $@
+	cmp $^ > $@; \
+	$(evaluate-test)
 
 $(objpfx)crti.o: $(objpfx)pt-crti.o
 	ln -f $< $@
@@ -579,13 +582,13 @@ endif
 
 ifeq ($(run-built-tests),yes)
 ifeq (yes,$(build-shared))
-tests: $(objpfx)tst-cancel-wrappers.out
 $(objpfx)tst-cancel-wrappers.out: tst-cancel-wrappers.sh
 	$(SHELL) $< '$(NM)' \
 		    $(common-objpfx)libc_pic.a \
 		    $(common-objpfx)libc.a \
 		    $(objpfx)libpthread_pic.a \
-		    $(objpfx)libpthread.a > $@
+		    $(objpfx)libpthread.a > $@; \
+	$(evaluate-test)
 endif
 endif
 
@@ -601,10 +604,9 @@ tst-stackguard1-ARGS = --command "$(host-test-program-cmd) --child"
 tst-stackguard1-static-ARGS = --command "$(objpfx)tst-stackguard1-static --child"
 
 ifeq ($(run-built-tests),yes)
-tests: $(objpfx)tst-oddstacklimit.out
-
 $(objpfx)tst-oddstacklimit.out: $(objpfx)tst-oddstacklimit $(objpfx)tst-basic1
-	$(test-program-prefix) $< --command '$(host-test-program-cmd)' > $@
+	$(test-program-prefix) $< --command '$(host-test-program-cmd)' > $@; \
+	$(evaluate-test)
 endif
 
 # The tests here better do not run in parallel

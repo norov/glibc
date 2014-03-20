@@ -1,3 +1,44 @@
+2014-03-07  Joseph Myers  <joseph@codesourcery.com>
+
+	* Makefile (LOCALES): Move definition above include of Rules.
+	(LOCALE_SRCS): Likewise.
+	(CHARMAPS): Likewise.
+	(CTYPE_FILES): Likewise.
+	(tests-special): Add locale files.
+	($(addprefix $(objpfx),$(CTYPE_FILES))): Use $(evaluate-test).
+
+	* Makefile (generated): Rename tests to end with .out.
+	(tests-special): Likewise.
+	($(objpfx)mtrace-tst-leaks): Likewise.
+
+2014-03-06  Joseph Myers  <joseph@codesourcery.com>
+
+	* Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.
+
+2014-02-28  Roland McGrath  <roland@hack.frob.com>
+
+	* Makefile (generated, generated-dirs): Use += rather than =.
+
+2014-02-26  Joseph Myers  <joseph@codesourcery.com>
+
+	* Makefile: Include Makeconfig immediately after defining subdir.
+	(all): Remove target.
+
+2014-02-21  Joseph Myers  <joseph@codesourcery.com>
+
+	* Makefile ($(objpfx)sort-test.out): Use $(evaluate-test).
+	($(objpfx)tst-fmon.out): Likewise.
+	($(objpfx)tst-numeric.out): Likewise.
+	($(objpfx)tst-locale.out): Likewise.
+	($(objpfx)tst-rpmatch.out): Likewise.
+	($(objpfx)tst-trans.out): Likewise.
+	($(objpfx)tst-mbswcs.out): Likewise.
+	($(objpfx)tst-ctype.out): Likewise.
+	($(objpfx)tst-wctype.out): Likewise.
+	($(objpfx)tst-langinfo.out): Likewise.
+	($(objpfx)mtrace-tst-leaks): Likewise.
+
 2013-12-26  Chris Leonard  <cjl@sugarlabs.org>
 
 	* locales/sa_IN: Add lang_name.

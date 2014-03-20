@@ -601,6 +601,12 @@ run-built-tests = yes
 endif
 endif
 
+# Whether to stop immediately when a test fails.  Nonempty means to
+# stop, empty means not to stop.
+ifndef stop-on-test-failure
+stop-on-test-failure =
+endif
+
 # How to run a program we just linked with our library.
 # The program binary is assumed to be $(word 2,$^).
 built-program-file = $(dir $(word 2,$^))$(notdir $(word 2,$^))
@@ -685,6 +691,7 @@ ifeq ($(all-warnings),yes)
 else
 +gccwarn := -Wall -Wwrite-strings -Winline
 endif
++gccwarn += -Wundef
 +gccwarn-c = -Wstrict-prototypes
 
 # We do not depend on the address of constants in different files to be
@@ -1083,8 +1090,15 @@ endif
 # The name to give to a test in test results summaries.
 test-name = $(strip $(patsubst %.out, %, $(patsubst $(common-objpfx)%, %, $@)))
 
-# Command to output a test status line (such as PASS: test-name).
+# Likewise, in XFAIL variable names.
+test-xfail-name = $(strip $(patsubst %.out, %, $(patsubst $(objpfx)%, %, $@)))
+
+# Command to output a test status line (such as PASS: test-name).  If
+# test-xfail-$(test-xfail-name) has a nonempty value, the status will be
+# XPASS or XFAIL rather than PASS or FAIL.
 evaluate-test = $(..)scripts/evaluate-test.sh $(test-name) $$? \
+		  $(if $(test-xfail-$(test-xfail-name)),true,false) \
+		  $(if $(stop-on-test-failure),true,false) \
 		  > $(common-objpfx)$(test-name).test-result
 
 endif # Makeconfig not yet included

@@ -20,6 +20,8 @@
 #
 subdir	:= string
 
+include ../Makeconfig
+
 headers	:= string.h strings.h memory.h endian.h bits/endian.h \
 	   argz.h envz.h byteswap.h bits/byteswap.h bits/byteswap-16.h \
 	   bits/string.h bits/string2.h bits/string3.h
@@ -56,6 +58,10 @@ tests		:= tester inl-tester noinl-tester testcopy test-ffs	\
 
 xtests = tst-strcoll-overflow
 
+ifeq ($(run-built-tests),yes)
+tests-special += $(objpfx)tst-svc-cmp.out
+endif
+
 include ../Rules
 
 tester-ENV = LANGUAGE=C
@@ -74,7 +80,7 @@ CFLAGS-test-ffs.c = -fno-builtin
 CFLAGS-tst-inlcall.c = -fno-builtin
 
 ifeq ($(run-built-tests),yes)
-tests: $(objpfx)tst-svc-cmp.out
 $(objpfx)tst-svc-cmp.out: tst-svc.expect $(objpfx)tst-svc.out
-	cmp $^ > $@
+	cmp $^ > $@; \
+	$(evaluate-test)
 endif

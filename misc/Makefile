@@ -21,6 +21,8 @@
 
 subdir	:= misc
 
+include ../Makeconfig
+
 headers	:= sys/uio.h bits/uio.h sys/ioctl.h bits/ioctls.h bits/ioctl-types.h \
 	   sys/ptrace.h sys/file.h sys/dir.h sys/cdefs.h \
 	   ar.h a.out.h libgen.h stab.h bits/stab.def sgtty.h \
@@ -67,9 +69,7 @@ routines := brk sbrk sstk ioctl \
 	    listxattr lgetxattr llistxattr lremovexattr lsetxattr \
 	    removexattr setxattr getauxval ifunc-impl-list
 
-generated := tst-error1.mtrace tst-error1-mem
-
-include ../Makeconfig
+generated += tst-error1.mtrace tst-error1-mem.out
 
 aux := init-misc
 install-lib := libg.a
@@ -78,7 +78,7 @@ gpl2lgpl := error.c error.h
 tests := tst-dirname tst-tsearch tst-fdset tst-efgcvt tst-mntent tst-hsearch \
 	 tst-error1 tst-pselect tst-insremque tst-mntent2 bug-hsearch1
 ifeq ($(run-built-tests),yes)
-tests: $(objpfx)tst-error1-mem
+tests-special += $(objpfx)tst-error1-mem.out
 endif
 
 CFLAGS-select.c = -fexceptions -fasynchronous-unwind-tables
@@ -110,5 +110,6 @@ endif
 
 tst-error1-ENV = MALLOC_TRACE=$(objpfx)tst-error1.mtrace
 tst-error1-ARGS = $(objpfx)tst-error1.out
-$(objpfx)tst-error1-mem: $(objpfx)tst-error1.out
-	$(common-objpfx)malloc/mtrace $(objpfx)tst-error1.mtrace > $@
+$(objpfx)tst-error1-mem.out: $(objpfx)tst-error1.out
+	$(common-objpfx)malloc/mtrace $(objpfx)tst-error1.mtrace > $@; \
+	$(evaluate-test)

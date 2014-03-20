@@ -1,3 +1,36 @@
+2014-02-28  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/hppa/nptl/tls.h (TLS_TCB_AT_TP): New macro.
+
+2014-03-05  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/hppa/fpu/libm-test-ulps: Remove individual test ulps.
+
+2014-03-04  Carlos O'Donell  <carlos@redhat.com>
+
+	* ports/sysdeps/hppa/fpu/libm-test-ulps: Remove fma ulps.
+
+	* ports/sysdeps/hppa/fpu/libm-test-ulps: Regenerate again.
+
+	* ports/sysdeps/hppa/fpu/libm-test-ulps: Regenerate.
+
+2014-02-20  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #16611]
+	* sysdeps/unix/sysv/linux/hppa/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x030100] (__ASSUME_SENDMMSG_SYSCALL):
+	Define.
+
+	[BZ #16610]
+	* sysdeps/unix/sysv/linux/hppa/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x020622] (__ASSUME_RECVMMSG_SYSCALL):
+	Define.
+
+	[BZ #16609]
+	* sysdeps/unix/sysv/linux/hppa/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x020622] (__ASSUME_ACCEPT4_SYSCALL):
+	Define.
+
 2014-02-12  Joseph Myers  <joseph@codesourcery.com>
 
 	* sysdeps/unix/sysv/linux/hppa/bits/mman.h [__USE_BSD]: Change

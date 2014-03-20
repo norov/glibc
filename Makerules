@@ -288,19 +288,22 @@ ifeq ($(build-shared),yes)
 $(addprefix $(common-objpfx),$(version-maps)): $(common-objpfx)sysd-versions
 common-generated += $(version-maps)
 postclean-generated += sysd-versions Versions.all abi-versions.h \
-		       Versions.def.v.i Versions.def.v Versions.v.i Versions.v
+		       Versions.def Versions.v.i Versions.v
 
 ifndef avoid-generated
 ifneq ($(sysd-versions-subdirs),$(sorted-subdirs) $(config-sysdirs))
 sysd-versions-force = FORCE
 FORCE:
 endif
-# See %.v/%.v.i implicit rules in Makeconfig.
-$(common-objpfx)Versions.def.v.i: $(..)Versions.def \
-				  $(wildcard $(add-ons:%=$(..)%/Versions.def))
+
+$(common-objpfx)Versions.def: $(..)scripts/versionlist.awk \
+			      $(common-objpfx)Versions.v
+	LC_ALL=C $(AWK) -f $^ > $@T
+	mv -f $@T $@
+
 $(common-objpfx)Versions.all: $(..)scripts/firstversions.awk \
 			      $(common-objpfx)soversions.i \
-			      $(common-objpfx)Versions.def.v
+			      $(common-objpfx)Versions.def
 	{ while read which lib version setname; do \
 	    test x"$$which" = xDEFAULT || continue; \
 	    test -z "$$setname" || echo "$$lib : $$setname"; \
@@ -311,7 +314,6 @@ $(common-objpfx)Versions.all: $(..)scripts/firstversions.awk \
 # See %.v/%.v.i implicit rules in Makeconfig.
 $(common-objpfx)Versions.v.i: $(wildcard $(subdirs:%=$(..)%/Versions)) \
 			      $(wildcard $(sysdirs:%=%/Versions)) \
-			      $(common-objpfx)abi-versions.h \
 			      $(sysd-versions-force)
 $(common-objpfx)sysd-versions: $(common-objpfx)Versions.all \
 			       $(common-objpfx)Versions.v \
@@ -1195,17 +1197,21 @@ generated += $(extra-libs:=.symlist)
 ifdef abilist-pattern
 $(objpfx)check-abi-%.out: $(common-objpfx)config.make $(abilist-pattern) \
 			  $(objpfx)%.symlist
-	$(check-abi-pattern)
+	$(check-abi-pattern); \
+	$(evaluate-test)
 $(objpfx)check-abi-%.out: $(common-objpfx)config.make $(abilist-pattern) \
 			  $(common-objpfx)%.symlist
-	$(check-abi-pattern)
+	$(check-abi-pattern); \
+	$(evaluate-test)
 endif
 $(objpfx)check-abi-%.out: $(common-objpfx)config.make %.abilist \
 			  $(objpfx)%.symlist
-	$(check-abi)
+	$(check-abi); \
+	$(evaluate-test)
 $(objpfx)check-abi-%.out: $(common-objpfx)config.make %.abilist \
 			  $(common-objpfx)%.symlist
-	$(check-abi)
+	$(check-abi); \
+	$(evaluate-test)
 define check-abi-pattern
 	diff -p -U 0 $(filter $(abilist-pattern),$^) $(filter %.symlist,$^) \
 	     > $@
@@ -1243,24 +1249,28 @@ endef
 
 .PHONY: update-abi check-abi
 update-abi: $(patsubst %.so,update-abi-%,$(install-lib.so-versioned))
-check-abi: $(patsubst %.so,$(objpfx)check-abi-%.out,$(install-lib.so-versioned))
+check-abi-list = $(patsubst %.so,$(objpfx)check-abi-%.out, \
+				 $(install-lib.so-versioned))
+check-abi: $(check-abi-list)
 ifdef subdir
 subdir_check-abi: check-abi
 subdir_update-abi: update-abi
 else
 check-abi: subdir_check-abi
+	if grep -q '^FAIL:' $(objpfx)*/check-abi*.test-result; then exit 1; fi
 update-abi: subdir_update-abi
 endif
 
 ifeq ($(subdir),elf)
 check-abi: $(objpfx)check-abi-libc.out
+tests-special += $(objpfx)check-abi-libc.out
 update-abi: update-abi-libc
 common-generated += libc.symlist
 endif
 
 ifeq ($(build-shared),yes)
 ifdef subdir
-tests: check-abi
+tests-special += $(check-abi-list)
 endif
 endif
 

@@ -20,7 +20,7 @@
 #
 subdir	:= malloc
 
-all:
+include ../Makeconfig
 
 dist-headers := malloc.h
 headers := $(dist-headers) obstack.h mcheck.h
@@ -48,14 +48,12 @@ extra-objs = mcheck-init.o libmcheck.a
 # Include the cleanup handler.
 aux := set-freeres thread-freeres
 
-include ../Makeconfig
-
 CPPFLAGS-memusagestat = -DNOT_IN_libc
 
 # The Perl script to analyze the output of the mtrace functions.
 ifneq ($(PERL),no)
 install-bin-script = mtrace
-generated = mtrace
+generated += mtrace
 
 # The Perl script will print addresses and to do this nicely we must know
 # whether we are on a 32 or 64 bit machine.
@@ -94,6 +92,14 @@ memusagestat-modules = memusagestat
 $(objpfx)memusagestat: $(memusagestat-modules:%=$(objpfx)%.o)
 	$(LINK.o) -o $@ $^ $(libgd-LDFLAGS) -lgd -lpng -lz -lm
 
+ifeq ($(run-built-tests),yes)
+ifeq (yes,$(build-shared))
+ifneq ($(PERL),no)
+tests-special += $(objpfx)tst-mtrace.out
+endif
+endif
+endif
+
 include ../Rules
 
 CFLAGS-mcheck-init.c = $(PIC-ccflag)
@@ -109,9 +115,9 @@ lib: $(objpfx)libmcheck.a
 ifeq ($(run-built-tests),yes)
 ifeq (yes,$(build-shared))
 ifneq ($(PERL),no)
-tests: $(objpfx)tst-mtrace.out
 $(objpfx)tst-mtrace.out: tst-mtrace.sh $(objpfx)tst-mtrace
-	$(SHELL) $< $(common-objpfx) '$(test-program-prefix)'
+	$(SHELL) $< $(common-objpfx) '$(test-program-prefix)'; \
+	$(evaluate-test)
 endif
 endif
 endif

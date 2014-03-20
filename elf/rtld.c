@@ -623,7 +623,8 @@ static void
 map_doit (void *a)
 {
   struct map_args *args = (struct map_args *) a;
-  args->map = _dl_map_object (args->loader, args->str, lt_library, 0,
+  int type = (args->mode == __RTLD_OPENEXEC) ? lt_executable : lt_library;
+  args->map = _dl_map_object (args->loader, args->str, type, 0,
 			      args->mode, LM_ID_BASE);
 }
 
@@ -1075,7 +1076,7 @@ of this helper program; chances are you did not intend to run this program.\n\
       else
 	{
 	  HP_TIMING_NOW (start);
-	  _dl_map_object (NULL, rtld_progname, lt_library, 0,
+	  _dl_map_object (NULL, rtld_progname, lt_executable, 0,
 			  __RTLD_OPENEXEC, LM_ID_BASE);
 	  HP_TIMING_NOW (stop);
 
@@ -1370,10 +1371,25 @@ of this helper program; chances are you did not intend to run this program.\n\
     GLRO(dl_use_load_bias) = main_map->l_addr == 0 ? -1 : 0;
 
   /* Set up the program header information for the dynamic linker
-     itself.  It is needed in the dl_iterate_phdr() callbacks.  */
-  ElfW(Ehdr) *rtld_ehdr = (ElfW(Ehdr) *) GL(dl_rtld_map).l_map_start;
-  ElfW(Phdr) *rtld_phdr = (ElfW(Phdr) *) (GL(dl_rtld_map).l_map_start
-					  + rtld_ehdr->e_phoff);
+     itself.  It is needed in the dl_iterate_phdr callbacks.  */
+  const ElfW(Ehdr) *rtld_ehdr;
+
+  /* Starting from binutils-2.23, the linker will define the magic symbol
+     __ehdr_start to point to our own ELF header if it is visible in a
+     segment that also includes the phdrs.  If that's not available, we use
+     the old method that assumes the beginning of the file is part of the
+     lowest-addressed PT_LOAD segment.  */
+#ifdef HAVE_EHDR_START
+  extern const ElfW(Ehdr) __ehdr_start __attribute__ ((visibility ("hidden")));
+  rtld_ehdr = &__ehdr_start;
+#else
+  rtld_ehdr = (void *) GL(dl_rtld_map).l_map_start;
+#endif
+  assert (rtld_ehdr->e_ehsize == sizeof *rtld_ehdr);
+  assert (rtld_ehdr->e_phentsize == sizeof (ElfW(Phdr)));
+
+  const ElfW(Phdr) *rtld_phdr = (const void *) rtld_ehdr + rtld_ehdr->e_phoff;
+
   GL(dl_rtld_map).l_phdr = rtld_phdr;
   GL(dl_rtld_map).l_phnum = rtld_ehdr->e_phnum;
 
@@ -1568,6 +1584,10 @@ ERROR: ld.so: object '%s' cannot be loaded as audit interface: %s; ignored.\n",
 	    }
 	}
     }
+
+  /* Keep track of the currently loaded modules to count how many
+     non-audit modules which use TLS are loaded.  */
+  size_t count_modids = _dl_count_modids ();
 
   /* Set up debugging before the debugger is notified for the first time.  */
 #ifdef ELF_MACHINE_DEBUG_SETUP
@@ -2220,7 +2240,8 @@ ERROR: ld.so: object '%s' cannot be loaded as audit interface: %s; ignored.\n",
 	_dl_start_profile ();
     }
 
-  if (!was_tls_init_tp_called && GL(dl_tls_max_dtv_idx) > 0)
+  if ((!was_tls_init_tp_called && GL(dl_tls_max_dtv_idx) > 0)
+      || count_modids != _dl_count_modids ())
     ++GL(dl_tls_generation);
 
   /* Now that we have completed relocation, the initializer data

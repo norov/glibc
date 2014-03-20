@@ -23,6 +23,8 @@
 #
 subdir	:= debug
 
+include ../Makeconfig
+
 headers	:= execinfo.h
 
 # Note that ptsname_r_chk and getlogin_r are not here, but in
@@ -165,12 +167,10 @@ others = pcprofiledump
 install-bin = pcprofiledump
 install-bin-script = xtrace
 
-include ../Makeconfig
-
 ifeq ($(build-shared),yes)
 install-bin-script += catchsegv
 endif
-generated = catchsegv xtrace
+generated += catchsegv xtrace
 
 include ../Rules
 

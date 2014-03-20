@@ -19,13 +19,9 @@
 
 subdir := manual
 
-# Allow override
-INSTALL_INFO = install-info
+include ../Makeconfig
 
 .PHONY: dvi pdf info html
-
-# Get glibc's configuration info.
-include ../Makeconfig
 
 dvi: $(objpfx)libc.dvi
 pdf: $(objpfx)libc.pdf
@@ -41,8 +37,8 @@ chapters = $(addsuffix .texi, \
 		       intro errno memory ctype string charset locale	\
 		       message search pattern io stdio llio filesys	\
 		       pipe socket terminal syslog math arith time	\
-		       resource setjmp signal startup process job nss	\
-		       users sysinfo conf crypt debug threads probes)
+		       resource setjmp signal startup process ipc job	\
+		       nss users sysinfo conf crypt debug threads probes)
 add-chapters = $(wildcard $(foreach d, $(add-ons), ../$d/$d.texi))
 appendices = lang.texi header.texi install.texi maint.texi platform.texi \
 	     contrib.texi
@@ -163,14 +159,14 @@ minimal-dist = summary.awk texis.awk tsort.awk libc-texinfo.sh libc.texinfo \
 	       $(patsubst %.c.texi,examples/%.c, $(examples))
 
 indices = cp fn pg tp vr ky
-generated-dirs := libc
-generated = libc.dvi libc.pdf libc.tmp libc.info*			    \
-	stubs								    \
-	texis summary.texi stamp-summary *.c.texi			    \
-	$(foreach index,$(indices),libc.$(index) libc.$(index)s)	    \
-	libc.log libc.aux libc.toc					    \
-	$(libc-texi-generated)						    \
-	stamp-libm-err stamp-version
+generated-dirs += libc
+generated += libc.dvi libc.pdf libc.tmp libc.info*			      \
+	     stubs							      \
+	     texis summary.texi stamp-summary *.c.texi			      \
+	     $(foreach index,$(indices),libc.$(index) libc.$(index)s)	      \
+	     libc.log libc.aux libc.toc					      \
+	     $(libc-texi-generated)					      \
+	     stamp-libm-err stamp-version
 
 include ../Rules
 

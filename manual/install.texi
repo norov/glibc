@@ -185,7 +185,7 @@ the compiler and/or binutils.
 
 If you only specify @samp{--host}, @code{configure} will prepare for a
 native compile but use what you specify instead of guessing what your
-system is. This is most useful to change the CPU submodel.  For example,
+system is.  This is most useful to change the CPU submodel.  For example,
 if @code{configure} guesses your machine as @code{i686-pc-linux-gnu} but
 you want to compile a library for 586es, give
 @samp{--host=i586-pc-linux-gnu} or just @samp{--host=i586-linux} and add
@@ -234,6 +234,12 @@ Before reporting bugs make sure there is no problem with your system.
 The tests (and later installation) use some pre-existing files of the
 system such as @file{/etc/passwd}, @file{/etc/nsswitch.conf} and others.
 These files must all contain correct and sensible content.
+
+Normally, @code{make check} will run all the tests before reporting
+all problems found and exiting with error status if any problems
+occurred.  You can specify @samp{stop-on-test-failure=y} when running
+@code{make check} to make the test run stop and exit with an error
+status immediately when a failure occurs.
 
 To format the @cite{GNU C Library Reference Manual} for printing, type
 @w{@code{make dvi}}.  You need a working @TeX{} installation to do

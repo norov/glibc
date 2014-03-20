@@ -250,18 +250,20 @@ mostlyclean: parent-mostlyclean
 tests-clean:
 	@$(MAKE) subdir_testclean no_deps=t
 
-tests: $(objpfx)c++-types-check.out $(objpfx)check-local-headers.out
+tests-special += $(objpfx)c++-types-check.out $(objpfx)check-local-headers.out
 ifneq ($(CXX),no)
 
 vpath c++-types.data $(+sysdep_dirs)
 
 $(objpfx)c++-types-check.out: c++-types.data scripts/check-c++-types.sh
-	scripts/check-c++-types.sh $< $(CXX) $(filter-out -std=gnu99 -Wstrict-prototypes,$(CFLAGS)) $(CPPFLAGS) > $@
+	scripts/check-c++-types.sh $< $(CXX) $(filter-out -std=gnu99 -Wstrict-prototypes,$(CFLAGS)) $(CPPFLAGS) > $@; \
+	$(evaluate-test)
 endif
 
 $(objpfx)check-local-headers.out: scripts/check-local-headers.sh
 	AWK='$(AWK)' scripts/check-local-headers.sh \
-	  "$(includedir)" "$(objpfx)" > $@
+	  "$(includedir)" "$(objpfx)" > $@; \
+	$(evaluate-test)
 
 ifneq ($(PERL),no)
 installed-headers = argp/argp.h assert/assert.h catgets/nl_types.h \
@@ -308,10 +310,36 @@ installed-headers = argp/argp.h assert/assert.h catgets/nl_types.h \
 		    time/sys/time.h time/sys/timeb.h wcsmbs/wchar.h \
 		    wctype/wctype.h
 
-tests: $(objpfx)begin-end-check.out
+tests-special += $(objpfx)begin-end-check.out
 $(objpfx)begin-end-check.out: scripts/begin-end-check.pl
-	$(PERL) scripts/begin-end-check.pl $(installed-headers) > $@
+	$(PERL) scripts/begin-end-check.pl $(installed-headers) > $@; \
+	$(evaluate-test)
 endif
+
+tests-special-notdir = $(patsubst $(objpfx)%, %, $(tests-special))
+tests: $(tests-special)
+	$(..)scripts/merge-test-results.sh -s $(objpfx) "" \
+	  $(sort $(tests-special-notdir:.out=)) \
+	  > $(objpfx)subdir-tests.sum
+	$(..)scripts/merge-test-results.sh -t $(objpfx) subdir-tests.sum \
+	  $(sort $(subdirs) .) \
+	  > $(objpfx)tests.sum
+	@grep '^ERROR:' $(objpfx)tests.sum || true
+	@grep '^FAIL:' $(objpfx)tests.sum || true
+	@echo "Summary of test results:"
+	@sed 's/:.*//' < $(objpfx)tests.sum | sort | uniq -c
+	@if grep -q '^ERROR:' $(objpfx)tests.sum; then exit 1; fi
+	@if grep -q '^FAIL:' $(objpfx)tests.sum; then exit 1; fi
+xtests:
+	$(..)scripts/merge-test-results.sh -t $(objpfx) subdir-xtests.sum \
+	  $(sort $(subdirs)) \
+	  > $(objpfx)xtests.sum
+	@grep '^ERROR:' $(objpfx)xtests.sum || true
+	@grep '^FAIL:' $(objpfx)xtests.sum || true
+	@echo "Summary of test results for extra tests:"
+	@sed 's/:.*//' < $(objpfx)xtests.sum | sort | uniq -c
+	@if grep -q '^ERROR:' $(objpfx)xtests.sum; then exit 1; fi
+	@if grep -q '^FAIL:' $(objpfx)xtests.sum; then exit 1; fi
 
 # The realclean target is just like distclean for the parent, but we want
 # the subdirs to know the difference in case they care.

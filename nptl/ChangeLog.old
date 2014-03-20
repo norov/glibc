@@ -1,3 +1,25 @@
+This file describes changes to the nptl/ subdirectory prior to 2014-03-03.
+Later nptl/ changes go into the top-level ChangeLog file, not here.
+
+
+
+2014-02-28  Roland McGrath  <roland@hack.frob.com>
+
+	* Makefile (generated-dirs): Use += rather than =.
+
+2014-02-26  Joseph Myers  <joseph@codesourcery.com>
+
+	* Makefile: Include Makeconfig immediately after defining subdir.
+
+2014-02-21  Joseph Myers  <joseph@codesourcery.com>
+
+	* Makefile ($(objpfx)tst-stack3-mem): Use $(evaluate-test).
+	($(objpfx)tst-tls6.out): Likewise.
+	($(objpfx)tst-cleanup0.out): Likewise.
+	($(objpfx)tst-cleanup0-cmp.out): Likewise.
+	($(objpfx)tst-cancel-wrappers.out): Likewise.
+	($(objpfx)tst-oddstacklimit.out): Likewise.
+
 2014-02-14  Joseph Myers  <joseph@codesourcery.com>
 
 	* Makefile ($(objpfx)tst-cleanup0.out): Do not run cmp.

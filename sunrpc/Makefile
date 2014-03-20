@@ -20,6 +20,8 @@
 #
 subdir	:= sunrpc
 
+include ../Makeconfig
+
 # The code in this subdirectory is taken from Sun's RPCSRC-4.0
 # distribution with some additional changes from the TI-RPC package
 # which is also available from Sun.  The files are heavily changed to
@@ -54,11 +56,9 @@ headers-not-in-tirpc = $(addprefix rpc/,key_prot.h rpc_des.h) \
 		       $(rpcsvc:%=rpcsvc/%) rpcsvc/bootparam.h
 headers = rpc/netdb.h
 install-others = $(inst_sysconfdir)/rpc
-generated = $(rpcsvc:%.x=rpcsvc/%.h) $(rpcsvc:%.x=x%.c) $(rpcsvc:%.x=x%.stmp) \
-	    $(rpcsvc:%.x=rpcsvc/%.stmp) rpcgen
-generated-dirs := rpcsvc
-
-include ../Makeconfig
+generated += $(rpcsvc:%.x=rpcsvc/%.h) $(rpcsvc:%.x=x%.c) $(rpcsvc:%.x=x%.stmp) \
+	     $(rpcsvc:%.x=rpcsvc/%.stmp) rpcgen
+generated-dirs += rpcsvc
 
 ifeq ($(link-obsolete-rpc),yes)
 headers += $(headers-in-tirpc) $(headers-not-in-tirpc)
@@ -93,8 +93,6 @@ rpcgen-objs = rpc_main.o rpc_hout.o rpc_cout.o rpc_parse.o \
 	      rpc_tblout.o rpc_sample.o
 extra-objs = $(rpcgen-objs) $(addprefix cross-,$(rpcgen-objs))
 others += rpcgen
-
-all: # Make this the default target; it will be defined in Rules.
 
 tests = tst-xdrmem tst-xdrmem2
 xtests := tst-getmyaddr

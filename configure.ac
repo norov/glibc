@@ -1099,29 +1099,6 @@ fi])
 AC_SUBST(libc_cv_gcc_static_libgcc)
 
 AC_PATH_PROG(BASH_SHELL, bash, no)
-if test "$BASH_SHELL" != no &&
-   $BASH_SHELL -c 'test "$BASH_VERSINFO" \
-	     && test "$BASH_VERSINFO" -ge 2 >&/dev/null'; then
-  libc_cv_have_bash2=yes
-else
-  libc_cv_have_bash2=no
-fi
-AC_SUBST(libc_cv_have_bash2)
-
-dnl We need a ksh compatible shell for tzselect.
-if test "$BASH_SHELL" = no; then
-  AC_PATH_PROG(KSH, ksh, no)
-  if test "$KSH" = no; then
-    libc_cv_have_ksh=no
-  else
-    libc_cv_have_ksh=yes
-  fi
-else
-  KSH="$BASH_SHELL"
-  AC_SUBST(KSH)
-  libc_cv_have_ksh=yes
-fi
-AC_SUBST(libc_cv_have_ksh)
 
 AC_PATH_PROG(PERL, perl, no)
 if test "$PERL" != no &&
@@ -2068,6 +2045,27 @@ if test $libc_cv_predef_stack_protector = yes; then
   libc_extra_cflags=-fno-stack-protector
 fi
 AC_SUBST(libc_extra_cflags)
+
+AC_CACHE_CHECK([whether the linker provides __ehdr_start],
+	       libc_cv_ehdr_start, [
+old_CFLAGS="$CFLAGS"
+old_LDFLAGS="$LDFLAGS"
+old_LIBS="$LIBS"
+CFLAGS="$CFLAGS -fPIC"
+LDFLAGS="$LDFLAGS -nostdlib -nostartfiles -shared"
+LIBS=
+AC_LINK_IFELSE([AC_LANG_SOURCE([
+extern const char __ehdr_start __attribute__ ((visibility ("hidden")));
+const char *ehdr (void) { return &__ehdr_start; }
+])],
+	       [libc_cv_ehdr_start=yes], [libc_cv_ehdr_start=no])
+CFLAGS="$old_CFLAGS"
+LDFLAGS="$old_LDFLAGS"
+LIBS="$old_LIBS"
+])
+if test $libc_cv_ehdr_start = yes; then
+  AC_DEFINE([HAVE_EHDR_START])
+fi
 
 ### End of automated tests.
 ### Now run sysdeps configure fragments.

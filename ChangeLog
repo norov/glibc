@@ -1,3 +1,2433 @@
+2014-03-19  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/libm-test.inc (fdim_test): Use ALL_RM_TEST.
+	(ldexp_test_data): Remove.
+	(ldexp_test): Move to after scalbn_test.  Use ALL_RM_TEST with
+	scalbn_test_data.
+	(scalb_test): Use ALL_RM_TEST.
+
+2014-03-19  Andreas Schwab  <schwab@suse.de>
+
+	* nscd/nscd.service: Also invalidate netgroup cache on reload.
+
+2014-03-19  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #16649]
+	* sysdeps/unix/sysv/linux/alpha/kernel-features.h
+	[__LINUX_KERNEL_VERSION < 0x020621] (__ASSUME_PREADV): Undefine.
+	[__LINUX_KERNEL_VERSION < 0x020621] (__ASSUME_PWRITEV): Likewise.
+	* sysdeps/unix/sysv/linux/microblaze/kernel-features.h
+	(__ASSUME_PREADV): Undefine.
+	(__ASSUME_PWRITEV): Likewise.
+
+2014-03-18  Roland McGrath  <roland@hack.frob.com>
+
+	* bits/mman-linux.h: Add comment about non-Linux use.
+	* sysdeps/unix/sysv/linux/Makefile (sysdep_headers): Add comment about
+	bits/mman-linux.h resting place.
+
+	* sysdeps/unix/sysv/linux/bits/mman-linux.h: Moved to ...
+	* bits/mman-linux.h: ... here.
+
+2014-03-18  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* conform/conformtest.pl: Add standard definition when calling C
+	preprocessor on data files.
+	(checknamespace): Remove unused variable.
+
+2014-03-18  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/gen-libm-test.pl (parse_args): Handle plus_oflow,
+	minus_oflow, plus_uflow and minus_uflow in expected results.
+	* math/libm-test.inc (scalbn_test_data): Add more tests of
+	negative arguments.  Use plus_oflow, minus_oflow, plus_uflow and
+	minus_uflow.
+	(scalbn_test): Use ALL_RM_TEST.
+	(scalbln_test_data): Add more tests of negative arguments.  Use
+	plus_oflow, minus_oflow, plus_uflow and minus_uflow.
+	(scalbln_test): Use ALL_RM_TEST.
+
+2014-03-18  Roland McGrath  <roland@hack.frob.com>
+
+	* scripts/abilist.awk: Ignore symbols marked with .hidden.
+
+2014-03-18  Will Newton  <will.newton@linaro.org>
+
+	* sysdeps/unix/sysv/linux/aarch64/sysdep.h: Remove
+	inaccurate comment.
+
+2014-03-18  Joseph Myers  <joseph@codesourcery.com>
+
+	* Makerules [!subdir] (check-abi): Exit with error status if a
+	test failed.
+
+2014-03-17  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/libm-test.inc (nearbyint_test_data): Include all tests used
+	for rint.  Include results for all rounding modes.
+	(nearbyint_test): Use ALL_RM_TEST.
+	(rint_test_data): Include all tests used for nearbyint.
+
+2014-03-17  Will Newton  <will.newton@linaro.org>
+
+	* nptl/sysdeps/pthread/pthread.h: Revert previous
+	change.
+
+	* sysdeps/generic/ldsodefs.h: Revert previous
+	change.
+
+	* libio/genops.c: Revert previous change.
+	* libio/libioP.h: Likewise.
+	* stdio-common/vfprintf.c: Likewise.
+
+	* sysdeps/generic/math_private.h: Revert previous
+	change.
+
+	* sysdeps/generic/math_private.h: Check whether
+	HAVE_RM_CTX is defined with #ifdef rather
+	than #if.
+
+	* argp/argp-fmtstream.h: Check whether
+	__STRICT_ANSI__ is defined with #ifdef rather
+	than #if.
+	* argp/argp.h: Likewise.
+
+	* libio/genops.c: Check whether
+	_IO_JUMPS_OFFSET is defined with #ifdef rather
+	than #if.
+	* libio/libioP.h: Likewise.
+	* stdio-common/vfprintf.c: Likewise.
+
+	* sysdeps/generic/ldsodefs.h: Check whether
+	HP_SMALL_TIMING_AVAIL is defined with #ifdef rather
+	than #if.
+
+	* nptl/sysdeps/pthread/pthread.h: Check
+	__PTHREAD_MUTEX_HAVE_ELISION is defined before testing
+	its value.
+
+2014-03-17  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* libio/iofdopen.c (_IO_new_fdopen): Seek to end only if
+	setting O_APPEND.
+	* libio/tst-ftell-active-handler.c (do_append_test): Add a
+	test case.
+
+	[BZ #16680]
+	* libio/fileops.c (_IO_file_open): Seek to end of file but
+	don't cache the offset.
+	(get_file_offset): Remove function.
+	(do_ftell): Use cached offset when available.
+	* libio/iofdopen.c (_IO_new_fdopen): Seek to end of file but
+	don't cache the offset.
+	* libio/tst-ftell-active-handler.c (do_rewind_test): New test
+	case.
+	(do_one_test): Call it.
+	(do_ftell_test): Fix up expected old offset for a+ mode.
+	* libio/wfileops.c (do_ftell_wide): Used cached offset when
+	available.
+
+	* libio/tst-ftell-active-handler.c (do_ftell_test): Don't mix
+	up test status with function return status.
+	(do_write_test): Likewise.
+	(do_append_test): Likewise.
+
+	* nptl/sysdeps/pthread/bits/libc-lockP.h [defined NOT_IN_libc
+	&& !defined IS_IN_libpthread && __LT_SPINNOCK_INIT != 0]:
+	Remove.
+
+2014-03-17  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/gen-libm-test.pl (parse_args): Handle results specified for
+	each rounding mode separately.
+	* math/libm-test.inc (lrint_test_data): Merge in per-rounding-mode
+	tests and results from lrint_tonearest_test_data,
+	lrint_towardzero_test_data, lrint_downward_test_data and
+	lrint_upward_test_data.
+	(lrint_test): Use ALL_RM_TEST.
+	(lrint_tonearest_test_data): Remove.
+	(lrint_test_tonearest): Likewise.
+	(lrint_towardzero_test_data): Likewise.
+	(lrint_test_towardzero): Likewise.
+	(lrint_downward_test_data): Likewise.
+	(lrint_test_downward): Likewise.
+	(lrint_upward_test_data): Likewise.
+	(lrint_test_upward): Likewise.
+	(llrint_test_data): Merge in per-rounding-mode tests and results
+	from llrint_tonearest_test_data, llrint_towardzero_test_data,
+	llrint_downward_test_data and llrint_upward_test_data.
+	(llrint_test): Use ALL_RM_TEST.
+	(llrint_tonearest_test_data): Remove.
+	(llrint_test_tonearest): Likewise.
+	(llrint_towardzero_test_data): Likewise.
+	(llrint_test_towardzero): Likewise.
+	(llrint_downward_test_data): Likewise.
+	(llrint_test_downward): Likewise.
+	(llrint_upward_test_data): Likewise.
+	(llrint_test_upward): Likewise.
+	(rint_test_data): Merge in per-rounding-mode tests and results
+	from rint_tonearest_test_data, rint_towardzero_test_data,
+	rint_downward_test_data and rint_upward_test_data.  Add
+	per-rounding-mode results for tests not in those arrays.
+	(rint_test): Use ALL_RM_TEST.
+	(rint_tonearest_test_data): Remove.
+	(rint_test_tonearest): Likewise.
+	(rint_towardzero_test_data): Likewise.
+	(rint_test_towardzero): Likewise.
+	(rint_downward_test_data): Likewise.
+	(rint_test_downward): Likewise.
+	(rint_upward_test_data): Likewise.
+	(rint_test_upward): Likewise.
+	(main): Don't call removed functions.
+
+2014-03-14  Roland McGrath  <roland@hack.frob.com>
+
+	* csu/Makefile ($(objpfx)version-info.h): Remove linux-specific
+	"Compiled on ..." crapola.  It is anti-useful.
+
+2014-03-14  Joseph Myers  <joseph@codesourcery.com>
+
+	* scripts/evaluate-test.sh: Handle fourth argument to determine
+	whether test run should stop on failure.
+	* Makeconfig (stop-on-test-failure): New variable.
+	(evaluate-test): Pass fourth argument to evaluate-test.sh based on
+	$(stop-on-test-failure).
+	* Makefile (tests): Give a summary of results from testing and
+	exit with failure status if they include an ERROR or FAIL.
+	(xtests): Likewise.
+	* manual/install.texi (Configuring and compiling): Mention
+	stop-on-test-failure=y.
+	* INSTALL: Regenerated.
+
+2014-03-14  Roland McGrath  <roland@hack.frob.com>
+
+	* scripts/versionlist.awk: New file.
+	* Makerules [$(build-shared) = yes]
+	(postclean-generated): Add Versions.def, not Versions.def.v and
+	Versions.def.v.i.
+	($(common-objpfx)Versions.def.v.i): Target removed.
+	($(common-objpfx)Versions.def): New target.
+	($(common-objpfx)Versions.all): Depend on that rather that
+	$(common-objpfx)Versions.def.v.
+	* Versions.def: File removed.
+
+	* Makeconfig (+gccwarn): Add -Wundef.
+	* include/errno.h [IS_IN_rtld] [!RTLD_PRIVATE_ERRNO]: #error to catch
+	a dl-sysdep.h breaking its contract.
+	[!IS_IN_rtld] (RTLD_PRIVATE_ERRNO): Define it to 0.
+	* include/stackinfo.h: New file.
+	* nptl/sysdeps/i386/tls.h (TLS_DTV_AT_TP): New macro.
+	* nptl/sysdeps/powerpc/tls.h (TLS_TCB_AT_TP): New macro.
+	* nptl/sysdeps/s390/tls.h (TLS_DTV_AT_TP): New macro.
+	* nptl/sysdeps/sh/tls.h (TLS_TCB_AT_TP): New macro.
+	* nptl/sysdeps/sparc/tls.h (TLS_DTV_AT_TP): New macro.
+	* nptl/sysdeps/x86_64/tls.h (TLS_DTV_AT_TP): New macro.
+	* sysdeps/aarch64/nptl/tls.h (TLS_TCB_AT_TP): New macro.
+	* sysdeps/alpha/nptl/tls.h (TLS_TCB_AT_TP): New macro.
+	* sysdeps/arm/nptl/tls.h (TLS_TCB_AT_TP): New macro.
+	* sysdeps/ia64/nptl/tls.h (TLS_TCB_AT_TP): New macro.
+	* sysdeps/m68k/nptl/tls.h (TLS_TCB_AT_TP): New macro.
+	* sysdeps/mach/hurd/i386/tls.h (TLS_DTV_AT_TP): New macro.
+	* sysdeps/microblaze/nptl/tls.h (TLS_TCB_AT_TP): New macro.
+	* sysdeps/mips/nptl/tls.h (TLS_TCB_AT_TP): New macro.
+	* sysdeps/tile/nptl/tls.h (TLS_TCB_AT_TP): New macro.
+
+2014-03-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	[BZ #16707]
+	* sysdeps/powerpc/powerpc64/fpu/s_roundl.S: Remove wrong
+	implementation.
+	* math/libm-test.inc (round_test_data): Add more tests.
+
+2014-03-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	[BZ #16706]
+	* sysdeps/powerpc/powerpc64/fpu/s_nearbyintl.S: Remove wrong
+	implementation.
+	* math/libm-test.inc (nearbyint_test_data): Add more tests.
+
+2014-03-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	[BZ #16701]
+	* sysdeps/powerpc/powerpc64/fpu/s_ceill.S: Remove wrong
+	implementation.
+	* math/libm-test.inc (ceil_test_data): Add more tests.
+
+2014-03-14  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* math/libm-test.inc (trunc_test_data): Add more tests related to
+	BZ#16414.
+
+2014-03-14  Roland McGrath  <roland@hack.frob.com>
+
+	* nptl/pthread_create.c (__pthread_create_2_1): Test TLS_TCB_AT_TP
+	with #if rather than #ifdef.
+	* nptl/sysdeps/pthread/createthread.c (create_thread): Likewise.
+
+2014-03-14  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/configure.ac: Check AVX-512 assembler support
+	first.  Disable AVX-512 GCC support if assembler doesn't support
+	it.
+	* sysdeps/x86_64/configure: Regenerated.
+
+2014-03-13  Carlos O'Donell  <carlos@redhat.com>
+
+	* nptl/pthread_attr_setstack.c (__pthread_attr_setstack)
+	[!_STACK_GROWS_DOWN]: Don't add stacksize to stackaddr.
+	(__old_pthread_attr_setstack): Likewise.
+	* nptl/pthread_attr_getstack.c (__pthread_attr_getstack)
+	[!_STACK_GROWS_DOWN]: Likewise.
+
+2014-03-13  Mike Frysinger  <vapier@gentoo.org>
+
+	* config.make.in (have-bash2): Delete.
+	* configure.ac (libc_cv_have_bash2): Delete.
+	* configure: Regenerate.
+	* elf/Makefile (common-ldd-rewrite): Rename to ...
+	(ldd-rewrite): ... this.  Move bash-ldd-rewrite content to end.
+	(sh-ldd-rewrite): Delete.
+	(bash-ldd-rewrite): Delete.
+	(have-bash2): Delete checks.
+	[ldd-rewrite-script]: Change $(ldd-shell)-ldd-rewrite to ldd-rewrite.
+
+2014-03-13  Mike Frysinger  <vapier@gentoo.org>
+
+	* config.make.in (have-ksh): Delete.
+	(KSH): Delete.
+	* configure.ac (libc_cv_have_ksh): Delete.
+	* configure: Regenerate.
+
+2014-03-13  Mike Frysinger  <vapier@gentoo.org>
+
+	* elf/Makefile: Delete $(have-ksh) check.
+	($(objpfx)sotruss): Change KSH to BASH.
+	* elf/sotruss.ksh: Rename to ...
+	* elf/sotruss.sh: ... this.  Change @KSH@ to @BASH@.  Change
+	function style to match POSIX.  Drop ksh vim mode setting.
+
+2014-03-13  Mike Frysinger  <vapier@gentoo.org>
+
+	* manual/time.texi (Specifying the Time Zone with TZ): Change
+	Tuesday to Thursday.
+
+2014-03-13  Mike Frysinger  <vapier@gentoo.org>
+
+	* debug/tst-longjmp_chk2.c: Update header comment.
+	(stackoverflow_handler): Add comment.  Call assert on pass value.
+
+2014-03-13  Igor Zamyatin  <igor.zamyatin@intel.com>
+
+	* config.h.in (HAVE_AVX512_SUPPORT): New #undef.
+	(HAVE_AVX512_ASM_SUPPORT): Likewise.
+	* sysdeps/x86_64/bits/link.h (La_x86_64_zmm): New.
+	(La_x86_64_vector): Add zmm.
+	* sysdeps/x86_64/Makefile (tests): Add tst-audit10.
+	(modules-names): Add tst-auditmod10a and tst-auditmod10b.
+	($(objpfx)tst-audit10): New target.
+	($(objpfx)tst-audit10.out): Likewise.
+	(tst-audit10-ENV): New.
+	(AVX512-CFLAGS): Likewise.
+	(CFLAGS-tst-audit10.c): Likewise.
+	(CFLAGS-tst-auditmod10a.c): Likewise.
+	(CFLAGS-tst-auditmod10b.c): Likewise.
+	* sysdeps/x86_64/configure.ac: Set config-cflags-avx512,
+	HAVE_AVX512_SUPPORT and HAVE_AVX512_ASM_SUPPORT.
+	* sysdeps/x86_64/configure: Regenerated.
+	* sysdeps/x86_64/dl-trampoline.S (_dl_runtime_profile): Add
+	AVX-512 zmm register support.
+	(_dl_x86_64_save_sse): Likewise.
+	(_dl_x86_64_restore_sse): Likewise.
+	* sysdeps/x86_64/dl-trampoline.h: Updated to support different
+	size vector registers.
+	* sysdeps/x86_64/link-defines.sym (YMM_SIZE): New.
+	(ZMM_SIZE): Likewise.
+	* sysdeps/x86_64/tst-audit10.c: New file.
+	* sysdeps/x86_64/tst-auditmod10a.c: Likewise.
+	* sysdeps/x86_64/tst-auditmod10b.c: Likewise.
+
+2014-03-13  Roland McGrath  <roland@hack.frob.com>
+
+	* configure.ac (HAVE_EHDR_START): New check.
+	* configure: Regenerated.
+	* config.h.in (HAVE_EHDR_START): New #undef.
+	* elf/rtld.c (dl_main) [HAVE_EHDR_START]: Use __ehdr_start rather than
+	assuming the lowest-addressed segment maps the start of the file.
+
+2014-03-13  Joseph Myers  <joseph@codesourcery.com>
+
+	* INSTALL: Regenerated.
+
+2014-03-13  Will Newton  <will.newton@linaro.org>
+
+	* manual/setjmp.texi (System V contexts): Improve
+	clarity and grammar of documentation.
+
+2014-03-12  Paul Pluzhnikov  <ppluzhnikov@google.com>
+
+	[BZ #16381]
+	* elf/Makefile (tests): Add tst-pie2.
+	(tests-pie): Add tst-pie2.
+	* elf/tst-pie2.c: New file.
+	* elf/dl-load.c (_dl_map_object_from_fd): Assert correct l_type
+	for ET_EXEC.
+	* elf/rtld.c (map_doit): Load executable as lt_executable.
+	(dl_main): Likewise.
+
+2014-03-12  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #16642]
+	* sysdeps/unix/sysv/linux/microblaze/kernel-features.h
+	(__ASSUME_PSELECT): Undefine.
+
+2014-03-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	[BZ #16689]
+	* sysdeps/powerpc/powerpc32/power4/multiarch/bzero-ppc32.S
+	(__bzero_ppc): Call memset@local instead of __memset_ppc@local for
+	static build.
+	* sysdeps/powerpc/powerpc32/power4/multiarch/bzero.c: Build IFUNC
+	selector for static builds.
+
+2014-03-12  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #16695]
+	* nscd/netgroupcache.c (addgetnetgrentX): Factor in space for
+	key in the buffer.
+
+2014-03-12  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/powerpc64/multiarch/strspn.c (strspn): Build IFUNC
+	selector for static builds.
+
+2014-03-11  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/mips/math_private.h [__mips_hard_float]
+	(libc_feresetround_ctx): Define to libc_feupdateenv_mips_ctx not
+	libc_feresetround_mips_ctx.
+	[__mips_hard_float] (libc_feresetroundf_ctx): Likewise.
+	[__mips_hard_float] (libc_feresetroundl_ctx): Likewise.
+	[__mips_hard_float] (libc_feresetround_mips_ctx): Remove.
+
+	[BZ #16677]
+	* math/s_nextafter.c (__nextafter): Do not return value from
+	overflowing computation.
+	* sysdeps/i386/fpu/s_nextafterl.c (__nextafterl): Likewise.
+	* sysdeps/ieee754/flt-32/s_nextafterf.c (__nextafterf): Likewise.
+	* sysdeps/ieee754/ldbl-128/s_nextafterl.c (__nextafterl):
+	Likewise.
+	* sysdeps/ieee754/ldbl-128ibm/s_nextafterl.c (__nextafterl):
+	Likewise.
+	* sysdeps/m68k/m680x0/fpu/s_nextafterl.c (__nextafterl): Likewise.
+	* math/libm-test.inc (nextafter_test): Use ALL_RM_TEST.
+
+2014-03-11  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/arm/setjmp.S: Use sfi_breg on stores of mangled registers.
+	* sysdeps/arm/__longjmp.S: Use sfi_breg on loads of mangled registers.
+	Move sfi_sp use from the load-multiple (that no longer sets sp) to
+	the new mov targetting sp.
+
+2014-03-11  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	[BZ #16683]
+	* sysdeps/powerpc/powerpc64/multiarch/memset-ppc64.S (__bzero_ppc):
+	Define it for static builds as well.
+	(NO_BZERO_IMPL): Likewise.
+
+2014-03-11  Vidya Ranganathan  <vidya@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/powerpc64/power7/strspn.S: New file: Optimization.
+	* sysdeps/powerpc/powerpc64/multiarch/strspn.c: New file:
+	multiarch strspn for PPC64.
+	* sysdeps/powerpc/powerpc64/multiarch/strspn-ppc64.c: New file
+	* sysdeps/powerpc/powerpc64/multiarch/strspn-power7.S: New file
+	* sysdeps/powerpc/powerpc64/multiarch/ifunc-impl-list.c:
+	(__libc_ifunc_impl_list): Likewise.
+	* sysdeps/powerpc/powerpc64/multiarch/Makefile: Add strspn
+	multiarch optimizations
+	* string/strspn.c (strspn): Using macro to redefine symbol name.
+
+2014-03-10  Vidya Ranganathan  <vidya@linux.vnet.ibm.com>
+	    Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/powerpc64/power7/strncat.S: New file: Optimization.
+	* sysdeps/powerpc/powerpc64/multiarch/strncat.c: New file:
+	multiarch strncat for PPC64.
+	* sysdeps/powerpc/powerpc64/multiarch/strncat-ppc64.c: New file
+	* sysdeps/powerpc/powerpc64/multiarch/strncat-power7.S: New file
+	* sysdeps/powerpc/powerpc64/multiarch/ifunc-impl-list.c:
+	(__libc_ifunc_impl_list): Likewise.
+	* sysdeps/powerpc/powerpc64/multiarch/Makefile: Add strncat
+	multiarch optimizations
+
+2014-03-10  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #16639]
+	* nscd/nscd.service: Make service type forking.
+
+2014-03-03  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/power5+/fpu/s_modf.c (__modf): Fix to return correct
+	sign in non default rounding modes.
+	* sysdeps/powerpc/power5+/fpu/s_modff.c (__modff): Likewise.
+
+2014-03-08  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/libm-test.inc (ALL_RM_TEST): New macro.
+	(ceil_test): Use ALL_RM_TEST.
+	(cimag_test): Likewise.
+	(conj_test): Likewise.
+	(copysign_test): Likewise.
+	(cproj_test): Likewise.
+	(creal_test): Likewise.
+	(fabs_test): Likewise.
+	(floor_test): Likewise.
+	(fmax_test): Likewise.
+	(fmin_test): Likewise.
+	(fmod_test): Likewise.
+	(fpclassify_test): Likewise.
+	(frexp_test): Likewise.
+	(ilogb_test): Likewise.
+	(isfinite_test): Likewise.
+	(finite_test): Likewise.
+	(isgreater_test): Likewise.
+	(isgreaterequal_test): Likewise.
+	(isinf_test): Likewise.
+	(isless_test): Likewise.
+	(islessequal_test): Likewise.
+	(islessgreater_test): Likewise.
+	(isnan_test): Likewise.
+	(isnormal_test): Likewise.
+	(issignaling_test): Likewise.
+	(isunordered_test): Likewise.
+	(logb_test): Likewise.
+	(logb_downward_test_data): Remove.
+	(logb_test_downward): Likewise.
+	(lround_test): Use ALL_RM_TEST.
+	(llround_test): Likewise.
+	(modf_test): Likewise.
+	(nexttoward_test): Likewise.
+	(remainder_test): Likewise.
+	(drem_test): Likewise.
+	(remainder_tonearest_test_data): Likewise.
+	(remainder_test_tonearest): Likewise.
+	(drem_test_tonearest): Likewise.
+	(remainder_towardzero_test_data): Likewise.
+	(remainder_test_towardzero): Likewise.
+	(drem_test_towardzero): Likewise.
+	(remainder_downward_test_data): Likewise.
+	(remainder_test_downward): Likewise.
+	(drem_test_downward): Likewise.
+	(remainder_upward_test_data): Likewise.
+	(remainder_test_upward): Likewise.
+	(drem_test_upward): Likewise.
+	(remquo_test): Use ALL_RM_TEST.  Remove comment about x.
+	(round_test): Use ALL_RM_TEST.
+	(signbit_test): Likewise.
+	(trunc_test): Likewise.
+	(significand_test): Likewise.
+	(main): Don't call removed functions.
+
+2014-03-07  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #16674]
+	* bits/siginfo.h (ILL_ILLOPC): Condition on [__USE_XOPEN_EXTENDED
+	|| __USE_XOPEN2K8].
+	(ILL_ILLOPN): Likewise.
+	(ILL_ILLADR): Likewise.
+	(ILL_ILLTRP): Likewise.
+	(ILL_PRVOPC): Likewise.
+	(ILL_PRVREG): Likewise.
+	(ILL_COPROC): Likewise.
+	(ILL_BADSTK): Likewise.
+	(FPE_INTDIV): Likewise.
+	(FPE_INTOVF): Likewise.
+	(FPE_FLTDIV): Likewise.
+	(FPE_FLTOVF): Likewise.
+	(FPE_FLTUND): Likewise.
+	(FPE_FLTRES): Likewise.
+	(FPE_FLTINV): Likewise.
+	(FPE_FLTSUB): Likewise.
+	(SEGV_MAPERR): Likewise.
+	(SEGV_ACCERR): Likewise.
+	(BUS_ADRALN): Likewise.
+	(BUS_ADRERR): Likewise.
+	(BUS_OBJERR): Likewise.
+	(TRAP_BRKPT): Condition on [__USE_XOPEN_EXTENDED].
+	(TRAP_TRACE): Likewise.
+	(CLD_EXITED): Condition on [__USE_XOPEN_EXTENDED ||
+	__USE_XOPEN2K8].
+	(CLD_KILLED): Likewise.
+	(CLD_DUMPED): Likewise.
+	(CLD_TRAPPED): Likewise.
+	(CLD_STOPPED): Likewise.
+	(CLD_CONTINUED): Likewise.
+	(POLL_IN): Likewise.
+	(POLL_OUT): Likewise.
+	(POLL_MSG): Likewise.
+	(POLL_ERR): Likewise.
+	(POLL_PRI): Likewise.
+	(POLL_HUP): Likewise.
+	* sysdeps/unix/sysv/linux/alpha/bits/siginfo.h (ILL_ILLOPC):
+	Likewise.
+	(ILL_ILLOPN): Likewise.
+	(ILL_ILLADR): Likewise.
+	(ILL_ILLTRP): Likewise.
+	(ILL_PRVOPC): Likewise.
+	(ILL_PRVREG): Likewise.
+	(ILL_COPROC): Likewise.
+	(ILL_BADSTK): Likewise.
+	(FPE_INTDIV): Likewise.
+	(FPE_INTOVF): Likewise.
+	(FPE_FLTDIV): Likewise.
+	(FPE_FLTOVF): Likewise.
+	(FPE_FLTUND): Likewise.
+	(FPE_FLTRES): Likewise.
+	(FPE_FLTINV): Likewise.
+	(FPE_FLTSUB): Likewise.
+	(SEGV_MAPERR): Likewise.
+	(SEGV_ACCERR): Likewise.
+	(BUS_ADRALN): Likewise.
+	(BUS_ADRERR): Likewise.
+	(BUS_OBJERR): Likewise.
+	(BUS_MCEERR_AR): Likewise.
+	(BUS_MCEERR_AO): Likewise.
+	(TRAP_BRKPT): Condition on [__USE_XOPEN_EXTENDED].
+	(TRAP_TRACE): Likewise.
+	(CLD_EXITED): Condition on [__USE_XOPEN_EXTENDED ||
+	__USE_XOPEN2K8].
+	(CLD_KILLED): Likewise.
+	(CLD_DUMPED): Likewise.
+	(CLD_TRAPPED): Likewise.
+	(CLD_STOPPED): Likewise.
+	(CLD_CONTINUED): Likewise.
+	(POLL_IN): Likewise.
+	(POLL_OUT): Likewise.
+	(POLL_MSG): Likewise.
+	(POLL_ERR): Likewise.
+	(POLL_PRI): Likewise.
+	(POLL_HUP): Likewise.
+	* sysdeps/unix/sysv/linux/bits/siginfo.h (ILL_ILLOPC): Likewise.
+	(ILL_ILLOPN): Likewise.
+	(ILL_ILLADR): Likewise.
+	(ILL_ILLTRP): Likewise.
+	(ILL_PRVOPC): Likewise.
+	(ILL_PRVREG): Likewise.
+	(ILL_COPROC): Likewise.
+	(ILL_BADSTK): Likewise.
+	(FPE_INTDIV): Likewise.
+	(FPE_INTOVF): Likewise.
+	(FPE_FLTDIV): Likewise.
+	(FPE_FLTOVF): Likewise.
+	(FPE_FLTUND): Likewise.
+	(FPE_FLTRES): Likewise.
+	(FPE_FLTINV): Likewise.
+	(FPE_FLTSUB): Likewise.
+	(SEGV_MAPERR): Likewise.
+	(SEGV_ACCERR): Likewise.
+	(BUS_ADRALN): Likewise.
+	(BUS_ADRERR): Likewise.
+	(BUS_OBJERR): Likewise.
+	(BUS_MCEERR_AR): Likewise.
+	(BUS_MCEERR_AO): Likewise.
+	(TRAP_BRKPT): Condition on [__USE_XOPEN_EXTENDED].
+	(TRAP_TRACE): Likewise.
+	(CLD_EXITED): Condition on [__USE_XOPEN_EXTENDED ||
+	__USE_XOPEN2K8].
+	(CLD_KILLED): Likewise.
+	(CLD_DUMPED): Likewise.
+	(CLD_TRAPPED): Likewise.
+	(CLD_STOPPED): Likewise.
+	(CLD_CONTINUED): Likewise.
+	(POLL_IN): Likewise.
+	(POLL_OUT): Likewise.
+	(POLL_MSG): Likewise.
+	(POLL_ERR): Likewise.
+	(POLL_PRI): Likewise.
+	(POLL_HUP): Likewise.
+	* sysdeps/unix/sysv/linux/ia64/bits/siginfo.h (ILL_ILLOPC):
+	Likewise.
+	(ILL_ILLOPN): Likewise.
+	(ILL_ILLADR): Likewise.
+	(ILL_ILLTRP): Likewise.
+	(ILL_PRVOPC): Likewise.
+	(ILL_PRVREG): Likewise.
+	(ILL_COPROC): Likewise.
+	(ILL_BADSTK): Likewise.
+	(ILL_BADIADDR): Likewise.
+	(ILL_BREAK): Likewise.
+	(FPE_INTDIV): Likewise.
+	(FPE_INTOVF): Likewise.
+	(FPE_FLTDIV): Likewise.
+	(FPE_FLTOVF): Likewise.
+	(FPE_FLTUND): Likewise.
+	(FPE_FLTRES): Likewise.
+	(FPE_FLTINV): Likewise.
+	(FPE_FLTSUB): Likewise.
+	(FPE_DECOVF): Likewise.
+	(FPE_DECDIV): Likewise.
+	(FPE_DECERR): Likewise.
+	(FPE_INVASC): Likewise.
+	(FPE_INVDEC): Likewise.
+	(SEGV_MAPERR): Likewise.
+	(SEGV_ACCERR): Likewise.
+	(SEGV_PSTKOVF): Likewise.
+	(BUS_ADRALN): Likewise.
+	(BUS_ADRERR): Likewise.
+	(BUS_OBJERR): Likewise.
+	(BUS_MCEERR_AR): Likewise.
+	(BUS_MCEERR_AO): Likewise.
+	(TRAP_BRKPT): Condition on [__USE_XOPEN_EXTENDED].
+	(TRAP_TRACE): Likewise.
+	(TRAP_BRANCH): Likewise.
+	(TRAP_HWBKPT): Likewise.
+	(CLD_EXITED): Condition on [__USE_XOPEN_EXTENDED ||
+	__USE_XOPEN2K8].
+	(CLD_KILLED): Likewise.
+	(CLD_DUMPED): Likewise.
+	(CLD_TRAPPED): Likewise.
+	(CLD_STOPPED): Likewise.
+	(CLD_CONTINUED): Likewise.
+	(POLL_IN): Likewise.
+	(POLL_OUT): Likewise.
+	(POLL_MSG): Likewise.
+	(POLL_ERR): Likewise.
+	(POLL_PRI): Likewise.
+	(POLL_HUP): Likewise.
+	* sysdeps/unix/sysv/linux/mips/bits/siginfo.h (ILL_ILLOPC): Likewise.
+	(ILL_ILLOPN): Likewise.
+	(ILL_ILLADR): Likewise.
+	(ILL_ILLTRP): Likewise.
+	(ILL_PRVOPC): Likewise.
+	(ILL_PRVREG): Likewise.
+	(ILL_COPROC): Likewise.
+	(ILL_BADSTK): Likewise.
+	(FPE_INTDIV): Likewise.
+	(FPE_INTOVF): Likewise.
+	(FPE_FLTDIV): Likewise.
+	(FPE_FLTOVF): Likewise.
+	(FPE_FLTUND): Likewise.
+	(FPE_FLTRES): Likewise.
+	(FPE_FLTINV): Likewise.
+	(FPE_FLTSUB): Likewise.
+	(SEGV_MAPERR): Likewise.
+	(SEGV_ACCERR): Likewise.
+	(BUS_ADRALN): Likewise.
+	(BUS_ADRERR): Likewise.
+	(BUS_OBJERR): Likewise.
+	(BUS_MCEERR_AR): Likewise.
+	(BUS_MCEERR_AO): Likewise.
+	(TRAP_BRKPT): Condition on [__USE_XOPEN_EXTENDED].
+	(TRAP_TRACE): Likewise.
+	(CLD_EXITED): Condition on [__USE_XOPEN_EXTENDED ||
+	__USE_XOPEN2K8].
+	(CLD_KILLED): Likewise.
+	(CLD_DUMPED): Likewise.
+	(CLD_TRAPPED): Likewise.
+	(CLD_STOPPED): Likewise.
+	(CLD_CONTINUED): Likewise.
+	(POLL_IN): Likewise.
+	(POLL_OUT): Likewise.
+	(POLL_MSG): Likewise.
+	(POLL_ERR): Likewise.
+	(POLL_PRI): Likewise.
+	(POLL_HUP): Likewise.
+	* sysdeps/unix/sysv/linux/s390/bits/siginfo.h (ILL_ILLOPC): Likewise.
+	(ILL_ILLOPN): Likewise.
+	(ILL_ILLADR): Likewise.
+	(ILL_ILLTRP): Likewise.
+	(ILL_PRVOPC): Likewise.
+	(ILL_PRVREG): Likewise.
+	(ILL_COPROC): Likewise.
+	(ILL_BADSTK): Likewise.
+	(FPE_INTDIV): Likewise.
+	(FPE_INTOVF): Likewise.
+	(FPE_FLTDIV): Likewise.
+	(FPE_FLTOVF): Likewise.
+	(FPE_FLTUND): Likewise.
+	(FPE_FLTRES): Likewise.
+	(FPE_FLTINV): Likewise.
+	(FPE_FLTSUB): Likewise.
+	(SEGV_MAPERR): Likewise.
+	(SEGV_ACCERR): Likewise.
+	(BUS_ADRALN): Likewise.
+	(BUS_ADRERR): Likewise.
+	(BUS_OBJERR): Likewise.
+	(BUS_MCEERR_AR): Likewise.
+	(BUS_MCEERR_AO): Likewise.
+	(TRAP_BRKPT): Condition on [__USE_XOPEN_EXTENDED].
+	(TRAP_TRACE): Likewise.
+	(CLD_EXITED): Condition on [__USE_XOPEN_EXTENDED ||
+	__USE_XOPEN2K8].
+	(CLD_KILLED): Likewise.
+	(CLD_DUMPED): Likewise.
+	(CLD_TRAPPED): Likewise.
+	(CLD_STOPPED): Likewise.
+	(CLD_CONTINUED): Likewise.
+	(POLL_IN): Likewise.
+	(POLL_OUT): Likewise.
+	(POLL_MSG): Likewise.
+	(POLL_ERR): Likewise.
+	(POLL_PRI): Likewise.
+	(POLL_HUP): Likewise.
+	* sysdeps/unix/sysv/linux/sparc/bits/siginfo.h (ILL_ILLOPC): Likewise.
+	(ILL_ILLOPN): Likewise.
+	(ILL_ILLADR): Likewise.
+	(ILL_ILLTRP): Likewise.
+	(ILL_PRVOPC): Likewise.
+	(ILL_PRVREG): Likewise.
+	(ILL_COPROC): Likewise.
+	(ILL_BADSTK): Likewise.
+	(FPE_INTDIV): Likewise.
+	(FPE_INTOVF): Likewise.
+	(FPE_FLTDIV): Likewise.
+	(FPE_FLTOVF): Likewise.
+	(FPE_FLTUND): Likewise.
+	(FPE_FLTRES): Likewise.
+	(FPE_FLTINV): Likewise.
+	(FPE_FLTSUB): Likewise.
+	(SEGV_MAPERR): Likewise.
+	(SEGV_ACCERR): Likewise.
+	(BUS_ADRALN): Likewise.
+	(BUS_ADRERR): Likewise.
+	(BUS_OBJERR): Likewise.
+	(BUS_MCEERR_AR): Likewise.
+	(BUS_MCEERR_AO): Likewise.
+	(TRAP_BRKPT): Condition on [__USE_XOPEN_EXTENDED].
+	(TRAP_TRACE): Likewise.
+	(CLD_EXITED): Condition on [__USE_XOPEN_EXTENDED ||
+	__USE_XOPEN2K8].
+	(CLD_KILLED): Likewise.
+	(CLD_DUMPED): Likewise.
+	(CLD_TRAPPED): Likewise.
+	(CLD_STOPPED): Likewise.
+	(CLD_CONTINUED): Likewise.
+	(POLL_IN): Likewise.
+	(POLL_OUT): Likewise.
+	(POLL_MSG): Likewise.
+	(POLL_ERR): Likewise.
+	(POLL_PRI): Likewise.
+	(POLL_HUP): Likewise.
+	* sysdeps/unix/sysv/linux/tile/bits/siginfo.h (ILL_ILLOPC): Likewise.
+	(ILL_ILLOPN): Likewise.
+	(ILL_ILLADR): Likewise.
+	(ILL_ILLTRP): Likewise.
+	(ILL_PRVOPC): Likewise.
+	(ILL_PRVREG): Likewise.
+	(ILL_COPROC): Likewise.
+	(ILL_BADSTK): Likewise.
+	(ILL_DBLFLT): Likewise.
+	(ILL_HARDWALL): Likewise.
+	(FPE_INTDIV): Likewise.
+	(FPE_INTOVF): Likewise.
+	(FPE_FLTDIV): Likewise.
+	(FPE_FLTOVF): Likewise.
+	(FPE_FLTUND): Likewise.
+	(FPE_FLTRES): Likewise.
+	(FPE_FLTINV): Likewise.
+	(FPE_FLTSUB): Likewise.
+	(SEGV_MAPERR): Likewise.
+	(SEGV_ACCERR): Likewise.
+	(BUS_ADRALN): Likewise.
+	(BUS_ADRERR): Likewise.
+	(BUS_OBJERR): Likewise.
+	(BUS_MCEERR_AR): Likewise.
+	(BUS_MCEERR_AO): Likewise.
+	(TRAP_BRKPT): Condition on [__USE_XOPEN_EXTENDED].
+	(TRAP_TRACE): Likewise.
+	(CLD_EXITED): Condition on [__USE_XOPEN_EXTENDED ||
+	__USE_XOPEN2K8].
+	(CLD_KILLED): Likewise.
+	(CLD_DUMPED): Likewise.
+	(CLD_TRAPPED): Likewise.
+	(CLD_STOPPED): Likewise.
+	(CLD_CONTINUED): Likewise.
+	(POLL_IN): Likewise.
+	(POLL_OUT): Likewise.
+	(POLL_MSG): Likewise.
+	(POLL_ERR): Likewise.
+	(POLL_PRI): Likewise.
+	(POLL_HUP): Likewise.
+	* sysdeps/unix/sysv/linux/x86/bits/siginfo.h (ILL_ILLOPC): Likewise.
+	(ILL_ILLOPN): Likewise.
+	(ILL_ILLADR): Likewise.
+	(ILL_ILLTRP): Likewise.
+	(ILL_PRVOPC): Likewise.
+	(ILL_PRVREG): Likewise.
+	(ILL_COPROC): Likewise.
+	(ILL_BADSTK): Likewise.
+	(FPE_INTDIV): Likewise.
+	(FPE_INTOVF): Likewise.
+	(FPE_FLTDIV): Likewise.
+	(FPE_FLTOVF): Likewise.
+	(FPE_FLTUND): Likewise.
+	(FPE_FLTRES): Likewise.
+	(FPE_FLTINV): Likewise.
+	(FPE_FLTSUB): Likewise.
+	(SEGV_MAPERR): Likewise.
+	(SEGV_ACCERR): Likewise.
+	(BUS_ADRALN): Likewise.
+	(BUS_ADRERR): Likewise.
+	(BUS_OBJERR): Likewise.
+	(BUS_MCEERR_AR): Likewise.
+	(BUS_MCEERR_AO): Likewise.
+	(TRAP_BRKPT): Condition on [__USE_XOPEN_EXTENDED].
+	(TRAP_TRACE): Likewise.
+	(CLD_EXITED): Condition on [__USE_XOPEN_EXTENDED ||
+	__USE_XOPEN2K8].
+	(CLD_KILLED): Likewise.
+	(CLD_DUMPED): Likewise.
+	(CLD_TRAPPED): Likewise.
+	(CLD_STOPPED): Likewise.
+	(CLD_CONTINUED): Likewise.
+	(POLL_IN): Likewise.
+	(POLL_OUT): Likewise.
+	(POLL_MSG): Likewise.
+	(POLL_ERR): Likewise.
+	(POLL_PRI): Likewise.
+	(POLL_HUP): Likewise.
+	* conform/Makefile (test-xfail-POSIX/signal.h/conform): Remove.
+	(test-xfail-POSIX/sys/wait.h/conform): Likewise.
+
+	[BZ #16670]
+	* posix/sched.h [!__USE_XOPEN2K] (__need_time_t): Don't define
+	before #include of <time.h>.
+	[!__USE_XOPEN2K] (__need_timespec): Likewise.
+	* conform/Makefile (test-xfail-POSIX/sched.h/conform): Remove.
+	(test-xfail-UNIX98/sched.h/conform): Likewise.
+
+2014-03-07  Marcus Shawcroft  <marcus.shawcroft@arm.com>
+
+	* sysdeps/aarch64/fpu/feenablxcpt.c (feenableexcept): Detect and
+	error absence of trapping exception support.
+	* sysdeps/aarch64/fpu/fesetenv.c (fesetenv): Likewise.
+
+2014-03-07  Joseph Myers  <joseph@codesourcery.com>
+
+	* catgets/Makefile (tests-special): Add $(objpfx)sample.SJIS.cat.
+	($(objpfx)sample.SJIS.cat): Use $(evaluate-test).
+	* timezone/Makefile (testdata): Move definition above include of
+	Rules.
+	(test-zones): New variable.
+	(tests-special): Add zone files.
+	(build-testdata): Use $(evaluate-test).
+
+	* elf/Makefile (tests-special): Rename tests to end with .out.
+	($(objpfx)noload-mem): Likewise.
+	($(objpfx)tst-leaks1-mem): Likewise.
+	($(objpfx)tst-leaks1-static-mem.out): Likewise.
+	* iconv/Makefile (xtests-special): Change test-iconvconfig to
+	$(objpfx)test-iconvconfig.out.
+	(test-iconvconfig): Change to $(objpfx)test-iconvconfig.out.  Use
+	set -e inside subshell and redirect output to file.
+	* iconvdata/Makefile (generated): Rename tests to end with .out.
+	Correct type.
+	(tests-special): Rename tests to end with .out.
+	($(objpfx)mtrace-tst-loading): Likewise.
+	* intl/Makefile (generated): Likewise.
+	(tests-special): Likewise.
+	($(objpfx)mtrace-tst-gettext): Likewise.
+	* misc/Makefile (generated): Likewise.
+	(tests-special): Likewise.
+	($(objpfx)tst-error1-mem): Likewise.
+	* nptl/Makefile (tests-special): Likewise.
+	($(objpfx)tst-stack3-mem): Likewise.
+	(generated): Likewise.
+	* posix/Makefile (generated): Likewise.
+	(tests-special): Likewise.
+	(xtests-special): Likewise.
+	($(objpfx)tst-fnmatch-mem): Likewise.
+	($(objpfx)bug-regex2-mem): Likewise.
+	($(objpfx)bug-regex14-mem): Likewise.
+	($(objpfx)bug-regex21-mem): Likewise.
+	($(objpfx)bug-regex31-mem): Likewise.
+	($(objpfx)tst-vfork3-mem): Likewise.
+	($(objpfx)tst-rxspencer-no-utf8-mem): Likewise.
+	($(objpfx)tst-pcre-mem): Likewise.
+	($(objpfx)tst-boost-mem): Likewise.
+	($(objpfx)bug-ga2-mem): Likewise.
+	($(objpfx)bug-glob2-mem): Likewise.
+	* resolv/Makefile (generate): Likewise.
+	(tests-special): Likewise.
+	(xtests-special): Likewise.
+	(generated): Likewise.
+	($(objpfx)mtrace-tst-leaks): Likewise.
+	($(objpfx)mtrace-tst-leaks2): Likewise.
+
+	* scripts/merge-test-results.sh: New file.
+	* Makefile (tests-special-notdir): New variable.
+	(tests): Run merge-test-results.sh.
+	(xtests): Likewise.
+	* Rules (tests-special-notdir): New variable.
+	(xtests-special-notdir): Likewise.
+	(tests): Run merge-test-results.sh
+	(xtests): Likewise.
+
+	* Makeconfig (test-xfail-name): New variable.
+	(evaluate-test): Use $(test-xfail-name) instead of $(@F:.out=) to
+	compute variable name for expected failures.
+	* conform/Makefile (conformtest-headers-data): New variable.
+	(conformtest-standards): Likewise.
+	(conformtest-headers-ISO): Likewise.
+	(conformtest-headers-ISO99): Likewise.
+	(conformtest-headers-ISO11): Likewise.
+	(conformtest-headers-POSIX): Likewise.
+	(conformtest-headers-XPG3): Likewise.
+	(conformtest-headers-XPG4): Likewise.
+	(conformtest-headers-UNIX98): Likewise.
+	(conformtest-headers-XOPEN2K): Likewise.
+	(conformtest-headers-POSIX2008): Likewise.
+	(conformtest-headers-XOPEN2K8): Likewise.
+	(conformtest-header-list-base): Likewise.
+	(conformtest-header-list-tests): Likewise.
+	(conformtest-header-base): Likewise.
+	(conformtest-header-tests): Likewise.
+	(tests-special): Add $(conformtest-header-list-tests).  If
+	[$(fast-check) && !$(cross-compiling)], add
+	$(conformtest-header-tests) instead of
+	$(objpfx)run-conformtest.out.
+	(generated): Add $(conformtest-header-list-base).  If
+	[$(fast-check) && !$(cross-compiling)], add
+	$(conformtest-header-base).  Remove previous setting.
+	($(conformtest-header-list-tests)): New target.
+	(test-xfail-run-conformtest): Remove variable.
+	($(objpfx)run-conformtest.out): Remove target.
+	(test-xfail-ISO11/complex.h/conform): New variable.
+	(test-xfail-ISO11/stdalign.h/conform): Likewise.
+	(test-xfail-ISO11/stdnoreturn.h/conform): Likewise.
+	(test-xfail-XPG3/varargs.h/conform): Likewise.
+	(test-xfail-XPG4/varargs.h/conform): Likewise.
+	(test-xfail-UNIX98/varargs.h/conform): Likewise.
+	(test-xfail-XPG4/ndbm.h/conform): Likewise.
+	(test-xfail-UNIX98/ndbm.h/conform): Likewise.
+	(test-xfail-XOPEN2K/ndbm.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/ndbm.h/conform): Likewise.
+	(test-xfail-XPG3/fcntl.h/conform): Likewise.
+	(test-xfail-XPG3/ftw.h/conform): Likewise.
+	(test-xfail-XPG3/grp.h/conform): Likewise.
+	(test-xfail-XPG3/langinfo.h/conform): Likewise.
+	(test-xfail-XPG3/limits.h/conform): Likewise.
+	(test-xfail-XPG3/pwd.h/conform): Likewise.
+	(test-xfail-XPG3/search.h/conform): Likewise.
+	(test-xfail-XPG3/signal.h/conform): Likewise.
+	(test-xfail-XPG3/stdio.h/conform): Likewise.
+	(test-xfail-XPG3/stdlib.h/conform): Likewise.
+	(test-xfail-XPG3/string.h/conform): Likewise.
+	(test-xfail-XPG3/sys/ipc.h/conform): Likewise.
+	(test-xfail-XPG3/sys/msg.h/conform): Likewise.
+	(test-xfail-XPG3/sys/sem.h/conform): Likewise.
+	(test-xfail-XPG3/sys/shm.h/conform): Likewise.
+	(test-xfail-XPG3/sys/stat.h/conform): Likewise.
+	(test-xfail-XPG3/sys/types.h/conform): Likewise.
+	(test-xfail-XPG3/sys/wait.h/conform): Likewise.
+	(test-xfail-XPG3/termios.h/conform): Likewise.
+	(test-xfail-XPG3/time.h/conform): Likewise.
+	(test-xfail-XPG3/unistd.h/conform): Likewise.
+	(test-xfail-XPG4/arpa/inet.h/conform): Likewise.
+	(test-xfail-XPG4/fcntl.h/conform): Likewise.
+	(test-xfail-XPG4/langinfo.h/conform): Likewise.
+	(test-xfail-XPG4/netdb.h/conform): Likewise.
+	(test-xfail-XPG4/netinet/in.h/conform): Likewise.
+	(test-xfail-XPG4/signal.h/conform): Likewise.
+	(test-xfail-XPG4/stdio.h/conform): Likewise.
+	(test-xfail-XPG4/stdlib.h/conform): Likewise.
+	(test-xfail-XPG4/stropts.h/conform): Likewise.
+	(test-xfail-XPG4/sys/ipc.h/conform): Likewise.
+	(test-xfail-XPG4/sys/msg.h/conform): Likewise.
+	(test-xfail-XPG4/sys/sem.h/conform): Likewise.
+	(test-xfail-XPG4/sys/shm.h/conform): Likewise.
+	(test-xfail-XPG4/sys/socket.h/conform): Likewise.
+	(test-xfail-XPG4/sys/stat.h/conform): Likewise.
+	(test-xfail-XPG4/sys/time.h/conform): Likewise.
+	(test-xfail-XPG4/sys/types.h/conform): Likewise.
+	(test-xfail-XPG4/sys/wait.h/conform): Likewise.
+	(test-xfail-XPG4/termios.h/conform): Likewise.
+	(test-xfail-XPG4/ucontext.h/conform): Likewise.
+	(test-xfail-XPG4/unistd.h/conform): Likewise.
+	(test-xfail-XPG4/utmpx.h/conform): Likewise.
+	(test-xfail-POSIX/sched.h/conform): Likewise.
+	(test-xfail-POSIX/signal.h/conform): Likewise.
+	(test-xfail-POSIX/sys/wait.h/conform): Likewise.
+	(test-xfail-POSIX/tar.h/conform): Likewise.
+	(test-xfail-UNIX98/arpa/inet.h/conform): Likewise.
+	(test-xfail-UNIX98/fcntl.h/conform): Likewise.
+	(test-xfail-UNIX98/langinfo.h/conform): Likewise.
+	(test-xfail-UNIX98/netdb.h/conform): Likewise.
+	(test-xfail-UNIX98/netinet/in.h/conform): Likewise.
+	(test-xfail-UNIX98/sched.h/conform): Likewise.
+	(test-xfail-UNIX98/signal.h/conform): Likewise.
+	(test-xfail-UNIX98/stdio.h/conform): Likewise.
+	(test-xfail-UNIX98/stdlib.h/conform): Likewise.
+	(test-xfail-UNIX98/stropts.h/conform): Likewise.
+	(test-xfail-UNIX98/sys/ipc.h/conform): Likewise.
+	(test-xfail-UNIX98/sys/msg.h/conform): Likewise.
+	(test-xfail-UNIX98/sys/sem.h/conform): Likewise.
+	(test-xfail-UNIX98/sys/shm.h/conform): Likewise.
+	(test-xfail-UNIX98/sys/socket.h/conform): Likewise.
+	(test-xfail-UNIX98/sys/time.h/conform): Likewise.
+	(test-xfail-UNIX98/sys/wait.h/conform): Likewise.
+	(test-xfail-UNIX98/ucontext.h/conform): Likewise.
+	(test-xfail-UNIX98/unistd.h/conform): Likewise.
+	(test-xfail-UNIX98/utmpx.h/conform): Likewise.
+	(test-xfail-XOPEN2K/aio.h/conform): Likewise.
+	(test-xfail-XOPEN2K/arpa/inet.h/conform): Likewise.
+	(test-xfail-XOPEN2K/fcntl.h/conform): Likewise.
+	(test-xfail-XOPEN2K/langinfo.h/conform): Likewise.
+	(test-xfail-XOPEN2K/math.h/conform): Likewise.
+	(test-xfail-XOPEN2K/mqueue.h/conform): Likewise.
+	(test-xfail-XOPEN2K/netdb.h/conform): Likewise.
+	(test-xfail-XOPEN2K/netinet/in.h/conform): Likewise.
+	(test-xfail-XOPEN2K/semaphore.h/conform): Likewise.
+	(test-xfail-XOPEN2K/signal.h/conform): Likewise.
+	(test-xfail-XOPEN2K/stdarg.h/conform): Likewise.
+	(test-xfail-XOPEN2K/stdio.h/conform): Likewise.
+	(test-xfail-XOPEN2K/stropts.h/conform): Likewise.
+	(test-xfail-XOPEN2K/sys/ipc.h/conform): Likewise.
+	(test-xfail-XOPEN2K/sys/msg.h/conform): Likewise.
+	(test-xfail-XOPEN2K/sys/sem.h/conform): Likewise.
+	(test-xfail-XOPEN2K/sys/shm.h/conform): Likewise.
+	(test-xfail-XOPEN2K/sys/socket.h/conform): Likewise.
+	(test-xfail-XOPEN2K/sys/wait.h/conform): Likewise.
+	(test-xfail-XOPEN2K/termios.h/conform): Likewise.
+	(test-xfail-XOPEN2K/tgmath.h/conform): Likewise.
+	(test-xfail-XOPEN2K/ucontext.h/conform): Likewise.
+	(test-xfail-XOPEN2K/utmpx.h/conform): Likewise.
+	(test-xfail-POSIX2008/arpa/inet.h/conform): Likewise.
+	(test-xfail-POSIX2008/fcntl.h/conform): Likewise.
+	(test-xfail-POSIX2008/netdb.h/conform): Likewise.
+	(test-xfail-POSIX2008/netinet/in.h/conform): Likewise.
+	(test-xfail-POSIX2008/signal.h/conform): Likewise.
+	(test-xfail-POSIX2008/stropts.h/conform): Likewise.
+	(test-xfail-POSIX2008/sys/socket.h/conform): Likewise.
+	(test-xfail-POSIX2008/sys/wait.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/arpa/inet.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/fcntl.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/limits.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/math.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/netdb.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/netinet/in.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/signal.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/stdio.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/stropts.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/sys/ipc.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/sys/msg.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/sys/select.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/sys/sem.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/sys/shm.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/sys/socket.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/sys/time.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/sys/wait.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/termios.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/tgmath.h/conform): Likewise.
+	(test-xfail-XOPEN2K8/utmpx.h/conform): Likewise.
+	(conformtest-cc-flags): Likewise.
+	($(conformtest-header-tests): New target.
+	* conform/check-header-lists.sh: New file.
+	* conform/run-conformtest.sh: Remove.
+
+	* conform/conformtest.pl: Allow ' and \ in values given for
+	constants.
+	* conform/data/semaphore.h-data [POSIX] (fcntl.h): Allow header
+	inclusion.
+	[POSIX] (sys/types.h): Likewise.
+	[POSIX2008 || XOPEN2K8] (sys/types.h): Don't allow header
+	inclusion.
+	[POSIX || UNIX98 || XOPEN2K] (time.h): Don't allow header
+	inclusion.
+	* conform/data/signal.h-data (SIGIO): Remove expectation.
+	[XPG3] (SIGBUS): Do not expect.
+	[POSIX || XPG3] (SIGPOLL): Likewise.
+	[POSIX || XPG3] (SIGPROF): Likewise.
+	[POSIX || XPG3] (SIGSYS): Likewise.
+	[XPG3] (SIGTRAP): Likewise.
+	[POSIX || XPG3] (SIGURG): Likewise.
+	[POSIX || XPG3] (SIGVTALRM): Likewise.
+	[POSIX || XPG3] (SIGXCPU): Likewise.
+	[POSIX || XPG3] (SIGXFSZ): Likewise.
+	[POSIX] (SA_SIGINFO): Expect.
+	[XPG3] (siginfo_t): Do not expect type or contents.
+	[POSIX] (si_pid): Do not expect element.
+	[POSIX] (si_uid): Likewise.
+	[POSIX] (si_addr): Likewise.
+	[POSIX] (si_status): Likewise.
+	[POSIX] (si_band): Likewise.
+	[XPG4] (si_value): Likewise.
+	[POSIX || XPG3] (ILL_ILLOPC): Do not expect.
+	[POSIX || XPG3] (ILL_ILLOPN): Likewise.
+	[POSIX || XPG3] (ILL_ILLADR): Likewise.
+	[POSIX || XPG3] (ILL_ILLTRP): Likewise.
+	[POSIX || XPG3] (ILL_PRVOPC): Likewise.
+	[POSIX || XPG3] (ILL_PRVREG): Likewise.
+	[POSIX || XPG3] (ILL_COPROC): Likewise.
+	[POSIX || XPG3] (ILL_BADSTK): Likewise.
+	[POSIX || XPG3] (FPE_INTDIV): Likewise.
+	[POSIX || XPG3] (FPE_INTOVF): Likewise.
+	[POSIX || XPG3] (FPE_FLTDIV): Likewise.
+	[POSIX || XPG3] (FPE_FLTOVF): Likewise.
+	[POSIX || XPG3] (FPE_FLTUND): Likewise.
+	[POSIX || XPG3] (FPE_FLTRES): Likewise.
+	[POSIX || XPG3] (FPE_FLTINV): Likewise.
+	[POSIX || XPG3] (FPE_FLTSUB): Likewise.
+	[POSIX || XPG3] (SEGV_MAPERR): Likewise.
+	[POSIX || XPG3] (SEGV_ACCERR): Likewise.
+	[POSIX || XPG3] (BUS_ADRALN): Likewise.
+	[POSIX || XPG3] (BUS_ADRERR): Likewise.
+	[POSIX || XPG3] (BUS_OBJERR): Likewise.
+	[POSIX || XPG3] (CLD_EXITED): Likewise.
+	[POSIX || XPG3] (CLD_KILLED): Likewise.
+	[POSIX || XPG3] (CLD_DUMPED): Likewise.
+	[POSIX || XPG3] (CLD_TRAPPED): Likewise.
+	[POSIX || XPG3] (CLD_STOPPED): Likewise.
+	[POSIX || XPG3] (CLD_CONTINUED): Likewise.
+	[POSIX || XPG3] (POLL_IN): Likewise.
+	[POSIX || XPG3] (POLL_OUT): Likewise.
+	[POSIX || XPG3] (POLL_MSG): Likewise.
+	[POSIX || XPG3] (POLL_ERR): Likewise.
+	[POSIX || XPG3] (POLL_PRI): Likewise.
+	[POSIX || XPG3] (POLL_HUP): Likewise.
+	[POSIX || XPG3 || POSIX2008] (TRAP_BRKPT): Likewise.
+	[POSIX || XPG3 || POSIX2008] (TRAP_TRACE): Likewise.
+	(SIG*): Do not allow.
+	[XPG3] (si_*): Likewise.
+	[XPG3] (SI_*): Likewise.
+	[XPG3 || XPG4] (sigev_*): Likewise.
+	[XPG3 || XPG4] (SIGEV_*): Likewise.
+	[XPG3 || XPG4] (sival_*): Likewise.
+	[POSIX || XPG3 || XPG4] (uc_*): Likewise.
+	[POSIX || XPG3] (BUS_*): Likewise.
+	[POSIX || XPG3] (CLD_*): Likewise.
+	[POSIX || XPG3] (FPE_*): Likewise.
+	[POSIX || XPG3] (ILL_*): Likewise.
+	[POSIX || XPG3] (POLL_*): Likewise.
+	[POSIX || XPG3] (SEGV_*): Likewise.
+	[POSIX || XPG3 || POSIX2008] (SS_*): Likewise.
+	[POSIX || XPG3 || POSIX2008] (SV_*): Likewise.
+	[POSIX || XPG3 || POSIX2008] (TRAP_*): Likewise.
+	[POSIX || XPG3 || POSIX2008] (ss_*): Likewise.
+	[POSIX || XPG3 || POSIX2008] (sv_*): Likewise.
+	* conform/data/tar.h-data (TMAGLEN): Use macro-int-constant.
+	Specify type and value.
+	(TVERSLEN): Likewise.
+	(REGTYPE): Likewise.
+	(AREGTYPE): Likewise.
+	(LNKTYPE): Likewise.
+	(SYMTYPE): Likewise.
+	(CHRTYPE): Likewise.
+	(BLKTYPE): Likewise.
+	(DIRTYPE): Likewise.
+	(FIFOTYPE): Likewise.
+	(CONTTYPE): Likewise.
+	(TSUID): Likewise.
+	(TSGID): Likewise.
+	(TSVTX): Likewise.
+	(TUREAD): Likewise.
+	(TUWRITE): Likewise.
+	(TUEXEC): Likewise.
+	(TGREAD): Likewise.
+	(TGWRITE): Likewise.
+	(TGEXEC): Likewise.
+	(TOREAD): Likewise.
+	(TOWRITE): Likewise.
+	(TOEXEC): Likewise.
+	[POSIX] (TSVTX): Expect constant.
+
+2014-03-06  Joseph Myers  <joseph@codesourcery.com>
+
+	* Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.
+	(tests): Depend on $(tests-special).
+	* Makerules (check-abi-list): New variable.
+	(check-abi): Depend on $(check-abi-list).
+	[$(subdir) = elf] (tests-special): Add
+	$(objpfx)check-abi-libc.out.
+	[$(build-shared) = yes && subdir] (tests-special): Add
+	$(check-abi-list).
+	[$(build-shared) = yes && subdir] (tests): Do not depend on
+	check-abi.
+	* Rules (tests): Depend on $(tests-special).
+	(xtests): Depend on $(xtests-special).
+	* catgets/Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.
+	* conform/Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.
+	* elf/Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.
+	* grp/Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.
+	* iconv/Makefile (xtests): Change dependencies to ....
+	(xtests-special): ... additions to this variable.
+	* iconvdata/Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.
+	* intl/Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.  Also add
+	$(objpfx)tst-gettext.out.
+	* io/Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.
+	* libio/Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.
+	* malloc/Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.
+	* misc/Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.
+	* nptl/Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.
+	* nptl_db/Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.
+	* posix/Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.
+	(xtests): Change dependencies to ....
+	(xtests-special): ... additions to this variable.
+	* resolv/Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.
+	(xtests): Change dependencies to ....
+	(xtests-special): ... additions to this variable.
+	* stdio-common/Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.
+	(do-tst-unbputc): Remove target.
+	(do-tst-printf): Likewise.
+	* stdlib/Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.
+	* string/Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.
+	* sysdeps/x86/Makefile (tests): Change dependencies to ....
+	(tests-special): ... additions to this variable.
+
+	* conform/data/netinet/tcp.h-data [POSIX2008 || XOPEN2K8]: Enable
+	whole file.
+	* conform/data/sys/timeb.h-data [POSIX2008 || XOPEN2K8]: Disable
+	whole file.
+	* conform/data/sys/uio.h-data [POSIX2008]: Likewise.
+	* conform/data/ucontext.h-data [POSIX2008 || XOPEN2K8]: Likewise.
+
+	* conform/data/aio.h-data [XPG3 || XPG4]: Disable whole file.
+	* conform/data/arpa/inet.h-data [XPG3]: Likewise.
+	* conform/data/dlfcn.h-data [XPG3 || XPG4]: Likewise.
+	* conform/data/fmtmsg.h-data [XPG3]: Likewise.
+	* conform/data/libgen.h-data [XPG3]: Likewise.
+	* conform/data/mqueue.h-data [XPG3 || XPG4]: Likewise.
+	* conform/data/ndbm.h-data [XPG3]: Likewise.
+	* conform/data/net/if.h-data [XPG3 || XPG4 || UNIX98]: Likewise.
+	* conform/data/netdb.h-data [XPG3]: Likewise.
+	* conform/data/netinet/in.h-data [XPG3]: Likewise.
+	* conform/data/poll.h-data [XPG3]: Likewise.
+	* conform/data/spawn.h-data [XPG3 || XPG4 || UNIX98]: Likewise.
+	* conform/data/strings.h-data [XPG3]: Likewise.
+	* conform/data/stropts.h-data [XPG3]: Likewise.
+	* conform/data/sys/mman.h-data [XPG3]: Likewise.
+	* conform/data/sys/resource.h-data [XPG3]: Likewise.
+	* conform/data/sys/select.h-data [XPG3 || XPG4 || UNIX98]:
+	Likewise.
+	* conform/data/sys/statvfs.h-data [XPG3]: Likewise.
+	* conform/data/sys/time.h-data [XPG3]: Likewise.
+	* conform/data/sys/timeb.h-data [XPG3]: Likewise.
+	* conform/data/sys/uio.h-data [XPG3]: Likewise.
+	* conform/data/sys/un.h-data [XPG3]: Likewise.
+	* conform/data/syslog.h-data [XPG3]: Likewise.
+	* conform/data/ucontext.h-data [XPG3]: Likewise.
+	* conform/data/utmpx.h-data [XPG3]: Likewise.
+	* conform/data/varargs.h-data [UNIX98]: Enable file.
+
+	* manual/Makefile (INSTALL_INFO): Remove variable setting.
+
+	* math/libm-test.inc (struct test_f_f_data): Move expected results
+	into structure for each rounding mode.
+	(struct test_ff_f_data): Likewise.
+	(struct test_ff_f_data_nexttoward): Likewise.
+	(struct test_fi_f_data): Likewise.
+	(struct test_fl_f_data): Likewise.
+	(struct test_if_f_data): Likewise.
+	(struct test_fff_f_data): Likewise.
+	(struct test_c_f_data): Likewise.
+	(struct test_f_f1_data): Likewise.
+	(struct test_fF_f1_data): Likewise.
+	(struct test_ffI_f1_data): Likewise.
+	(struct test_c_c_data): Likewise.
+	(struct test_cc_c_data): Likewise.
+	(struct test_f_i_data): Likewise.
+	(struct test_ff_i_data): Likewise.
+	(struct test_f_l_data): Likewise.
+	(struct test_f_L_data): Likewise.
+	(struct test_fFF_11_data): Likewise.
+	(RM_): New macro.
+	(RM_FE_DOWNWARD): Likewise.
+	(RM_FE_TONEAREST): Likewise.
+	(RM_FE_TOWARDZERO): Likewise.
+	(RM_FE_UPWARD): Likewise.
+	(RUN_TEST_LOOP_f_f): Update references to expected results.
+	(RUN_TEST_LOOP_2_f): Likewise.
+	(RUN_TEST_LOOP_fff_f): Likewise.
+	(RUN_TEST_LOOP_c_f): Likewise.
+	(RUN_TEST_LOOP_f_f1): Likewise.
+	(RUN_TEST_LOOP_fF_f1): Likewise.
+	(RUN_TEST_LOOP_fI_f1): Likewise.
+	(RUN_TEST_LOOP_ffI_f1): Likewise.
+	(RUN_TEST_LOOP_c_c): Likewise.
+	(RUN_TEST_LOOP_cc_c): Likewise.
+	(RUN_TEST_LOOP_f_i): Likewise.
+	(RUN_TEST_LOOP_f_i_tg): Likewise.
+	(RUN_TEST_LOOP_ff_i_tg): Likewise.
+	(RUN_TEST_LOOP_f_b): Likewise.
+	(RUN_TEST_LOOP_f_b_tg): Likewise.
+	(RUN_TEST_LOOP_f_l): Likewise.
+	(RUN_TEST_LOOP_f_L): Likewise.
+	(RUN_TEST_LOOP_fFF_11): Likewise.
+	* math/gen-libm-test.pl (parse_args): Output four copies of
+	expected results for each test.
+
+	* sysdeps/unix/sysv/linux/aarch64/kernel-features.h
+	(__ASSUME_UTIMES): Remove.
+	* sysdeps/unix/sysv/linux/tile/kernel-features.h
+	(__ASSUME_UTIMES): Likewise.
+
+	* math/gen-auto-libm-tests.c: Update comment on output format.
+	(output_for_one_input_case): Generate before-rounding and
+	after-rounding information as conditions on output flags not
+	floating-point format.
+	* math/auto-libm-test-out: Regenerated.
+	* math/gen-libm-test.pl (cond_value): New function.
+	(or_cond_value): Use cond_value.
+	(generate_testfile): Handle conditional exceptions.
+
+2014-03-05  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/libm-test.inc (max_valid_error): New variable.
+	(init_max_error): Take new argument specifying whether function
+	results are exactly determined.  Set max_valid_error and bound
+	other variables for errors based on this argument.
+	(set_max_error): Do not record results above max_valid_error.
+	(check_float_internal): Only accept errors of up to 0.5ulps if
+	also at most max_valid_error.
+	(START): Take new argument EXACT and pass it to init_max_error.
+	(acos_test): Update call to START.
+	(acos_test_tonearest): Likewise.
+	(acos_test_towardzero): Likewise.
+	(acos_test_downward): Likewise.
+	(acos_test_upward): Likewise.
+	(acosh_test): Likewise.
+	(asin_test): Likewise.
+	(asin_test_tonearest): Likewise.
+	(asin_test_towardzero): Likewise.
+	(asin_test_downward): Likewise.
+	(asin_test_upward): Likewise.
+	(asinh_test): Likewise.
+	(atan_test): Likewise.
+	(atanh_test): Likewise.
+	(atan2_test): Likewise.
+	(cabs_test): Likewise.
+	(cacos_test): Likewise.
+	(cacosh_test): Likewise.
+	(carg_test): Likewise.
+	(casin_test): Likewise.
+	(casinh_test): Likewise.
+	(catan_test): Likewise.
+	(catanh_test): Likewise.
+	(cbrt_test): Likewise.
+	(ccos_test): Likewise.
+	(ccosh_test): Likewise.
+	(ceil_test): Likewise.
+	(cexp_test): Likewise.
+	(cimag_test): Likewise.
+	(clog_test): Likewise.
+	(clog10_test): Likewise.
+	(conj_test): Likewise.
+	(copysign_test): Likewise.
+	(cos_test): Likewise.
+	(cos_test_tonearest): Likewise.
+	(cos_test_towardzero): Likewise.
+	(cos_test_downward): Likewise.
+	(cos_test_upward): Likewise.
+	(cosh_test): Likewise.
+	(cosh_test_tonearest): Likewise.
+	(cosh_test_towardzero): Likewise.
+	(cosh_test_downward): Likewise.
+	(cosh_test_upward): Likewise.
+	(cpow_test): Likewise.
+	(cproj_test): Likewise.
+	(creal_test): Likewise.
+	(csin_test): Likewise.
+	(csinh_test): Likewise.
+	(csqrt_test): Likewise.
+	(ctan_test): Likewise.
+	(ctan_test_tonearest): Likewise.
+	(ctan_test_towardzero): Likewise.
+	(ctan_test_downward): Likewise.
+	(ctan_test_upward): Likewise.
+	(ctanh_test): Likewise.
+	(ctanh_test_tonearest): Likewise.
+	(ctanh_test_towardzero): Likewise.
+	(ctanh_test_downward): Likewise.
+	(ctanh_test_upward): Likewise.
+	(erf_test): Likewise.
+	(erfc_test): Likewise.
+	(exp_test): Likewise.
+	(exp_test_tonearest): Likewise.
+	(exp_test_towardzero): Likewise.
+	(exp_test_downward): Likewise.
+	(exp_test_upward): Likewise.
+	(exp10_test): Likewise.
+	(exp10_test_tonearest): Likewise.
+	(exp10_test_towardzero): Likewise.
+	(exp10_test_downward): Likewise.
+	(exp10_test_upward): Likewise.
+	(pow10_test): Likewise.
+	(exp2_test): Likewise.
+	(expm1_test): Likewise.
+	(expm1_test_tonearest): Likewise.
+	(expm1_test_towardzero): Likewise.
+	(expm1_test_downward): Likewise.
+	(expm1_test_upward): Likewise.
+	(fabs_test): Likewise.
+	(fdim_test): Likewise.
+	(floor_test): Likewise.
+	(fma_test): Likewise.
+	(fma_test_towardzero): Likewise.
+	(fma_test_downward): Likewise.
+	(fma_test_upward): Likewise.
+	(fmax_test): Likewise.
+	(fmin_test): Likewise.
+	(fmod_test): Likewise.
+	(fpclassify_test): Likewise.
+	(frexp_test): Likewise.
+	(hypot_test): Likewise.
+	(ilogb_test): Likewise.
+	(isfinite_test): Likewise.
+	(finite_test): Likewise.
+	(isgreater_test): Likewise.
+	(isgreaterequal_test): Likewise.
+	(isinf_test): Likewise.
+	(isless_test): Likewise.
+	(islessequal_test): Likewise.
+	(islessgreater_test): Likewise.
+	(isnan_test): Likewise.
+	(isnormal_test): Likewise.
+	(issignaling_test): Likewise.
+	(isunordered_test): Likewise.
+	(j0_test): Likewise.
+	(j1_test): Likewise.
+	(jn_test): Likewise.
+	(ldexp_test): Likewise.
+	(lgamma_test): Likewise.
+	(gamma_test): Likewise.
+	(lrint_test): Likewise.
+	(lrint_test_tonearest): Likewise.
+	(lrint_test_towardzero): Likewise.
+	(lrint_test_downward): Likewise.
+	(lrint_test_upward): Likewise.
+	(llrint_test): Likewise.
+	(llrint_test_tonearest): Likewise.
+	(llrint_test_towardzero): Likewise.
+	(llrint_test_downward): Likewise.
+	(llrint_test_upward): Likewise.
+	(log_test): Likewise.
+	(log10_test): Likewise.
+	(log1p_test): Likewise.
+	(log2_test): Likewise.
+	(logb_test): Likewise.
+	(logb_test_downward): Likewise.
+	(lround_test): Likewise.
+	(llround_test): Likewise.
+	(modf_test): Likewise.
+	(nearbyint_test): Likewise.
+	(nextafter_test): Likewise.
+	(nexttoward_test): Likewise.
+	(pow_test): Likewise.
+	(pow_test_tonearest): Likewise.
+	(pow_test_towardzero): Likewise.
+	(pow_test_downward): Likewise.
+	(pow_test_upward): Likewise.
+	(remainder_test): Likewise.
+	(drem_test): Likewise.
+	(remainder_test_tonearest): Likewise.
+	(drem_test_tonearest): Likewise.
+	(remainder_test_towardzero): Likewise.
+	(drem_test_towardzero): Likewise.
+	(remainder_test_downward): Likewise.
+	(drem_test_downward): Likewise.
+	(remainder_test_upward): Likewise.
+	(drem_test_upward): Likewise.
+	(remquo_test): Likewise.
+	(rint_test): Likewise.
+	(rint_test_tonearest): Likewise.
+	(rint_test_towardzero): Likewise.
+	(rint_test_downward): Likewise.
+	(rint_test_upward): Likewise.
+	(round_test): Likewise.
+	(scalb_test): Likewise.
+	(scalbn_test): Likewise.
+	(scalbln_test): Likewise.
+	(signbit_test): Likewise.
+	(sin_test): Likewise.
+	(sin_test_tonearest): Likewise.
+	(sin_test_towardzero): Likewise.
+	(sin_test_downward): Likewise.
+	(sin_test_upward): Likewise.
+	(sincos_test): Likewise.
+	(sinh_test): Likewise.
+	(sinh_test_tonearest): Likewise.
+	(sinh_test_towardzero): Likewise.
+	(sinh_test_downward): Likewise.
+	(sinh_test_upward): Likewise.
+	(sqrt_test): Likewise.
+	(sqrt_test_tonearest): Likewise.
+	(sqrt_test_towardzero): Likewise.
+	(sqrt_test_downward): Likewise.
+	(sqrt_test_upward): Likewise.
+	(tan_test): Likewise.
+	(tan_test_tonearest): Likewise.
+	(tan_test_towardzero): Likewise.
+	(tan_test_downward): Likewise.
+	(tan_test_upward): Likewise.
+	(tanh_test): Likewise.
+	(tgamma_test): Likewise.
+	(trunc_test): Likewise.
+	(y0_test): Likewise.
+	(y1_test): Likewise.
+	(yn_test): Likewise.
+	(significand_test): Likewise.
+
+	* math/libm-test.inc (struct ulp_data): Don't refer to ulps for
+	individual tests in comment.
+	(libm-test-ulps.h): Don't refer to test_ulps in #include comment.
+	(prev_max_error): New variable.
+	(prev_real_max_error): Likewise.
+	(prev_imag_max_error): Likewise.
+	(compare_ulp_data): Don't refer to test names in comment.
+	(find_test_ulps): Remove function.
+	(find_function_ulps): Likewise.
+	(find_complex_function_ulps): Likewise.
+	(init_max_error): Take function name as argument.  Look up ulps
+	for that function.
+	(print_ulps): Remove function.
+	(print_max_error): Use prev_max_error instead of calling
+	find_function_ulps.
+	(print_complex_max_error): Use prev_real_max_error and
+	prev_imag_max_error instead of calling find_complex_function_ulps.
+	(check_float_internal): Take max_ulp parameter instead of calling
+	find_test_ulps.  Don't call print_ulps.
+	(check_float): Update call to check_float_internal.
+	(check_complex): Update calls to check_float_internal.
+	(START): Pass argument to init_max_error.
+	* math/gen-libm-test.pl (%results): Don't include "kind"
+	information.
+	(parse_ulps): Don't handle ulps of individual tests.
+	(print_ulps_file): Likewise.
+	(output_ulps): Likewise.
+	* math/README.libm-test: Update.
+	* manual/libm-err-tab.pl (parse_ulps): Don't handle ulps of
+	individual tests.
+	* sysdeps/aarch64/libm-test-ulps: Remove individual test ulps.
+	* sysdeps/alpha/fpu/libm-test-ulps: Likewise.
+	* sysdeps/arm/libm-test-ulps: Likewise.
+	* sysdeps/i386/fpu/libm-test-ulps: Likewise.
+	* sysdeps/ia64/fpu/libm-test-ulps: Likewise.
+	* sysdeps/m68k/coldfire/fpu/libm-test-ulps: Likewise.
+	* sysdeps/m68k/m680x0/fpu/libm-test-ulps: Likewise.
+	* sysdeps/microblaze/libm-test-ulps: Likewise.
+	* sysdeps/mips/mips32/libm-test-ulps: Likewise.
+	* sysdeps/mips/mips64/libm-test-ulps: Likewise.
+	* sysdeps/powerpc/fpu/libm-test-ulps: Likewise.
+	* sysdeps/powerpc/nofpu/libm-test-ulps: Likewise.
+	* sysdeps/s390/fpu/libm-test-ulps: Likewise.
+	* sysdeps/sh/libm-test-ulps: Likewise.
+	* sysdeps/sparc/fpu/libm-test-ulps: Likewise.
+	* sysdeps/tile/libm-test-ulps: Likewise.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2014-03-04  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/libm-test.inc (print_complex_max_error): Check separately
+	whether real and imaginary errors are within allowed range and
+	pass 0 to print_complex_function_ulps instead of value within
+	allowed range.
+
+2014-03-04  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* libio/tst-ftell-active-handler.c (get_handles_fdopen): Fix
+	formatting.
+	(get_handles_fopen): Likewise.
+	(do_write_test): Likewise.
+
+	* libio/wfileops.c (do_ftell_wide): Fix up formatting.
+
+	* libio/fileops.c (do_ftell): Use cached offset when
+	available.
+	* libio/iofwide.c (do_ftell_wide): Likewise.
+	* libio/iofdopen.c (_IO_new_fdopen): Don't use
+	_IO_file_attach.
+	* libio/wfileops.c (_IO_fwide): Don't cache offset.
+
+	[BZ #16532]
+	* libio/libioP.h (get_file_offset): New function.
+	* libio/fileops.c (get_file_offset): Likewise.
+	(do_ftell): Likewise.
+	(_IO_new_file_seekoff): Split out ftell logic.
+	* libio/wfileops.c (do_ftell_wide): Likewise.
+	(_IO_wfile_seekoff): Split out ftell logic.
+	* libio/tst-ftell-active-handler.c: New test case.
+	* libio/Makefile (tests): Add it.
+
+2014-03-03  Roland McGrath  <roland@hack.frob.com>
+
+	* nptl/ChangeLog: Renamed to nptl/ChangeLog.old, no longer used.
+	* nptl_db/ChangeLog: Renamed to nptl_db/ChangeLog.old, no longer used.
+
+2014-03-03  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #16639]
+	* nscd/connections.c (nscd_init): Call do_exit.
+	(start_threads): Call do_exit and notify_parent.
+	(begin_drop_privileges): Call do_exit.
+	(finish_drop_privileges): Likewise.
+	* nscd/selinux.c (preserve_capabilities): Likewise.
+	(install_real_capabilities): Likewise.
+	(nscd_selinux_enabled): Likewise.
+	(avc_create_thread): Likewise.
+	(avc_alloc_lock): Likewise.
+	(nscd_avc_init): Likewise.
+	* nscd/nscd.c (parent_fd): New static variable.
+	(main): Create a pipe between parent and child processes.
+	Skip closing parent_fd.
+	(monitor_child): New function.
+	(do_exit): Likewise.
+	(notify_parent): Likewise.
+	* nscd/nscd.h (notify_parent): Likewise.
+	(do_exit): Likewise.
+
+2014-03-03  Carlos O'Donell  <carlos@redhat.com>
+
+	* malloc/malloc.c (__libc_calloc): Revert last change.
+
+2014-03-03  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/fpu/libm-test-ulps: Update.
+
+2014-03-03  Rajalakshmi Srinivasaraghavan <raji@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/powerpc64/power7/strrchr.S: New file.
+	* sysdeps/powerpc/powerpc64/multiarch/Makefile: Add strrchr multiarch
+	implementation.
+	* sysdeps/powerpc/powerpc64/multiarch/ifunc-impl-list.c:
+	(__libc_ifunc_impl_list): Likewise.
+	* sysdeps/powerpc/powerpc64/multiarch/strrchr.c: New file.
+	* sysdeps/powerpc/powerpc64/multiarch/strrchr-ppc64.c: New file.
+	* sysdeps/powerpc/powerpc64/multiarch/strrchr-power7.S: New file.
+	* string/strrchr.c: Define STRRCHR.
+
+2014-02-28  Ondřej Bílka  <neleai@seznam.cz>
+
+	* benchtest/bench-strtok.c (simple_strtok): Delete.
+	(strtok_string): Use as benchmark.
+	* string/strtok (STRTOK): New macro.
+
+2014-02-28  Carlos O'Donell  <carlos@redhat.com>
+
+	* manual/threads.texi: Add header and standard comments to all
+	functions.
+
+	* elf/dl-lookup.c (check_match): New function.
+	(ELF_MACHINE_SYM_NO_MATCH): Adjust comment.
+	(do_lookup_x): Remove nested function check_match. Use non-nested
+	function check_match.
+
+2014-02-28  Roland McGrath  <roland@hack.frob.com>
+
+	* csu/Makefile (generated, before-compile): Use += rather than =.
+	* catgets/Makefile (generated, generated-dirs): Likewise.
+	* debug/Makefile (generated): Likewise.
+	* dlfcn/Makefile (generated): Likewise.
+	* elf/Makefile (before-compile, generated, generated-dirs): Likewise.
+	* iconvdata/Makefile (before-compile, generated): Likewise.
+	* intl/Makefile (before-compile, generated, generated-dirs): Likewise.
+	* libio/Makefile (generated): Likewise.
+	* malloc/Makefile (generated): Likewise.
+	* manual/Makefile (generated, generated-dirs): Likewise.
+	* misc/Makefile (generated): Likewise.
+	* posix/Makefile (generated): Likewise.
+	* resolv/Makefile (generated): Likewise.
+	* sunrpc/Makefile (generated, generated-dirs): Likewise.
+	* timezone/Makefile (generated, generated-dirs): Likewise.
+
+	* stdio-common/Versions (libc: GLIBC_PRIVATE): Add missing }.
+
+2014-02-27  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/powerpc64/fpu/multiarch/Makefile: Add llround power8
+	implementation.
+	* sysdeps/powerpc/powerpc64/fpu/multiarch/s_llround-power8.S: New file:
+	POWER8 llround ifunc implementation.
+	* sysdeps/powerpc/powerpc64/fpu/multiarch/s_llround.c (__lllround): Add
+	POWER8 implementation.
+	* sysdeps/powerpc/powerpc64/power8/fpu/s_llround.S: New file:
+	POWER8 llround implementation.
+
+2014-02-27  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/powerpc64/fpu/multiarch/Makefile: Add llrint power8
+	implementation.
+	* sysdeps/powerpc/powerpc64/fpu/multiarch/s_llrint-power8.S: New file:
+	POWER8 llrint ifunc implementation.
+	* sysdeps/powerpc/powerpc64/fpu/multiarch/s_llrint.c (__lllrint): Add
+	POWER8 implementation.
+	* sysdeps/powerpc/powerpc64/power8/fpu/s_llrint.S: New file:
+	POWER8 llrint implementation.
+
+2014-02-27  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/powerpc64/fpu/multiarch/Makefile: Add finite power8
+	implementation.
+	* sysdeps/powerpc/powerpc64/fpu/multiarch/s_finite-power8.S: New file:
+	POWER8 finite ifunc implementation.
+	* sysdeps/powerpc/powerpc64/fpu/multiarch/s_finite.c (__finite): Add
+	POWER8 implementation.
+	* sysdeps/powerpc/powerpc64/fpu/multiarch/s_finitef.c (__finitef):
+	Likewise.
+	* sysdeps/powerpc/powerpc64/power8/fpu/s_finite.S: New file:
+	POWER8 finite implementation.
+	* sysdeps/powerpc/powerpc64/power8/fpu/s_finitef.S: New file.
+
+2014-02-27  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/powerpc64/fpu/multiarch/Makefile: Add isinf power8
+	implementation.
+	* sysdeps/powerpc/powerpc64/fpu/multiarch/s_isinf-power8.S: New file:
+	POWER8 isinf ifunc implementation.
+	* sysdeps/powerpc/powerpc64/fpu/multiarch/s_isinf.c (__isinf): Add
+	POWER8 implementation.
+	* sysdeps/powerpc/powerpc64/fpu/multiarch/s_isinff.c (__isinff):
+	Likewise.
+	* sysdeps/powerpc/powerpc64/power8/fpu/s_isinf.S: New file:
+	POWER8 isinf implementation.
+	* sysdeps/powerpc/powerpc64/power8/fpu/s_isinff.S: New file.
+
+2014-02-27  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/powerpc32/power4/multiarch/init-arch.h (INIT_ARCH):
+	Add hwcap2 initialization.
+	* sysdeps/powerpc/powerpc64/fpu/multiarch/Makefile: Add isnan power8
+	implementation.
+	* sysdeps/powerpc/powerpc64/fpu/multiarch/s_isnan-power8.S: New file:
+	POWER8 isnan ifunc implementation.
+	* sysdeps/powerpc/powerpc64/fpu/multiarch/s_isnan.c (__isnan): Add
+	POWER8 implementation.
+	* sysdeps/powerpc/powerpc64/fpu/multiarch/s_isnanf.c (__isnanf):
+	Likewise.
+	* sysdeps/powerpc/powerpc64/power8/fpu/s_isnan.S: New file:
+	POWER8 isnan implementation.
+	* sysdeps/powerpc/powerpc64/power8/fpu/s_isnanf.S: New file.
+
+2014-02-27  Joey Ye  <joey.ye@arm.com>
+
+	* sysdeps/arm/soft-fp/sfp-machine.h (_FP_NANFRAC_S, _FP_NANFRAC_D)
+	(_FP_NANFRAC_Q): Set to zero.
+
+2014-02-27  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #16623]
+	* math/auto-libm-test-in: New test inputs.
+	* math/auto-libm-test-out: Regenerate.
+	* sysdeps/ieee754/dbl-64/s_sin.c (__sin): Preserve sign of A
+	and DA.
+	(__cos): Likewise.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Regenerate.
+
+2014-02-27  Joseph Myers  <joseph@codesourcery.com>
+
+	* scripts/evaluate-test.sh: Take new argument indicating whether
+	failure is expected.
+	* Makeconfig (evaluate-test): Pass argument to evaluate-test.sh
+	indicating whether failure is expected.
+	* conform/Makefile (test-xfail-run-conformtest): New variable.
+	($(objpfx)run-conformtest.out): Don't expect to fail at makefile
+	level.
+	* posix/Makefile (test-xfail-annexc): New variable.
+	($(objpfx)annexc.out): Don't expect to fail at makefile level.
+
+2014-02-26  Joseph Myers  <joseph@codesourcery.com>
+
+	* argp/Makefile: Include Makeconfig immediately after defining
+	subdir.
+	* assert/Makefile: Likewise.
+	* benchtests/Makefile: Likewise.
+	* catgets/Makefile: Likewise.
+	* conform/Makefile: Likewise.
+	* crypt/Makefile: Likewise.
+	* csu/Makefile: Likewise.
+	(all): Remove target.
+	* ctype/Makefile: Include Makeconfig immediately after defining
+	subdir.
+	* debug/Makefile: Likewise.
+	* dirent/Makefile: Likewise.
+	* dlfcn/Makefile: Likewise.
+	* gmon/Makefile: Likewise.
+	* gnulib/Makefile: Likewise.
+	* grp/Makefile: Likewise.
+	* gshadow/Makefile: Likewise.
+	* hesiod/Makefile: Likewise.
+	* hurd/Makefile: Likewise.
+	(all): Remove target.
+	* iconvdata/Makefile: Include Makeconfig immediately after
+	defining subdir.
+	* inet/Makefile: Likewise.
+	* intl/Makefile: Likewise.
+	* io/Makefile: Likewise.
+	* libio/Makefile: Likewise.
+	(all): Remove target.
+	* locale/Makefile: Include Makeconfig immediately after defining
+	subdir.
+	* login/Makefile: Likewise.
+	* mach/Makefile: Likewise.
+	(all): Remove target.
+	* malloc/Makefile: Include Makeconfig immediately after defining
+	subdir.
+	(all): Remove target.
+	* manual/Makefile: Include Makeconfig immediately after defining
+	subdir.
+	* math/Makefile: Likewise.
+	* misc/Makefile: Likewise.
+	* nis/Makefile: Likewise.
+	* nss/Makefile: Likewise.
+	* po/Makefile: Likewise.
+	(all): Remove target.
+	* posix/Makefile: Include Makeconfig immediately after defining
+	subdir.
+	* pwd/Makefile: Likewise.
+	* resolv/Makefile: Likewise.
+	* resource/Makefile: Likewise.
+	* rt/Makefile: Likewise.
+	* setjmp/Makefile: Likewise.
+	* shadow/Makefile: Likewise.
+	* signal/Makefile: Likewise.
+	* socket/Makefile: Likewise.
+	* soft-fp/Makefile: Likewise.
+	* stdio-common/Makefile: Likewise.
+	* stdlib/Makefile: Likewise.
+	* streams/Makefile: Likewise.
+	* string/Makefile: Likewise.
+	* sunrpc/Makefile: Likewise.
+	(all): Remove target.
+	* sysvipc/Makefile: Include Makeconfig immediately after defining
+	subdir.
+	* termios/Makefile: Likewise.
+	* time/Makefile: Likewise.
+	* timezone/Makefile: Likewise.
+	(all): Remove target.
+	* wcsmbs/Makefile: Include Makeconfig immediately after defining
+	subdir.
+	* wctype/Makefile: Likewise.
+
+2014-02-26  Steve Ellcey  <sellcey@mips.com>
+
+	* sysdeps/mips/math_private.h (_FPU_MASK_ALL) New.
+	(libc_feholdexcept_mips): Use _FPU_MASK_ALL.
+	(libc_feholdexcept_setround_mips): Ditto.
+	(libc_feholdsetround): New.
+	(libc_feholdsetroundf): New.
+	(libc_feholdsetroundl): New.
+	(libc_feupdateenv_test_mips): New.
+	(libc_feupdateenv_test): New.
+	(libc_feupdateenv_testf): New.
+	(libc_feupdateenv_testl): New.
+	(libc_feresetround): New.
+	(libc_feresetroundf): New.
+	(libc_feresetroundl): New.
+	(libc_fetestexcept_mips): New.
+	(libc_fetestexcept): New.
+	(libc_fetestexceptf): New.
+	(libc_fetestexceptl): New.
+	(HAVE_RM_CTX): New.
+	(libc_feholdexcept_setround_mips_ctx): New.
+	(libc_feholdexcept_setround_ctx): New.
+	(libc_feholdexcept_setroundf_ctx): New.
+	(libc_feholdexcept_setroundl_ctx): New.
+	(libc_fesetenv_mips_ctx): New.
+	(libc_fesetenv_ctx): New.
+	(libc_fesetenv_ctxf): New.
+	(libc_fesetenv_ctxl): New.
+	(libc_feupdateenv_mips_ctx): New.
+	(libc_feupdateenv_ctx): New.
+	(libc_feupdateenvf_ctx): New.
+	(libc_feupdateenvl_ctx): New.
+	(libc_feholdsetround_mips_ctx): New.
+	(libc_feholdsetround_ctx): New.
+	(libc_feholdsetroundf_ctx): New.
+	(libc_feholdsetroundl_ctx): New.
+	(libc_feresetround_mips_ctx): New.
+	(libc_feresetround_ctx): New.
+	(libc_feresetroundf_ctx): New.
+	(libc_feresetroundl_ctx): New.
+
+2014-02-26  Carlos O'Donell  <carlos@redhat.com>
+
+	* manual/ipc.texi (Semaphores): Use @Theglibc{}.
+
+	* manual/ipc.texi: New file.
+	* manual/Makefile (chapters): Add ipc.
+	* manual/job.texi: Add "Inter-Process Communication" to next.
+	* manual/process.texi: Add "Inter-Process Communication" to prev.
+
+2014-02-26  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/fpu/libm-test-ulps: Update.
+
+2014-02-26  Ondřej Bílka  <neleai@seznam.cz>
+
+	* malloc/malloc.c (__libc_calloc): Simplify implementation.
+
+	* manual/arith.texi: Fix spaces after sentences.
+	* manual/charset.texi: Likewise.
+	* manual/errno.texi: Likewise.
+	* manual/install.texi: Likewise.
+	* manual/llio.texi: Likewise.
+	* manual/locale.texi: Likewise.
+	* manual/maint.texi: Likewise.
+	* manual/math.texi: Likewise.
+	* manual/memory.texi: Likewise.
+	* manual/message.texi: Likewise.
+	* manual/probes.texi: Likewise.
+	* manual/resource.texi: Likewise.
+	* manual/signal.texi: Likewise.
+	* manual/socket.texi: Likewise.
+	* manual/stdio.texi: Likewise.
+	* manual/string.texi: Likewise.
+	* manual/time.texi: Likewise.
+	* manual/users.texi: Likewise.
+
+2014-02-25  Carlos O'Donell  <carlos@redhat.com>
+
+	[BZ #16632]
+	* include/features.h: Don't warn about _BSD_SOURCE or _SVID_SOURCE if
+	_DEFAULT_SOURCE is defined.
+
+2014-02-25  Ulrich Drepper  <drepper@gmail.com>
+	    Carlos O'Donell  <carlos@redhat.com>
+
+	[BZ #16613]
+	* elf/dl-tls.c (_dl_count_modids): New function.
+	* sysdeps/generic/ldsodefs.h: Declare _dl_count_modids.
+	* elf/rtld.c (dl_main): Call _dl_count_modids to track TLS usage in
+	audit library and increment generation counter.
+	(_dl_allocate_tls_init): Add assertion to check TLS generation count.
+	* elf/tst-audit9.c: New file.
+	* elf/tst-auditmod9a.c: New file.
+	* elf/tst-auditmod9b.c: New file.
+	* elf/Makefile: Add rules to build and run tst-audit9.
+
+2014-02-25  Florian Weimer  <fweimer@redhat.com>
+
+	[BZ #15347]
+	* misc/sys/select.h (__FD_MASK): Avoid signed integer overflow.
+
+2014-02-25  Will Newton  <will.newton@linaro.org>
+
+	* sysdeps/arm/__longjmp.S: Include stap-probe.h.
+	(__longjmp): Restore sp and lr before restoring callee
+	saved registers.  Add longjmp and longjmp_target
+	SystemTap probe point.
+	* sysdeps/arm/bits/setjmp.h (__jmp_buf): Update comment.
+	* sysdeps/arm/include/bits/setjmp.h (__JMP_BUF_SP):
+	Define to zero to match jmpbuf layout.
+	* sysdeps/arm/setjmp.S: Include stap-probe.h.
+	(__sigsetjmp): Save sp and lr before saving callee
+	saved registers.  Add setjmp SystemTap probe point.
+
+2014-02-24  Stefan Liebler  <stli@linux.vnet.ibm.com>
+
+	* sysdeps/s390/fpu/libm-test-ulps: Regenerate.
+
+2014-02-24  Andreas Schwab  <schwab@suse.de>
+
+	[BZ #15804]
+	* elf/pldd.c (wait_for_ptrace_stop): New function.
+	(main): Call it after attaching.
+
+2014-02-22  Roland McGrath  <roland@hack.frob.com>
+
+	* Makerules ($(common-objpfx)Versions.v.i): No longer depend
+	on $(common-objpfx)abi-versions.h; using <shlib-compat.h> inside
+	Versions files is now verboten.
+	* hurd/Versions (libc: GLIBC_2.0):
+	Remove various [SHLIB_COMPAT (libc, GLIBC_2_0, ...)] sections.
+	(libc: HURD_CTHREADS_0.3): Remove conditionalization, was under
+	[!SHLIB_COMPAT (libc, GLIBC_2_0, GLIBC_2_2)].
+	* mach/Versions: Likewise.
+
+	* csu/Versions: Remove unused %include.
+	* resolv/Versions: Likewise.
+
+2014-02-21  Joseph Myers  <joseph@codesourcery.com>
+
+	* Makefile ($(objpfx)c++-types-check.out): Use $(evaluate-test).
+	($(objpfx)check-local-headers.out): Likewise.
+	($(objpfx)begin-end-check.out): Likewise.
+	* Makerules (check-abi-%.out): Likewise.
+	* catgets/Makefile ($(objpfx)test1.cat): Likewise.
+	($(objpfx)test2.cat): Likewise.
+	($(objpfx)de/libc.cat): Likewise.
+	($(objpfx)test-gencat.out): Likewise.
+	* conform/Makefile ($(objpfx)run-conformtest.out): Likewise.
+	* elf/Makefile ($(objpfx)order-cmp.out): Likewise.
+	($(objpfx)noload-mem): Likewise.
+	($(objpfx)tst-pathopt.out): Likewise.
+	($(objpfx)tst-rtld-load-self.out): Likewise.
+	($(objpfx)tst-array1-cmp.out): Likewise.
+	($(objpfx)tst-array1-static-cmp.out): Likewise.
+	($(objpfx)tst-array2-cmp.out): Likewise.
+	($(objpfx)tst-array3-cmp.out): Likewise.
+	($(objpfx)tst-array4-cmp.out): Likewise.
+	($(objpfx)tst-array5-cmp.out): Likewise.
+	($(objpfx)tst-array5-static-cmp.out): Likewise.
+	($(objpfx)check-textrel.out): Likewise.
+	($(objpfx)check-execstack.out): Likewise.
+	($(objpfx)check-localplt.out): Likewise.
+	($(objpfx)order2-cmp.out): Likewise.
+	($(objpfx)tst-leaks1-mem): Likewise.
+	($(objpfx)tst-leaks1-static-mem): Likewise.
+	($(objpfx)tst-initorder-cmp.out): Likewise.
+	($(objpfx)tst-initorder2-cmp.out): Likewise.
+	($(objpfx)tst-unused-dep.out): Likewise.
+	($(objpfx)tst-unused-dep-cmp.out): Likewise.
+	* grp/Makefile ($(objpfx)tst_fgetgrent.out): Likewise.
+	* iconv/Makefile (test-iconvconfig): Likewise.
+	* iconvdata/Makefile ($(objpfx)mtrace-tst-loading): Likewise.
+	($(objpfx)iconv-test.out): Likewise.
+	($(objpfx)tst-tables.out): Likewise.
+	* intl/Makefile ($(objpfx)mtrace-tst-gettext): Likewise.
+	($(objpfx)tst-gettext.out): Likewise.
+	($(objpfx)tst-translit.out): Likewise.
+	($(objpfx)tst-gettext2.out): Likewise.
+	($(objpfx)tst-gettext4.out): Likewise.
+	($(objpfx)tst-gettext6.out): Likewise.
+	* io/Makefile ($(objpfx)ftwtest.out): Likewise.
+	* libio/Makefile ($(objpfx)test-freopen.out): Likewise.
+	($(objpfx)tst-fopenloc-cmp.out): Likewise.
+	($(objpfx)tst-fopenloc-mem.out): Likewise.
+	* malloc/Makefile ($(objpfx)tst-mtrace.out): Likewise.
+	* misc/Makefile ($(objpfx)tst-error1-mem): Likewise.
+	* posix/Makefile ($(objpfx)globtest.out): Likewise.
+	($(objpfx)wordexp-tst.out): Likewise.
+	($(objpfx)annexc.out): Likewise.
+	($(objpfx)tst-fnmatch-mem): Likewise.
+	($(objpfx)bug-regex2-mem): Likewise.
+	($(objpfx)bug-regex14-mem): Likewise.
+	($(objpfx)bug-regex21-mem): Likewise.
+	($(objpfx)bug-regex31-mem): Likewise.
+	($(objpfx)tst-vfork3-mem): Likewise.
+	($(objpfx)tst-rxspencer-no-utf8-mem): Likewise.
+	($(objpfx)tst-pcre-mem): Likewise.
+	($(objpfx)tst-boost-mem): Likewise.
+	($(objpfx)tst-getconf.out): Likewise.
+	($(objpfx)bug-ga2-mem): Likewise.
+	($(objpfx)bug-glob2-mem): Likewise.
+	* resolv/Makefile ($(objpfx)mtrace-tst-leaks): Likewise.
+	($(objpfx)mtrace-tst-leaks2): Likewise.
+	* stdio-common/Makefile ($(objpfx)tst-unbputc.out): Likewise.
+	($(objpfx)tst-printf.out): Likewise.
+	($(objpfx)tst-setvbuf1.out): Likewise.
+	($(objpfx)tst-setvbuf1-cmp.out): Likewise.
+	* stdlib/Makefile ($(objpfx)isomac.out): Likewise.
+	($(objpfx)tst-fmtmsg.out): Likewise.
+	* string/Makefile ($(objpfx)tst-svc-cmp.out): Likewise.
+	* sysdeps/x86/Makefile ($(objpfx)tst-xmmymm.out): Likewise.
+
+	* bits/fcntl.h [__USE_MISC]: Remove redundant conditionals.
+	* bits/sigaction.h [__USE_MISC]: Likewise.
+	* bits/waitstatus.h: Update #endif comments.
+	* ctype/ctype.h: Likewise.
+	* dirent/dirent.h: Likewise.
+	[__USE_MISC]: Remove redundant conditionals.
+	* grp/grp.h: Update #endif comments.
+	[__USE_GNU]: Remove redundant conditionals.
+	[__USE_MISC]: Likewise.
+	* inet/netinet/in.h [__USE_GNU]: Likewise.
+	* io/sys/stat.h [__USE_MISC]: Likewise.
+	* libio/bits/stdio-ldbl.h [__USE_MISC]: Likewise.
+	* libio/bits/stdio.h: Update #endif comments.
+	[__USE_MISC]: Remove redundant conditionals.
+	* libio/bits/stdio2.h [__USE_MISC]: Likewise.
+	* libio/stdio.h: Update #endif comments.
+	[__USE_MISC]: Remove redundant conditionals.
+	* math/bits/math-finite.h [__USE_MISC]: Likewise.
+	* math/bits/mathcalls.h [__USE_MISC]: Likewise.
+	* math/math.h: Update #else and #endif comments.
+	[__USE_MISC]: Remove redundant conditionals.
+	* misc/sys/uio.h: Update #endif comments.
+	* posix/bits/unistd.h [__USE_MISC]: Remove redundant conditionals.
+	* posix/glob.h [__USE_MISC]: Likewise.
+	* posix/sys/types.h: Update #endif comments.
+	[__USE_MISC]: Remove redundant conditionals.
+	* posix/sys/wait.h: Update #endif comments.
+	[__USE_MISC]: Remove redundant conditionals.
+	* posix/unistd.h: Update #endif comments.
+	[__USE_MISC]: Remove redundant conditionals.
+	* pwd/pwd.h [__USE_GNU]: Likewise.
+	[__USE_MISC]: Likewise.
+	* resolv/netdb.h [__USE_GNU]: Likewise.
+	* signal/signal.h: Update #endif comments.
+	[__USE_MISC]: Remove redundant conditionals.
+	* stdlib/stdlib.h: Update #else and #endif comments.
+	[__USE_MISC]: Remove redundant conditionals.
+	[__USE_GNU]: Likewise.
+	* string/bits/string2.h [__USE_MISC]: Likewise.
+	* string/string.h: Update #endif comments.
+	[__USE_MISC]: Remove redundant conditionals.
+	* sysdeps/m68k/m680x0/fpu/bits/mathinline.h [__USE_MISC]:
+	Likewise.
+	* sysdeps/mach/hurd/bits/fcntl.h [__USE_MISC]: Likewise.
+	* sysdeps/mach/hurd/bits/stat.h [__USE_MISC]: Likewise.
+	* sysdeps/unix/sysv/linux/alpha/bits/sigaction.h [__USE_MISC]:
+	Likewise.
+	* sysdeps/unix/sysv/linux/alpha/bits/stat.h [__USE_MISC]:
+	Likewise.
+	* sysdeps/unix/sysv/linux/bits/fcntl-linux.h: Update #endif
+	comments.
+	[__USE_MISC]: Remove redundant conditionals.
+	* sysdeps/unix/sysv/linux/bits/in.h [__USE_GNU]: Likewise.
+	* sysdeps/unix/sysv/linux/bits/sigaction.h [__USE_MISC]: Likewise.
+	* sysdeps/unix/sysv/linux/bits/socket.h [__USE_GNU]: Likewise.
+	* sysdeps/unix/sysv/linux/bits/stat.h [__USE_MISC]: Likewise.
+	* sysdeps/unix/sysv/linux/ia64/bits/sigaction.h [__USE_MISC]:
+	Likewise.
+	* sysdeps/unix/sysv/linux/m68k/bits/stat.h [__USE_MISC]: Likewise.
+	* sysdeps/unix/sysv/linux/mips/bits/sigaction.h [__USE_MISC]:
+	Likewise.
+	* sysdeps/unix/sysv/linux/mips/bits/stat.h [__USE_MISC]: Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/bits/stat.h [__USE_MISC]:
+	Likewise.
+	* sysdeps/unix/sysv/linux/s390/bits/sigaction.h [__USE_MISC]:
+	Likewise.
+	* sysdeps/unix/sysv/linux/s390/bits/stat.h [__USE_MISC]: Likewise.
+	* sysdeps/unix/sysv/linux/sparc/bits/sigaction.h [__USE_MISC]:
+	Likewise.
+	* sysdeps/unix/sysv/linux/sparc/bits/stat.h [__USE_MISC]:
+	Likewise.
+	* sysdeps/unix/sysv/linux/x86/bits/stat.h [__USE_MISC]: Likewise.
+	* sysdeps/x86/bits/string.h: Update #endif comments.
+	* sysdeps/x86/fpu/bits/mathinline.h [__USE_MISC]: Remove redundant
+	conditionals.
+	* time/sys/time.h: Update #endif comments.
+	* time/time.h: Likewise.
+	[__USE_MISC]: Remove redundant conditionals.
+
+2014-02-21  Yury Gribov  <y.gribov@samsung.com>
+
+	[BZ #16600]
+	* sysdeps/arm/libm-test-ulps: Update for VFPv4.
+
+2014-02-21  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* Versions.def (librt): Add GLIBC_2.17.
+
+2014-02-21  Adam Conrad  <adconrad@0c3.net>
+
+	* sysdeps/powerpc/bits/hwcap.h: Allow _SYSDEPS_SYSDEP_H guard as a
+	synonym for _SYS_AUXV_H to allow direct inclusion.
+	* sysdeps/sparc/bits/hwcap.h: Likewise.
+	* sysdeps/powerpc/sysdep.h: Define _SYSDEPS_SYSDEP_H instead of
+	_SYS_AUXV_H so we can include sysdep.h and sys/auxv.h together.
+	* sysdeps/sparc/sysdep.h: Likewise.
+
+2014-02-21  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* benchtests/bench-strrchr.c (do_test): Fix minor formatting.
+
+2014-02-21  Rajalakshmi Srinivasaraghavan  <raji@linux.vnet.ibm.com>
+
+	* benchtests/bench-strrchr.c: Print length instead of position.
+
+2014-02-20  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #16611]
+	* sysdeps/unix/sysv/linux/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x030000 && __ASSUME_SOCKETCALL]
+	(__ASSUME_SENDMMSG_SOCKETCALL): Define.
+	[__LINUX_KERNEL_VERSION >= 0x030000 && (__i386__ || __x86_64__ ||
+	__powerpc__ || __sh__ || __sparc__)] (__ASSUME_SENDMMSG_SYSCALL):
+	Likewise.
+	[__i386__ || __powerpc__ || __sh__ || __sparc__]
+	(__ASSUME_SENDMMSG_SYSCALL_WITH_SOCKETCALL): Likewise.
+	[__ASSUME_SENDMMSG_SOCKETCALL || __ASSUME_SENDMMSG_SYSCALL]
+	(__ASSUME_SENDMMSG): Define instead of using previous
+	[__LINUX_KERNEL_VERSION >= 0x020627] condition.
+	* sysdeps/unix/sysv/linux/aarch64/kernel-features.h
+	(__ASSUME_SENDMMSG_SYSCALL): Define.
+	* sysdeps/unix/sysv/linux/alpha/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x030200] (__ASSUME_SENDMMSG_SYSCALL):
+	Likewise.
+	* sysdeps/unix/sysv/linux/arm/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x030000] (__ASSUME_SENDMMSG_SYSCALL):
+	Likewise.
+	* sysdeps/unix/sysv/linux/ia64/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x030000] (__ASSUME_SENDMMSG_SYSCALL):
+	Likewise.
+	* sysdeps/unix/sysv/linux/internal_sendmmsg.S [__ASSUME_SOCKETCALL
+	&& !__ASSUME_SENDMMSG_SYSCALL_WITH_SOCKETCALL &&
+	!__ASSUME_SENDMMSG_SYSCALL] (__NR_sendmmsg): Undefine.
+	[__ASSUME_SENDMMSG]: Change conditionals to
+	[__ASSUME_SENDMMSG_SOCKETCALL].
+	* sysdeps/unix/sysv/linux/microblaze/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x030300] (__ASSUME_SENDMMSG_SYSCALL):
+	Define.
+	* sysdeps/unix/sysv/linux/mips/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x030100] (__ASSUME_SENDMMSG_SYSCALL):
+	Likewise.
+	* sysdeps/unix/sysv/linux/sendmmsg.c [__ASSUME_SOCKETCALL &&
+	!__ASSUME_SENDMMSG_SYSCALL_WITH_SOCKETCALL &&
+	!__ASSUME_SENDMMSG_SYSCALL] (__NR_sendmmsg): Undefine.
+	[!__ASSUME_SENDMMSG]: Change conditional to
+	[!__ASSUME_SENDMMSG_SOCKETCALL].
+	* sysdeps/unix/sysv/linux/tile/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x030000] (__ASSUME_SENDMMSG_SYSCALL):
+	Define.
+
+	[BZ #16610]
+	* sysdeps/unix/sysv/linux/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x020621 && __ASSUME_SOCKETCALL]
+	(__ASSUME_RECVMMSG_SOCKETCALL): Define.
+	[(__LINUX_KERNEL_VERSION >= 0x020621 && (__i386__ || __x86_64__ ||
+	__sparc__)) || (__LINUX_KERNEL_VERSION >= 0x020625 && (__powerpc__
+	|| __sh__))] (__ASSUME_RECVMMSG_SYSCALL): Likewise.
+	[__i386__ || __sparc__]
+	(__ASSUME_RECVMMSG_SYSCALL_WITH_SOCKETCALL): Likewise.
+	[__ASSUME_RECVMMSG_SOCKETCALL || __ASSUME_RECVMMSG_SYSCALL]
+	(__ASSUME_RECVMMSG): Define instead of using previous
+	[__LINUX_KERNEL_VERSION >= 0x020621] condition.
+	* sysdeps/unix/sysv/linux/aarch64/kernel-features.h
+	(__ASSUME_RECVMMSG_SYSCALL): Define.
+	* sysdeps/unix/sysv/linux/alpha/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x020621] (__ASSUME_RECVMMSG_SYSCALL):
+	Likewise.
+	* sysdeps/unix/sysv/linux/arm/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x020621] (__ASSUME_RECVMMSG_SYSCALL):
+	Likewise.
+	* sysdeps/unix/sysv/linux/ia64/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x020621] (__ASSUME_RECVMMSG_SYSCALL):
+	Likewise.
+	* sysdeps/unix/sysv/linux/internal_recvmmsg.S [__ASSUME_SOCKETCALL
+	&& !__ASSUME_RECVMMSG_SYSCALL_WITH_SOCKETCALL &&
+	!__ASSUME_RECVMMSG_SYSCALL] (__NR_recvmmsg): Undefine.
+	[__ASSUME_RECVMMSG]: Change condition to
+	[__ASSUME_RECVMMSG_SOCKETCALL].
+	* sysdeps/unix/sysv/linux/microblaze/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x020621] (__ASSUME_RECVMMSG_SYSCALL):
+	Define.
+	(__ASSUME_RECVMMSG_SYSCALL_WITH_SOCKETCALL): Likewise.
+	* sysdeps/unix/sysv/linux/mips/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x020621] (__ASSUME_RECVMMSG_SYSCALL):
+	Likewise.
+	* sysdeps/unix/sysv/linux/recvmmsg.c [__ASSUME_SOCKETCALL &&
+	!__ASSUME_RECVMMSG_SYSCALL_WITH_SOCKETCALL &&
+	!__ASSUME_RECVMMSG_SYSCALL] (__NR_recvmmsg): Undefine.
+	[!__ASSUME_RECVMMSG]: Change condition to
+	[!__ASSUME_RECVMMSG_SOCKETCALL].
+	* sysdeps/unix/sysv/linux/tile/kernel-features.h
+	(__ASSUME_RECVMMSG_SYSCALL): Define.
+
+	[BZ #16609]
+	* sysdeps/unix/sysv/linux/kernel-features.h [__i386__ ||
+	__powerpc__ || __s390__ || __sh__ || __sparc__]
+	(__ASSUME_SOCKETCALL): Define.
+	[__LINUX_KERNEL_VERSION && __ASSUME_SOCKETCALL]
+	(__ASSUME_ACCEPT4_SOCKETCALL): Likewise.
+	[(__LINUX_KERNEL_VERSION >= 0x02061c && (__x86_64__ || __sparc__))
+	|| (__LINUX_KERNEL_VERSION >= 0x020625 && (__powerpc__ ||
+	__sh__))] (__ASSUME_ACCEPT4_SYSCALL): Likewise.
+	[__sparc__] (__ASSUME_ACCEPT4_SYSCALL_WITH_SOCKETCALL): Likewise.
+	[__ASSUME_ACCEPT4_SOCKETCALL || __ASSUME_ACCEPT4_SYSCALL]
+	(__ASSUME_ACCEPT4): Define instead of using previous
+	[__LINUX_KERNEL_VERSION >= 0x02061c && (__i386__ || __x86_64__ ||
+	__powerpc__ || __sparc__ || __s390__)] condition.
+	* sysdeps/unix/sysv/linux/aarch64/kernel-features.h
+	(__ASSUME_ACCEPT4): Change to __ASSUME_ACCEPT4_SYSCALL.
+	* sysdeps/unix/sysv/linux/accept4.c [__ASSUME_SOCKETCALL &&
+	!__ASSUME_ACCEPT4_SYSCALL_WITH_SOCKETCALL &&
+	!__ASSUME_ACCEPT4_SYSCALL] (__NR_accept4): Undefine.
+	[!__ASSUME_ACCEPT4]: Change condition to
+	[!__ASSUME_ACCEPT4_SOCKETCALL].
+	* sysdeps/unix/sysv/linux/alpha/kernel-features.h
+	(__ASSUME_ACCEPT4): Change to __ASSUME_ACCEPT4_SYSCALL.  Correct
+	condition to [__LINUX_KERNEL_VERSION >= 0x030200].
+	* sysdeps/unix/sysv/linux/arm/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x020624] (__ASSUME_ACCEPT4): Change to
+	__ASSUME_ACCEPT4_SYSCALL.
+	* sysdeps/unix/sysv/linux/i386/accept4.S [__ASSUME_ACCEPT4]:
+	Change conditions to [__ASSUME_ACCEPT4_SOCKETCALL].
+	* sysdeps/unix/sysv/linux/ia64/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x030300] (__ASSUME_ACCEPT4): Change to
+	__ASSUME_ACCEPT4_SYSCALL.
+	* sysdeps/unix/sysv/linux/internal_accept4.S [__ASSUME_SOCKETCALL
+	&& !__ASSUME_ACCEPT4_SYSCALL_WITH_SOCKETCALL &&
+	!__ASSUME_ACCEPT4_SYSCALL] (__NR_accept4): Undefine.
+	[__ASSUME_ACCEPT4]: Change condition to
+	[__ASSUME_ACCEPT4_SOCKETCALL].
+	* sysdeps/unix/sysv/linux/m68k/kernel-features.h
+	(__ASSUME_SOCKETCALL): Define.
+	[__LINUX_KERNEL_VERSION >= 0x02061c] (__ASSUME_ACCEPT4): Remove.
+	* sysdeps/unix/sysv/linux/microblaze/kernel-features.h
+	(__ASSUME_SOCKETCALL): Define.
+	(__ASSUME_ACCEPT4): Remove.
+	[__LINUX_KERNEL_VERSION >= 0x020621] (__ASSUME_ACCEPT4_SYSCALL):
+	Define.
+	* sysdeps/unix/sysv/linux/mips/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x02061f] (__ASSUME_ACCEPT4_SYSCALL):
+	Likewise.
+	* sysdeps/unix/sysv/linux/tile/kernel-features.h
+	(__ASSUME_ACCEPT4): Change to __ASSUME_ACCEPT4_SYSCALL.
+
+	* sysdeps/unix/sysv/linux/arm/bits/hwcap.h (HWCAP_ARM_VFPD32): New
+	macro.
+	(HWCAP_ARM_LPAE): Likewise.
+	(HWCAP_ARM_EVTSTRM): Likewise.
+	* sysdeps/unix/sysv/linux/arm/dl-procinfo.c (_dl_arm_cap_flags):
+	Add vpfd32, lpae and evtstrm.
+	* sysdeps/unix/sysv/linux/arm/dl-procinfo.h (_DL_HWCAP_COUNT):
+	Increase to 22.
+
+2014-02-19  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/auto-libm-test-in: Add tests of clog10.
+	* math/auto-libm-test-out: Regenerated.
+	* math/libm-test.inc (clog10_test_data): Use AUTO_TESTS_c_c.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2014-02-18  Andreas Schwab  <schwab@suse.de>
+
+	[BZ #16574]
+	* resolv/res_send.c (send_vc): Add parameter ansp2_malloced.
+	Store non-zero if the second buffer was newly allocated.
+	(send_dg): Likewise.
+	(__libc_res_nsend): Add parameter ansp2_malloced and pass it down
+	to send_vc and send_dg.
+	(res_nsend): Pass NULL for ansp2_malloced.
+	* resolv/res_query.c (__libc_res_nquery): Add parameter
+	answerp2_malloced and pass it down to __libc_res_nsend.
+	(res_nquery): Pass additional NULL to __libc_res_nquery.
+	(__libc_res_nsearch): Add parameter answerp2_malloced and pass it
+	down to __libc_res_nquery and __libc_res_nquerydomain.  Deallocate
+	second answer buffer if answerp2_malloced was set.
+	(res_nsearch): Pass additional NULL to __libc_res_nsearch.
+	(__libc_res_nquerydomain): Add parameter
+	answerp2_malloced and pass it down to __libc_res_nquery.
+	(res_nquerydomain): Pass additional NULL to
+	__libc_res_nquerydomain.
+	* resolv/nss_dns/dns-network.c (_nss_dns_getnetbyname_r): Pass
+	additional NULL to __libc_res_nsend and __libc_res_nquery.
+	* resolv/nss_dns/dns-host.c (_nss_dns_gethostbyname3_r): Pass
+	additional NULL to __libc_res_nsearch.
+	(_nss_dns_gethostbyname4_r): Revert last change.  Use new
+	parameter of __libc_res_nsearch to check for separately allocated
+	second buffer.
+	(_nss_dns_gethostbyaddr2_r): Pass additional NULL to
+	__libc_res_nquery.
+	* resolv/nss_dns/dns-canon.c (_nss_dns_getcanonname_r): Pass
+	additional NULL to __libc_res_nquery.
+	* resolv/gethnamaddr.c (gethostbyname2): Pass additional NULL to
+	__libc_res_nsearch.
+	(gethostbyaddr): Pass additional NULL to __libc_res_nquery.
+	* include/resolv.h: Update prototypes of __libc_res_nquery,
+	__libc_res_nsearch, __libc_res_nsend.
+
 2014-02-18  Joseph Myers  <joseph@codesourcery.com>
 
 	* math/auto-libm-test-in: Add tests of fma.
@@ -36,9 +2466,9 @@
 
 2014-02-17  David Holsgrove <david.holsgrove@xilinx.com>
 
-        * sysdeps/microblaze: Move directory from ports/sysdeps/microblaze.
-        * sysdeps/unix/sysv/linux/microblaze: Move directory from
-          ports/sysdeps/unix/sysv/linux/microblaze.
+	* sysdeps/microblaze: Move directory from ports/sysdeps/microblaze.
+	* sysdeps/unix/sysv/linux/microblaze: Move directory from
+	ports/sysdeps/unix/sysv/linux/microblaze.
 	* README: Add missing listing for microblaze*-*-linux-gnu.
 
 2014-02-16  Mike Frysinger  <vapier@gentoo.org>
@@ -1058,6 +3488,12 @@
 	(__ASSUME_PROC_PID_TASK_COMM): Define.
 
 2014-02-05  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #16398]
+	* libio/wfileops.c (_IO_wfile_seekoff): Break out form
+	conversion when destination buffer does not have enough space.
+	* libio/tst-ftell-partial-wide.c: New test case.
+	* libio/Makefile (tests): Add tst-ftell-partial-wide.
 
 	* manual/contrib.texi: Update entry for Ondrej Bilka, Will
 	Newton and Alexandre Oliva.  Add entries for Steve Ellcey, Chris
