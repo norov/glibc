@@ -3,10 +3,10 @@ GLIBC_PROVIDES dnl See aclocal.m4 in the top level source directory.
 
 arch_minimum_kernel=3.7.0
 
-test -n "$libc_cv_slibdir" ||
+test -n "$slibdir" ||
 case "$prefix" in
   /usr | /usr/)
-    libc_cv_slibdir="/lib64"
+    slibdir="/lib64"
     libc_cv_rtlddir="/lib"
     if test "$libdir" = '${exec_prefix}/lib'; then
       libdir='${exec_prefix}/lib64';

@@ -9,12 +9,12 @@
 case "$prefix" in
 /usr | /usr/)
   # 64-bit libraries on bi-arch platforms go in /lib64 instead of /lib.
-  # Allow earlier configure scripts to handle libc_cv_slibdir,
+  # Allow earlier configure scripts to handle slibdir,
   # libc_cv_rtlddir, libdir, and libc_cv_localedir.
-  test -n "$libc_cv_slibdir" || \
+  test -n "$slibdir" || \
   case $machine in
   sparc/sparc64 | x86_64* | powerpc/powerpc64 | s390/s390-64)
-    libc_cv_slibdir=/lib64
+    slibdir=/lib64
     case $machine in
     s390/s390-64)
       libc_cv_rtlddir=/lib
@@ -27,7 +27,7 @@ case "$prefix" in
     fi
     ;;
   *)
-    libc_cv_slibdir=/lib
+    slibdir=/lib
     ;;
   esac
   # Allow the user to override the path with --sysconfdir.
