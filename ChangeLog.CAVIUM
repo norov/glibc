@@ -1,3 +1,13 @@
+2014-03-21  Andrew Pinski  <apinski@cavium.com>
+
+	* config.make.in: s/libc_cv_slibdir/slibdir.
+	* configure.ac: Likewise.
+	* sysdeps/gnu/configure.ac: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/configure.ac: Likewise.
+	* configure: Regenerate.
+	* sysdeps/gnu/configure: Rengnerate.
+	* sysdeps/unix/sysv/linux/aarch64/configure: Regenerate.
+
 2012-09-10  Andrew Pinski  <apinski@cavium.com>
 
 	Bug #4632
