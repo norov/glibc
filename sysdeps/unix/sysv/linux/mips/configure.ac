@@ -60,12 +60,6 @@ LIBC_CONFIG_VAR([default-abi],
 
 case "$prefix" in
 /usr | /usr/)
-  # Make the build system aware of where we install octeon2 libs so
-  # that the relative links it creates between /usr/lib and /lib work.
-  case $machine in
-  mips/mips64/n*/mips64octeon2 )
-    platform=/octeon2
-  esac
   # 64-bit libraries on bi-arch platforms go in /lib64 instead of /lib.
   # Allow earlier configure scripts to handle slibdir, libdir,
   # and libc_cv_localedir.
