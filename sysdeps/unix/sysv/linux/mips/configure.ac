@@ -60,6 +60,11 @@ LIBC_CONFIG_VAR([default-abi],
 
 case "$prefix" in
 /usr | /usr/)
+  # Make the build system aware of where we install octeon3 libs.
+  case $machine in
+  mips/mips64/n*/mips64octeon3 )
+    platform=-fp;;
+  esac
   # 64-bit libraries on bi-arch platforms go in /lib64 instead of /lib.
   # Allow earlier configure scripts to handle slibdir, libdir,
   # and libc_cv_localedir.

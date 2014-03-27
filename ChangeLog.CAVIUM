@@ -1,3 +1,11 @@
+2012-08-29  Andrew Pinski  <apinski@cavium.com>	
+
+	* ports/sysdeps/mips/preconfigure: Append octeon3 to the machine
+	variable.
+	* ports/sysdeps/unix/sysv/linux/mips/configure.in: Add Octeon3 support
+	(lib32-fp/lib64-fp).
+	* ports/sysdeps/unix/sysv/linux/mips/configure: Regnerate.
+
 2014-03-21  Andrew Pinski  <apinski@cavium.com>
 
 	* config.make.in: s/libc_cv_slibdir/slibdir.

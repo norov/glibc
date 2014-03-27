@@ -23,6 +23,7 @@ mips64*)	base_machine=mips64
 		# octeon2 directories.
 		case "$CC $CFLAGS $CPPFLAGS " in
 		*" -march=octeon2 "*) mips_arch=mips64octeon2 ;;
+		*" -march=octeon3 "*) mips_arch=mips64octeon3 ;;
 		*) mips_arch=@config_machine ;;
 		esac
 
