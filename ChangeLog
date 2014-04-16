@@ -1,3 +1,8 @@
+2014-04-16  Ian Bolton  <ian.bolton@arm.com>
+	    Wilco Dijkstra  <wilco.dijkstra@arm.com>
+
+	* sysdeps/aarch64/fpu/math_private.h: New file.
+
 2014-03-19  Joseph Myers  <joseph@codesourcery.com>
 
 	* math/libm-test.inc (fdim_test): Use ALL_RM_TEST.
