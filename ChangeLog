@@ -1,3 +1,58 @@
+2014-04-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* nptl/sysdeps/unix/sysv/linux/powerpc/pthread_once.c: Remove file.
+
+2014-04-17  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/fpu/fenv_private.h
+	(libc_feholdexcept_setroundl_ctx): Define to
+	libc_feholdexcept_setround_ppc_ctx.
+	(libc_fesetenvl_ctx): Define to libc_fesetenv_ppc_ctx.
+	(libc_feholdsetroundl_ctx): Define to libc_feholdsetround_ppc_ctx.
+	(libc_feresetroundl_ctx): Define to libc_feresetround_ppc_ctx.
+	(libc_feupdateenvl_ctx): libc_feupdateenv_ppc_ctx.
+
+2014-04-17  Ian Bolton  <ian.bolton@arm.com>
+
+	* sysdeps/aarch64/math-tests.h: New file.
+
+2014-04-17  Sihai Yao  <sihai.ysh@alibaba-inc.com>
+
+	* sysdeps/x86_64/multiarch/ifunc-defines.sym (COMMON_CPUID_INDEX_7):
+	New.
+	* sysdeps/x86_64/multiarch/init-arch.c (__init_cpu_features):
+	Check and set bit_AVX2_Usable.
+	* sysdeps/x86_64/multiarch/init-arch.h (bit_AVX2_Usable): New
+	macro.
+	(bit_AVX2): Likewise.
+	(index_AVX2_Usable): Likewise.
+	(CPUID_AVX2): Likewise.
+	(HAS_AVX2): Likewise.
+
+2014-04-17  Will Newton  <will.newton@linaro.org>
+
+	* manual/setjmp.texi (System V contexts): Add note that
+	calling setcontext on a context created by a call to a
+	signal handler is undefined.  Update text to note that
+	setcontext from a signal handler is possible but not
+	recommended.
+
+	[BZ #16629]
+	* stdlib/tst-setcontext.c: Include signal.h.
+	(main): Check that the signal stack before and
+	after swapcontext is the same.
+
+	* sysdeps/unix/sysv/linux/aarch64/setcontext.S (__setcontext):
+	Re-implement to restore registers in user code and avoid
+	rt_sigreturn system call.
+
+2014-04-17  Wilco  <wdijkstr@arm.com>
+
+	* sysdeps/arm/math-tests.h: New file: Set ARM math-test settings.
+	* sysdeps/generic/math-tests.h: Add macro (EXCEPTION_ENABLE_SUPPORTED).
+	* math/test-fenv.c: Skip exception trap tests on targets which only
+	support non-stop mode.
+
 2014-04-17  Ian Bolton  <ian.bolton@arm.com>
 	    Wilco Dijkstra  <wilco.dijkstra@arm.com>
 
@@ -10,10 +65,1036 @@
 	(libc_feresetround_noex_ctx, libc_feresetround_noexf_ctx)
 	(libc_feresetround_noexl_ctx): Define.
 
+2014-04-16  Richard Henderson  <rth@redhat.com>
+
+	* sysdeps/unix/sysv/linux/alpha/nptl/pthread_once.c: Remove.
+
+	* sysdeps/alpha/Makefile [debug] (CFLAGS-backtrace.c): Enable
+	unwind tables.
+
+	* sysdeps/unix/alpha/sysdep.h (__pointer_chk_guard): Remove
+	const from the non-libc, non-ldso copy.
+
+	* sysdeps/alpha/libm-test-ulps: Regenerate.
+
 2014-04-16  Ian Bolton  <ian.bolton@arm.com>
 	    Wilco Dijkstra  <wilco.dijkstra@arm.com>
 
 	* sysdeps/aarch64/fpu/math_private.h: New file.
+
+2014-04-16  Marcus Shawcroft  <marcus.shawcroft@arm.com>
+
+	* sysdeps/aarch64/libm-test-ulps: Regenerate.
+
+2014-04-16  Igor Zamyatin  <igor.zamyatin@intel.com>
+
+	* sysdeps/x86_64/bits/link.h (La_x86_64_regs): Add lr_bnd.
+	(La_x86_64_retval): Add lrv_bnd0 and lrv_bnd1.
+	* sysdeps/x86_64/dl-trampoline.S (_dl_runtime_profile): Save
+	Intel MPX bound registers before _dl_profile_fixup.
+	* sysdeps/x86_64/dl-trampoline.h: Restore Intel MPX bound
+	registers after _dl_profile_fixup.  Save and restore bound
+	registers bnd0/bnd1 when calling _dl_call_pltexit.
+	* sysdeps/x86_64/link-defines.sym (BND_SIZE): New.
+	(LR_BND_OFFSET): Likewise.
+	(LRV_BND0_OFFSET): Likewise.
+	(LRV_BND1_OFFSET): Likewise.
+
+2014-04-16  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	* sysdeps/mach/hurd/tls.h (dtv, dtv_t, tcbhead_t): Move declarations
+	to...
+	* sysdeps/mach/hurd/i386/tls.h: ... here.
+	(tcbhead_t): Add multiple_threads, sysinfo, stack_guard,
+	pointer_guard, gscope_flag, private_futex, __private_tm, __private_ss
+	fields.
+
+2014-04-16  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+	* sysdeps/mach/munmap.c (__munmap): Return EINVAL if `addr' is 0.
+
+2014-04-16  Stefan Liebler  <stli@linux.vnet.ibm.com>
+
+	* sysdeps/s390/fpu/libm-test-ulps: Regenerate.
+
+2014-04-16  Stefan Liebler  <stli@linux.vnet.ibm.com>
+
+	[BZ #14770]
+	* sysdeps/s390/configure.ac: Check for Binutils >= 2.24.
+	* sysdeps/s390/configure: Regenerate.
+
+2014-04-16  Stefan Liebler  <stli@linux.vnet.ibm.com>
+
+	[BZ #16824]
+	* sysdeps/ieee754/ldbl-128/e_j1l.c (__ieee754_y1l):
+	Set round-to-nearest internally to reduce error accumulation.
+
+2014-04-16  Alan Modra  <amodra@gmail.com>
+
+	[BZ #16740]
+	[BZ #16619]
+	* sysdeps/ieee754/ldbl-128ibm/s_frexpl.c (__frexpl): Rewrite.
+	* math/libm-test.inc (frexp_test_data): Add tests.
+	* NEWS: Update fixed bug list.
+
+2014-04-15  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* benchtests/Makefile: Depend on libraries in build directory.
+	(bench-math): Separate out math tests.
+	(bench-pthread): Separate out pthread tests.
+	(bench): Include math and pthread tests.
+
+2014-04-14  Carlos O'Donell  <carlos@redhat.com>
+
+	[BZ #16831]
+	* csu/libc-start.c (LIBC_START_MAIN) [!SHARED]: Call
+	_dl_debug_initialize.
+
+2014-04-14  Carlos O'Donell  <carlos@redhat.com>
+
+	* configure.ac: Remove SELinux header check.
+	* configure: Regenerate.
+	* nscd/selinux.c (perms): Array of const char* to permission names.
+	(nscd_request_avc_has_perm): Call security_deny_unknown to find
+	default policy. Call string_to_security_class and string_to_av_perm to
+	translate strings. Enforce default policy and call avs_has_perm with
+	results of translated strings.
+
+2014-04-13  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/fpu/libm-test-ulps: Update.
+
+2014-04-12  Allan McRae  <allan@archlinux.org>
+
+	[BZ #16838]
+	* manual/string.texi (Collation Functions): Fix qsort argument
+	order in example.
+	Reported by David C. Rankin <drankinatty@suddenlinkmail.com>.
+
+2014-04-11  Chris Metcalf  <cmetcalf@tilera.com>
+
+	* math/test-fenv-preserve.c [FE_ALL_EXCEPT == 0] (do_test):
+	Make the test a no-op if there are no exceptions defined.
+
+2014-04-11  Paul Pluzhnikov  <ppluzhnikov@google.com>
+
+	* elf/Makefile (tests): make tst-dlopen-aout conditional on
+	enable-hardcoded-path-in-tests
+
+2014-04-11  Will Newton  <will.newton@linaro.org>
+
+	* benchtests/Makefile (extra-objs): Add json-lib.o.
+	(bench-func): Tidy up JSON output.
+	* benchtests/bench-skeleton.c: Include json-lib.h.
+	(main): Use JSON library functions to do output of
+	benchmark results.
+	* benchtests/bench-timing-type.c (main): Output the
+	timing type simply, leaving formatting to the user.
+	* benchtests/json-lib.c: New file.
+	* benchtests/json-lib.h: Likewise.
+
+2014-04-11  Torvald Riegel  <triegel@redhat.com>
+
+	[BZ #15215]
+	* nptl/sysdeps/unix/sysv/linux/sparc/pthread_once.c: Moved to ...
+	* nptl/sysdeps/unix/sysv/linux/pthread_once.c: ... here.  Add missing
+	memory barriers.  Add comments.
+	* sysdeps/unix/sysv/linux/aarch64/nptl/pthread_once.c: Remove file.
+	* sysdeps/unix/sysv/linux/arm/nptl/pthread_once.c: Remove file.
+	* sysdeps/unix/sysv/linux/ia64/nptl/pthread_once.c: Remove file.
+	* sysdeps/unix/sysv/linux/m68k/nptl/pthread_once.c: Remove file.
+	* sysdeps/unix/sysv/linux/mips/nptl/pthread_once.c: Remove file.
+	* sysdeps/unix/sysv/linux/tile/nptl/pthread_once.c: Remove file.
+
+2014-04-11  Stefan Liebler  <stli@linux.vnet.ibm.com>
+
+	* sysdeps/s390/s390-32/configure.ac: Unify file with ...
+	* sysdeps/s390/s390-64/configure.ac: ... this ...
+	* sysdeps/s390/configure.ac: ... to here.
+	* sysdeps/s390/s390-32/configure: Delete file.
+	* sysdeps/s390/s390-64/configure: Delete file.
+	* sysdeps/s390/configure: Regenerate.
+
+2014-04-11  Joseph Anthony Pasquale Holsten  <joseph@josephholsten.com>
+
+	* resolv/res_query.c (__libc_res_nsearch): Fix typo in comment.
+
+2014-04-11  Will Newton  <will.newton@linaro.org>
+
+	* malloc/malloc.c [!MALLOC_DEBUG]: #define MALLOC_DEBUG
+	to zero if it is not defined elsewhere.  (mtrim): Test
+	the value of MALLOC_DEBUG with #if rather than #ifdef.
+
+2014-04-10 Torvald Riegel  <triegel@redhat.com>
+
+	* benchtests/pthread_once-inputs: New file.
+	* benchtests/pthread_once-source.c: New file.
+	* benchtests/README: Update documentation.
+
+2014-04-09  Igor Zamyatin  <igor.zamyatin@intel.com>
+	    H.J. Lu  <hongjiu.lu@intel.com>
+
+	* config.h.in (HAVE_MPX_SUPPORT): New #undef.
+	* sysdeps/x86_64/configure.ac: Set HAVE_MPX_SUPPORT.
+	* sysdeps/x86_64/configure: Regenerated.
+	* sysdeps/x86_64/dl-trampoline.S (REGISTER_SAVE_AREA): New
+	macro.
+	(REGISTER_SAVE_RAX): Likewise.
+	(REGISTER_SAVE_RCX): Likewise.
+	(REGISTER_SAVE_RDX): Likewise.
+	(REGISTER_SAVE_RSI): Likewise.
+	(REGISTER_SAVE_RDI): Likewise.
+	(REGISTER_SAVE_R8): Likewise.
+	(REGISTER_SAVE_R9): Likewise.
+	(REGISTER_SAVE_BND0): Likewise.
+	(REGISTER_SAVE_BND1): Likewise.
+	(REGISTER_SAVE_BND2): Likewise.
+	(_dl_runtime_resolve): Use them.  Save and restore Intel MPX
+	bound registers when calling _dl_fixup.
+
+2014-04-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* bits/string.h (_STRING_ARCH_unaligned): Define it to 0.
+	* crypt/sha256.c (_STRING_ARCH_unaligned): Check its value instead of its
+	definition.
+	* iconv/gconv_simple.c (_STRING_ARCH_unaligned): Likewise.
+	* iconv/loop.c (_STRING_ARCH_unaligned): Likewise.
+	* iconv/skeleton.c (_STRING_ARCH_unaligned): Likewise.
+	* nscd/nscd_gethst_r.c (_STRING_ARCH_unaligned): Likewise.
+	* nscd/nscd_getserv_r.c (_STRING_ARCH_unaligned): Likewise.
+	* nscd/nscd_helper.c (_STRING_ARCH_unaligned): Likewise.
+	* resolv/res_send.c (_STRING_ARCH_unaligned): Likewise.
+
+2014-04-09  Peter Brett  <peter@peter-b.co.uk>
+
+	[BZ #15514]
+	* sysdeps/posix/pathconf.c (__pathconf): Use statvfs64() for
+	pathconf(_PC_NAME_MAX).
+
+2014-04-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* nptl/sysdeps/pthread/pthread.h (__PTHREAD_MUTEX_HAVE_ELISION):
+	Remove macro usage.
+	(__PTHREAD_SPINS): Move definition to ...
+	* nptl/sysdeps/unix/sysv/linux/powerpc/bits/pthreadtypes.h
+	(__PTHREAD_SPINS): ... here.
+	* nptl/sysdeps/unix/sysv/linux/s390/bits/pthreadtypes.h
+	(__PTHREAD_SPIN): Likewise.
+	* nptl/sysdeps/unix/sysv/linux/sh/bits/pthreadtypes.h
+	(__PTHREAD_SPIN): Likewise.
+	* nptl/sysdeps/unix/sysv/linux/sparc/bits/pthreadtypes.h
+	(__PTHREAD_SPIN): Likewise.
+	* nptl/sysdeps/unix/sysv/linux/x86/bits/pthreadtypes.h
+	(__PTHREAD_SPIN): Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/nptl/bits/pthreadtypes.h
+	(__PTHREAD_SPIN): Likewise.
+	* sysdeps/unix/sysv/linux/alpha/nptl/bits/pthreadtypes.h
+	(__PTHREAD_SPIN): Likewise.
+	* sysdeps/unix/sysv/linux/arm/nptl/bits/pthreadtypes.h
+	(__PTHREAD_SPIN): Likewise.
+	* sysdeps/unix/sysv/linux/ia64/nptl/bits/pthreadtypes.h
+	(__PTHREAD_SPIN): Likewise.
+	* sysdeps/unix/sysv/linux/m68k/nptl/bits/pthreadtypes.h
+	(__PTHREAD_SPIN): Likewise.
+	* sysdeps/unix/sysv/linux/microblaze/nptl/bits/pthreadtypes.h
+	(__PTHREAD_SPIN): Likewise.
+	* sysdeps/unix/sysv/linux/mips/nptl/bits/pthreadtypes.h
+	(__PTHREAD_SPIN): Likewise.
+	* sysdeps/unix/sysv/linux/tile/nptl/bits/pthreadtypes.h
+	(__PTHREAD_SPIN): Likewise.
+
+2014-04-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/powerpc32/power6x/fpu/Implies: New file.
+	* sysdeps/powerpc/powerpc64/power6x/fpu/Implies: new file.
+	* sysdeps/powerpc/powerpc64/power6x/multiarch/Implies: New file.
+	* sysdeps/powerpc/powerpc64/power5+/fpu/Implies: Remove multiarch
+	imply folder.
+	* sysdeps/powerpc/powerpc64/power5/fpu/Implies: Likewise.
+	* sysdeps/powerpc/powerpc64/power7/fpu/Implies: Likewise.
+	* sysdeps/powerpc/powerpc64/power8/fpu/Implies: Likewise.
+	* sysdeps/powerpc/powerpc64/power6x/fpu/multiarch/Implies: Adjust
+	correct imply path.
+	* sysdeps/powerpc/powerpc64/power7/strncat.S (STRLEN): Define correct
+	strlen symbol for non multi-arch builds.
+	* sysdeps/powerpc/powerpc64/power8/fpu/s_isnan.S (__isnan): Add
+	missing hidden_def and weak_alias.
+
+2014-04-08  Carlos O'Donell  <carlos@redhat.com>
+
+	* manual/ipc.texi (sem_close): AC-unsafe because of aculock.
+
+2014-04-07  Will Newton  <will.newton@linaro.org>
+
+	* string/basename.c [HAVE_CONFIG_H]: Remove #ifdef and
+	and contents.  [!_LIBC] Remove #ifndef and contents.
+	(basename): Use ANSI prototype.  [_LIBC] Remove #idef.
+	* string/memccpy.c (__memccpy): Use ANSI prototype.
+	* string/memfrob.c (memfrob): Likewise.
+	* string/strcoll.c (STRCOLL): Likewise.
+	* string/strlen.c (strlen): Likewise.
+	* string/strtok.c (STRTOK): Likewise.
+	* string/strcat.c: Remove unused #include of memcopy.h.
+	(strcat): Use ANSI prototype.
+	* string/strchr.c: Remove unused #include of memcopy.h.
+	(strchr): Use ANSI prototype.
+	* string/strcmp.c: Remove unused #include of memcopy.h.
+	(strcmp): Use ANSI prototype.
+	* string/strcpy.c: Remove unused #include of memcopy.h.
+	(strcpy): Use ANSI prototype.
+
+2014-04-06  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* Makeconfig (CPPFLAGS): Add config-extra-cppflags to list.
+	* config.make.in (config-extra-cppflags): Set it from
+	libc_extra_cppflags.
+	* configure.ac (libc_extra_cflags): Make it accumulate over
+	configure fragments.
+	(libc_extra_cppflags): New flag.
+	* configure. Regenerate.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/configure.ac
+	(libc_cv_ppc64_def_call_elf): Define it to yes if compiler does not set
+	_CALL_ELF and add -D_CALL_ELF=1 to libc_extra_cppflags.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc64/configure: Regenerate.
+
+2014-04-06  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	[BZ #16815]
+	* sysdeps/powerpc/powerpc32/fpu/s_nearbyint.S (__nearbyint): Fix
+	result for FE_DOWNWARD rounding mode.
+	* sysdeps/powerpc/powerpc32/fpu/s_nearbyintf.S (__nearbyintf):
+	Likewise.
+	* sysdeps/powerpc/fpu/libm-test-ulps: Update.
+
+2014-04-04  Chris Metcalf  <cmetcalf@tilera.com>
+
+	* sysdeps/tile/dl-runtime.c (_dl_unmap): Fix cut-and-paste bug
+	in function argument name.
+
+2014-04-03  David Svoboda  <svoboda@cert.org>
+
+	[BZ #5666]
+	* manual/stdio.texi (Line-Oriented Input): Document buffer allocation
+	explicitly.
+
+2014-04-03  Roland McGrath  <roland@hack.frob.com>
+
+	* elf/dl-unmap-segments.h: New file.
+	* sysdeps/generic/ldsodefs.h
+	(DL_UNMAP): Use _dl_unmap_segments in place of __munmap.
+	* elf/dl-close.c: Include <dl-unmap-segments.h>.
+	* elf/dl-fptr.c: Likewise.
+	(_dl_unmap): Use _dl_unmap_segments in place of __munmap.
+	* sysdeps/aarch64/tlsdesc.c: Likewise.
+	* sysdeps/arm/tlsdesc.c: Likewise.
+	* sysdeps/i386/tlsdesc.c: Likewise.
+	* sysdeps/tile/dl-runtime.c: Likewise.
+	* sysdeps/x86_64/tlsdesc.c: Likewise.
+	* elf/dl-load.h: New file.
+	* elf/dl-load.c: Include it.
+	(MAP_FILE, MAP_COPY, MAP_BASE_ADDR):
+	Macros moved to dl-load.h.
+	(ELF_PREFERRED_ADDRESS_DATA, ELF_PREFERRED_ADDRESS): Likewise.
+	(_dl_map_object_from_fd): Type 'struct loadcmd' moved to dl-load.h.
+	Use _dl_unmap_segments in place of __munmap.
+	Break out segment-mapping loop into ...
+	* elf/dl-map-segments.h (_dl_map_segments): ... here, in new file.
+
+2014-04-03  Will Newton  <will.newton@linaro.org>
+
+	* elf/dl-lookup.c (do_lookup_x): Remove comment
+	referring to nested function and move variable
+	declarations down to before first use.
+
+2014-04-02  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #16799]
+	[BZ #16800]
+	* math/s_catan.c (__catan): Avoid passing -0 denominator to atan2
+	with 0 numerator.
+	* math/s_catanf.c (__catanf): Likewise.
+	* math/s_catanh.c (__catanh): Likewise.
+	* math/s_catanhf.c (__catanhf): Likewise.
+	* math/s_catanhl.c (__catanhl): Likewise.
+	* math/s_catanl.c (__catanl): Likewise.
+	* sysdeps/ieee754/flt-32/e_logf.c (__ieee754_logf): Always divide
+	by positive zero when computing -Inf result.
+	* math/libm-test.inc (catan_test): Use ALL_RM_TEST.
+	(catanh_test): Likewise.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+	[BZ #16789]
+	* math/s_clog.c (__clog): Use math_force_eval to ensure underflow
+	instead of using underflowing value in computing result.
+	* math/s_clog10.c (__clog10): Likewise.
+	* math/s_clog10f.c (__clog10f): Likewise.
+	* math/s_clog10l.c (__clog10l): Likewise.
+	* math/s_clogf.c (__clogf): Likewise.
+	* math/s_clogl.c (__clogl): Likewise.
+	* math/libm-test.inc (clog_test): Use ALL_RM_TEST.
+	(clog10_test): Likewise.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2014-04-02  Alan Modra  <amodra@gmail.com>
+
+	[BZ #16739]
+	* sysdeps/ieee754/ldbl-128ibm/s_nextafterl.c (__nextafterl): Correct
+	output when value is near a power of two.  Use int64_t for lx and
+	remove casts.  Use decimal rather than hex exponent constants.
+	Don't use long double multiplication when double will suffice.
+	* math/libm-test.inc (nextafter_test_data): Add tests.
+	* NEWS: Add 16739 and 16786 to bug list.
+
+2014-04-02  Alan Modra  <amodra@gmail.com>
+
+	* sysdeps/powerpc/powerpc64/power7/memrchr.S: Correct stream hint.
+
+2014-04-02  Alan Modra  <amodra@gmail.com>
+
+	* sysdeps/powerpc/powerpc64/start.S: Add @toc to toc symbol reference.
+
+2014-04-01  Will Newton  <will.newton@linaro.org>
+
+	* benchtests/Makefile (CFLAGS-bench-ffs.c): Add
+	-fno-builtin.  (CFLAGS-bench-ffsll.c): Likewise.
+
+2014-04-01  Florian Weimer  <fweimer@redhat.com>
+
+	[BZ #13347]
+	* nptl/nptl-init.c (sighandler_setxid): Check system call result.
+	* nptl/tst-setuid2.c: New file.
+	* nptl/Makefile (xtests): Add tst-setuid2.
+
+2014-04-01  Alan Modra  <amodra@gmail.com>
+
+	[BZ #16786]
+	* sysdeps/powerpc/powerpc64/fpu/s_copysign.S: Don't trash stack.
+
+2014-03-31  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #6803]
+	[BZ #6804]
+	* math/w_scalb.c (__scalb): For non-SVID mode, check result and
+	set errno as appropriate.
+	* math/w_scalbf.c (__scalbf): Likewise.
+	* math/w_scalbl.c (__scalbl): Likewise.
+	* math/gen-libm-test.pl (parse_args): Handle ERRNO_PLUS_OFLOW,
+	ERRNO_MINUS_OFLOW, ERRNO_PLUS_UFLOW and ERRNO_MINUS_UFLOW.
+	* math/libm-test.inc (scalb_test_data): Add errno expectations.
+	Add more NaN tests.
+
+	[BZ #16349]
+	* math/w_atan2.c: Include <errno.h>.
+	(__atan2): Set errno for result underflowing to zero.
+	* math/w_atan2f.c: Include <errno.h>.
+	(__atan2f): Set errno for result underflowing to zero.
+	* math/w_atan2l.c: Include <errno.h>.
+	(__atan2l): Set errno for result underflowing to zero.
+	* math/auto-libm-test-in: Don't allow missing errno for some atan2
+	tests.
+	* math/auto-libm-test-out: Regenerated.
+
+2014-03-31  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/powerpc64/power8/fpu/s_finite.S (MFVSRD_R3_V1):
+	Encode instruction correctly in little endian.
+	* sysdeps/powerpc/powerpc64/power8/fpu/s_isinf.S (MFVSRD_R3_V1):
+	Likewise.
+	* sysdeps/powerpc/powerpc64/power8/fpu/s_isnan.S (MFVSRD_R3_V1):
+	Likewise.
+	* sysdeps/powerpc/powerpc64/power8/fpu/s_llrint.S (MFVSRD_R3_V1):
+	Likewise.
+	* sysdeps/powerpc/powerpc64/power8/fpu/s_llround.S (MFVSRD_R3_V1):
+	Likewise.
+
+2014-03-31  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #9894]
+	* sysdeps/unix/sysv/linux/kernel-features.h
+	[__sparc__ && !__arch64__ && !__sparc_v9__]
+	(__ASSUME_SET_ROBUST_LIST): Do not define.
+	[__sparc__ && !__arch64__ && !__sparc_v9__]
+	(__ASSUME_FUTEX_LOCK_PI): Likewise.
+	[__sparc__ && !__arch64__ && !__sparc_v9__] (__ASSUME_REQUEUE_PI):
+	Likewise.
+	* sysdeps/unix/sysv/linux/arm/kernel-features.h
+	(__ASSUME_FUTEX_LOCK_PI): Undefine.
+	(__ASSUME_REQUEUE_PI): Likewise.
+	(__ASSUME_SET_ROBUST_LIST): Likewise.
+	* sysdeps/unix/sysv/linux/m68k/kernel-features.h
+	[__LINUX_KERNEL_VERSION < 0x030a00] (__ASSUME_FUTEX_LOCK_PI):
+	Undefine.
+	* sysdeps/unix/sysv/linux/microblaze/kernel-features.h
+	[__LINUX_KERNEL_VERSION < 0x020621] (__ASSUME_FUTEX_LOCK_PI):
+	Likewise.
+	[__LINUX_KERNEL_VERSION < 0x020621] (__ASSUME_REQUEUE_PI):
+	Likewise.
+	[__LINUX_KERNEL_VERSION < 0x020621] (__ASSUME_SET_ROBUST_LIST):
+	Likewise.
+	* sysdeps/unix/sysv/linux/mips/kernel-features.h
+	[__mips == 1 || _MIPS_ARCH_R5900] (__ASSUME_FUTEX_LOCK_PI):
+	Undefine.
+	[__mips == 1 || _MIPS_ARCH_R5900] (__ASSUME_REQUEUE_PI): Likewise.
+	[__mips == 1 || _MIPS_ARCH_R5900] (__ASSUME_SET_ROBUST_LIST):
+	Likewise.
+
+	[BZ #16648]
+	* sysdeps/unix/sysv/linux/microblaze/kernel-features.h
+	[__LINUX_KERNEL_VERSION >= 0x020621] (__ASSUME_FUTIMESAT): Define.
+	* sysdeps/unix/sysv/linux/microblaze/futimesat.c: New file.
+
+2014-03-31  Will Newton  <will.newton@linaro.org>
+
+	* benchtests/Makefile (bench): Add ffs and ffsll to list
+	of tests.
+	* benchtests/ffs-inputs: New file.
+	* benchtests/ffsll-inputs: Likewise.
+
+2014-03-29  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #16770]
+	* math/e_scalb.c (__ieee754_scalb): Check second argument is not
+	too large before casting to int.
+	* math/e_scalbf.c (__ieee754_scalbf): Likewise.
+	* math/e_scalbl.c (__ieee754_scalbl): Likewise.
+	* math/libm-test.inc (scalb_test_data): Add more tests.
+
+2014-03-29  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* benchtests/Makefile (DETAILED_OPT): New make option.
+	(bench-func): Run benchmark program with -d if DETAILED_OPT is
+	set.
+	* benchtests/bench-skeleton.c: Include stdbool.h.
+	(main): Store and print timings per input.
+	* benchtests/scripts/bench.py (STRUCT_TEMPLATE): Add timing
+	member to each argument value.
+	(EPILOGUE): Define new macros RESULT and RESULT_ACCUM.
+	(_print_arg_data): Initialize per-input timing to 0.
+
+	* benchtests/Makefile (timing-type): New binary.
+	(bench-clean): Also remove bench-timing-type.
+	(bench): New target for timing-type.
+	(bench-func): Print output in JSON format.
+	* benchtests/bench-skeleton.c (main): Print output in JSON
+	format.
+	* benchtests/bench-timing-type.c: New file.
+	* benchtests/bench-timing.h (TIMING_TYPE): New macro.
+	(TIMING_PRINT_STATS): Remove.
+	* benchtests/scripts/bench.py (_print_arg_data): Store variant
+	name separately.
+
+	* benchtests/bench-modf.c: Remove.
+	* benchtests/modf-inputs: New inputs file.
+
+2014-03-28  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #16362]
+	* math/s_clog10.c (M_PI_LOG10E): New macro.
+	(__clog10): Use M_PI_LOG10E instead of M_PI when real and
+	imaginary parts are 0.
+	* math/s_clog10f.c (M_PI_LOG10Ef): New macro.
+	(__clog10f): Use M_PI_LOG10Ef instead of M_PI when real and
+	imaginary parts are 0.
+	* math/s_clog10l.c (M_PI_LOG10El): New macro.
+	(__clog10l): Use M_PI_LOG10El instead of M_PIl when real and
+	imaginary parts are 0.
+	* math/libm-test.inc (clog10_test_data): Update expected results
+	for when real and imaginary parts are 0.
+
+2014-03-27  Paul Pluzhnikov  <ppluzhnikov@google.com>
+
+	* elf/dl-load.c: Finish conversion of __builtin_expect into
+	__glibc_{un}likely.
+
+2014-03-27  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #16348]
+	* sysdeps/i386/fpu/e_expl.S (IEEE754_EXPL) [!USE_AS_EXPM1L]: Use
+	1+x for argument with exponent below -67.
+	* sysdeps/x86_64/fpu/e_expl.S (IEEE754_EXPL) [!USE_AS_EXPM1L]:
+	Likewise.
+	* math/auto-libm-test-in: Add more tests of exp.
+	* math/auto-libm-test-out: Regenerated.
+
+2014-03-27  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #16759]
+	* inet/getnetgrent_r.c (get_nonempty_val): New function.
+	(nscd_getnetgrent): Use it.
+
+	[BZ #16760]
+	* nscd/netgroupcache.c (addgetnetgrentX): Use memmove instead
+	of stpcpy.
+
+2014-03-27  Andi Kleen  <ak@linux.intel.com>
+
+	* nptl/sysdeps/unix/sysv/linux/x86_64/lowlevellock.h (lll_lock,
+	lll_robust_lock, lll_cond_lock, lll_timedlock, lll_robust_cond_lock,
+	lll_robust_timedlock, lll_unlock, lll_robust_unlock):
+	Remove out of line section. Use cfi intrinsics.
+	(LLL_STUB_UNWIND_INFO*): Remove.
+	* nptl/sysdeps/unix/sysv/linux/i386/lowlevellock.h (lll_lock,
+	lll_robust_lock, lll_cond_lock, lll_timedlock, lll_robust_cond_lock,
+	lll_robust_timedlock, lll_unlock, lll_robust_unlock):
+	Remove out of line section. Use cfi intrinsics.
+	(LLL_STUB_UNWIND_INFO*): Remove.
+
+2014-03-27  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	[BZ #16758]
+	* nscd/netgroupcache.c (addinnetgrX): Succeed if triplet has
+	blank values.
+
+2014-03-26  Paul Pluzhnikov  <ppluzhnikov@google.com>
+
+	* elf/dl-load.c: Convert __builtin_expect into __glibc_{un}likely.
+
+2014-03-26  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #16198]
+	* sysdeps/x86_64/fpu/fegetenv.c (fegetenv): Use fldenv after
+	fnstenv.
+	* math/test-fenv-preserve.c: New file.
+	* math/Makefile (tests): Add test-fenv-preserve.
+
+2014-03-26  Will Newton <will.newton@linaro.org>
+
+	* benchtests/bench-strtod.c (TIMEOUT): Define to 10.
+
+2014-03-25  Roland McGrath  <roland@hack.frob.com>
+
+	* scripts/versionlist.awk: Partition the version sets and emit all
+	GLIBC_* (sorted) before all others (sorted).
+
+2014-03-25  Joseph Myers  <joseph@codesourcery.com>
+
+	* elf/Versions (libc) [EXPORT_UNWIND_FIND_FDE]: Add empty
+	GLIBC_2.2.5 version.
+
+2014-03-25 Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* scripts/localplt.awk: Check for PLT generated by internal IFUNC
+	calls.
+
+2014-03-25 Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* nptl/sysdeps/unix/sysv/linux/powerpc/bits/pthreadtypes.h: Revert
+	previous change.
+
+2014-03-25 Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/fpu/libm-test-ulps: Update.
+
+2014-03-25  Andreas Schwab  <schwab@suse.de>
+
+	* sysdeps/unix/sysv/linux/check_pf.c (make_request): Add out_fail2
+	label to be used after in6ailist is initialized.
+
+2014-03-25  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* nptl/sysdeps/unix/sysv/linux/powerpc/bits/pthreadtypes.h
+	(__PTHREAD_MUTEX_HAVE_ELISION): New define.
+
+2014-03-25  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #16357]
+	[BZ #16599]
+	* math/gen-auto-libm-tests.c (fp_format_desc): Add field
+	min_plus_half.
+	(fp_formats): Update initializers.
+	(init_fp_formats): Initialize new field.
+	(output_for_one_input_case): Allow underflow for results up to
+	min_plus_half.
+	* math/libm-test.inc (log1p_test): Use ALL_RM_TEST.
+	* math/auto-libm-test-in: Don't mark some underflows from asin and
+	atanh as spurious.
+	* math/auto-libm-test-out: Regenerated.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2014-03-25  Andreas Schwab  <schwab@suse.de>
+
+	* libio/Makefile (tst-ftell-partial-wide-ENV)
+	(tst-ftell-active-handler-ENV): Define.
+
+2014-03-25  Stefan Liebler <stli@linux.vnet.ibm.com>
+
+	* NEWS: Add 16712, 16713, 16714 to fixed bug list.
+
+2014-03-24  Paul Pluzhnikov  <ppluzhnikov@google.com>
+
+	* elf/tst-dlopen-aout.c: Adjust comments. Use test-skeleton.c
+
+2014-03-24  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/ieee754/dbl-64/e_exp.c: Include <math.h>.
+	* sysdeps/x86_64/fpu/multiarch/e_exp.c
+	[HAVE_FMA4_SUPPORT || HAVE_AVX_SUPPORT]: Likewise.
+
+2014-03-24  Paul Pluzhnikov  <ppluzhnikov@google.com>
+
+	[BZ #16634]
+	* elf/dl-load.c (open_verify): Add mode parameter.
+	Error early when ET_EXEC and mode does not have __RTLD_OPENEXEC.
+	(open_path): Change from boolean 'secure' to complete flag 'mode'
+	(_dl_map_object): Adjust.
+	* elf/Makefile (tests): Add tst-dlopen-aout.
+	* elf/tst-dlopen-aout.c: New test.
+
+2014-03-24  Stefan Liebler <stli@linux.vnet.ibm.com>
+
+	[BZ #16714]
+	* sysdeps/unix/sysv/linux/s390/bits/stat.h
+	(struct stat): Rename member pad0 to __glibc_reserved0.
+
+2014-03-24  Stefan Liebler <stli@linux.vnet.ibm.com>
+
+	[BZ #16712]
+	* sysdeps/s390/s390-32/bits/wordsize.h
+	(__WORDSIZE32_SIZE_ULONG): New define.
+	* sysdeps/s390/s390-64/bits/wordsize.h
+	(__WORDSIZE32_SIZE_ULONG): Likewise.
+	* sysdeps/generic/stdint.h (SIZE_MAX):
+	Define as UL if __WORDSIZE32_SIZE_ULONG.
+
+2014-03-24  Stefan Liebler <stli@linux.vnet.ibm.com>
+
+	[BZ #16713]
+	* sysdeps/unix/sysv/linux/s390/bits/sigaction.h
+	(__glibc_reserved0): New variable.
+	(sa_flags): Change type to int.
+
+2014-03-24  Stefan Liebler  <stli@linux.vnet.ibm.com>
+
+	* posix/Makefile (before-compile): Use += before-compile instead
+	of a :=.
+
+2014-03-24  Stefan Liebler <stli@linux.vnet.ibm.com>
+
+	* nptl/sysdeps/unix/sysv/linux/s390/bits/pthreadtypes.h
+	(__PTHREAD_MUTEX_HAVE_ELISION): New define.
+
+2014-03-20  Andreas Schwab  <schwab@suse.de>
+
+	[BZ #16743]
+	* sysdeps/posix/getaddrinfo.c (gaih_inet): Properly skip over
+	non-matching result from nscd.
+
+2014-03-24  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* scripts/bench.py: Moved to ...
+	* benchtests/scripts/bench.py: ... here.
+	* benchtests/Makefile ($(objpfx)bench-%.c): Adjust.
+
+2014-03-24  Andreas Schwab  <schwab@suse.de>
+
+	[BZ #16002]
+	* sysdeps/unix/sysv/linux/check_pf.c (make_request): Use
+	alloca_account and account alloca use for struct in6ailist.
+
+2014-03-24  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #16284]
+	* sysdeps/ieee754/dbl-64/e_exp.c (__ieee754_exp): Use original
+	rounding mode to recompute results that overflow to infinity or
+	underflow to zero.
+	* math/auto-libm-test-in: Don't mark tests as expected to fail for
+	bug 16284.
+	* math/auto-libm-test-out: Regenerated.
+	* math/libm-test.inc (ccos_test): Use ALL_RM_TEST.
+	(ccosh_test): Likewise.
+	(csin_test_data): Use plus_oflow.
+	(csin_test): Use ALL_RM_TEST.
+	(csinh_test_data): Use plus_oflow.
+	(csinh_test): Use ALL_RM_TEST.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2014-03-21  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/mips/bits/wordsize.h: Include <sgidefs.h>.
+	* sysdeps/unix/sysv/linux/mips/getrlimit64.c: Likewise.
+	* sysdeps/unix/sysv/linux/mips/setrlimit64.c: Likewise.
+
+	[BZ #16731]
+	* sysdeps/i386/fpu/e_log.S (__ieee754_log): Take absolute value
+	when x - 1 is zero.
+	* sysdeps/i386/fpu/e_logf.S (__ieee754_logf): Likewise.
+	* sysdeps/i386/fpu/e_logl.S (__ieee754_logl): Likewise.
+	* sysdeps/i386/i686/fpu/e_logl.S (__ieee754_logl): Likewise.
+	* sysdeps/ieee754/dbl-64/e_log.c (__ieee754_log): Return +0 when
+	argument is 1.
+	* sysdeps/ieee754/ldbl-128/e_logl.c (__ieee754_logl): Likewise.
+	* sysdeps/x86_64/fpu/e_logl.S: Take absolute value when x - 1 is
+	zero.
+	* math/libm-test.inc (log_test): Use ALL_RM_TEST.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2014-03-21  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* scripts/bench.pl: Remove file.
+	* scripts/bench.py: New benchmark script.
+	* benchtests/Makefile ($(objpfx)bench-%.c): Use it.
+	* benchtests/README: Mention python dependency.
+	* scripts/pylintrc: New file.
+	* scripts/pylint: New file.
+
+	* bits/mathdef.h: Use #ifdef instead of #if.
+	* sysdeps/arm/bits/mathdef.h [defined __USE_ISOC99 && defined
+	_MATH_H && !defined _MATH_H_MATHDEF]: Likewise.
+	* sysdeps/tile/bits/mathdef.h [defined __USE_ISOC99 && defined
+	_MATH_H && !defined _MATH_H_MATHDEF]: Likewise.
+	* sysdeps/x86/bits/mathdef.h [defined __USE_ISOC99 && defined
+	_MATH_H && !defined _MATH_H_MATHDEF]: Likewise.
+
+2014-03-20  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+	    Vidya Ranganathan  <vidya@linux.vnet.ibm.com>
+
+	* string/strpbrk.c (strpbrk): Using macro to redefine symbol name.
+	* sysdeps/powerpc/powerpc64/multiarch/Makefile: Add strpbrk-power7
+	and strpbrk-ppc64 objects.
+	* sysdeps/powerpc/powerpc64/multiarch/ifunc-impl-list.c
+	(__libc_ifunc_impl_list): Add new strpbrk optimized symbols.
+	* sysdeps/powerpc/powerpc64/multiarch/strpbrk-power7.S: New file:
+	multiarch strpbrk for POWER7.
+	* sysdeps/powerpc/powerpc64/multiarch/strpbrk-ppc64.c: New file:
+	multiarch strpbrk for PPC64.
+	* sysdeps/powerpc/powerpc64/multiarch/strpbrk.c: New file: strpbrk
+	ifunc selector.
+	* sysdeps/powerpc/powerpc64/power7/strpbrk.S: New file: optimited
+	strpbrk for POWER7.
+
+2014-03-20  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/libm-test.inc (asinh_test): Use ALL_RM_TEST.
+	(atan_test): Likewise.
+	(atanh_test_data): Use NO_TEST_INLINE for two tests.
+	(atanh_test): Use ALL_RM_TEST.
+	(atan2_test_data): Likewise.
+	(cabs_test): Likewise.
+	(cacosh_test): Likewise.
+	(carg_test): Likewise.
+	(casin_test): Likewise.
+	(casinh_test): Likewise.
+	(cbrt_test): Likewise.
+	(csqrt_test): Likewise.
+	(erf_test): Likewise.
+	(erfc_test): Likewise.
+	(pow10_test): Likewise.
+	(exp2_test): Likewise.
+	(hypot_test): Likewise.
+	(j0_test): Likewise.
+	(j1_test): Likewise.
+	(lgamma_test): Likewise.
+	(gamma_test): Likewise.
+	(sincos_test): Likewise.
+	(tanh_test): Likewise.
+	(y0_test): Likewise.
+	(y1_test): Likewise.
+	* sysdeps/i386/fpu/libm-test-ulps: Update.
+	* sysdeps/x86_64/fpu/libm-test-ulps: Likewise.
+
+2014-03-20  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* string/strcspn.c (strcspn): Using macro to redefine symbol name.
+	* sysdeps/powerpc/powerpc64/multiarch/Makefile: Add strcspn-power7
+	and strcspn-ppc64 objects.
+	* sysdeps/powerpc/powerpc64/multiarch/ifunc-impl-list.c
+	(__libc_ifunc_impl_list): Add new strcspn optimized symbols.
+	* sysdeps/powerpc/powerpc64/multiarch/strcspn-power7.S: New file:
+	multiarch strcspn for POWER7.
+	* sysdeps/powerpc/powerpc64/multiarch/strcspn-ppc64.c: New file:
+	multiarch strcspn for PPC64.
+	* sysdeps/powerpc/powerpc64/multiarch/strcspn.c: New file: strcspn
+	ifunc selector.
+	* sysdeps/powerpc/powerpc64/power7/strcspn.S: New file: optimited
+	strcspn for POWER7.
+
+2014-03-20  Joseph Myers  <joseph@codesourcery.com>
+
+	* math/gen-libm-test.pl (generate_testfile): Expect only function
+	name as argument to AUTO_TESTS_* and pass results for all rounding
+	modes to parse_args.
+	(parse_auto_input): Separate inputs of automatic tests from
+	outputs before storing in %auto_tests.
+	* math/libm-test.inc (acos_test_data): Update call to
+	AUTO_TESTS_f_f.
+	(acos_test): Use ALL_RM_TEST.
+	(acos_tonearest_test_data): Remove.
+	(acos_test_tonearest): Likewise.
+	(acos_towardzero_test_data): Likewise.
+	(acos_test_towardzero): Likewise.
+	(acos_downward_test_data): Likewise.
+	(acos_test_downward): Likewise.
+	(acos_upward_test_data): Likewise.
+	(acos_test_upward): Likewise.
+	(acosh_test_data): Update call to AUTO_TESTS_f_f.
+	(asin_test_data): Likewise.
+	(asin_test): Use ALL_RM_TEST.
+	(asin_tonearest_test_data): Remove.
+	(asin_test_tonearest): Likewise.
+	(asin_towardzero_test_data): Likewise.
+	(asin_test_towardzero): Likewise.
+	(asin_downward_test_data): Likewise.
+	(asin_test_downward): Likewise.
+	(asin_upward_test_data): Likewise.
+	(asin_test_upward): Likewise.
+	(asinh_test_data): Update call to AUTO_TESTS_f_f.
+	(atan_test_data): Likewise.
+	(atanh_test_data): Likewise.
+	(atan2_test_data): Update call to AUTO_TESTS_ff_f.
+	(cabs_test_data): Update call to AUTO_TESTS_c_f.
+	(carg_test_data): Likewise.
+	(cbrt_test_data): Update call to AUTO_TESTS_f_f.
+	(ccos_test_data): Update call to AUTO_TESTS_c_c.
+	(ccosh_test_data): Likewise.
+	(cexp_test_data): Likewise.
+	(clog_test_data): Likewise.
+	(clog10_test_data): Likewise.
+	(cos_test_data): Update call to AUTO_TESTS_f_f.
+	(cos_test): Use ALL_RM_TEST.
+	(cos_tonearest_test_data): Remove.
+	(cos_test_tonearest): Likewise.
+	(cos_towardzero_test_data): Likewise.
+	(cos_test_towardzero): Likewise.
+	(cos_downward_test_data): Likewise.
+	(cos_test_downward): Likewise.
+	(cos_upward_test_data): Likewise.
+	(cos_test_upward): Likewise.
+	(cosh_test_data): Update call to AUTO_TESTS_f_f.
+	(cosh_test): Use ALL_RM_TEST.
+	(cosh_tonearest_test_data): Remove.
+	(cosh_test_tonearest): Likewise.
+	(cosh_towardzero_test_data): Likewise.
+	(cosh_test_towardzero): Likewise.
+	(cosh_downward_test_data): Likewise.
+	(cosh_test_downward): Likewise.
+	(cosh_upward_test_data): Likewise.
+	(cosh_test_upward): Likewise.
+	(cpow_test_data): Update call to AUTO_TESTS_cc_c.
+	(csqrt_test_data): Update call to AUTO_TESTS_c_c.
+	(ctan_test_data): Likewise.
+	(ctan_test): Use ALL_RM_TEST.
+	(ctan_tonearest_test_data): Remove.
+	(ctan_test_tonearest): Likewise.
+	(ctan_towardzero_test_data): Likewise.
+	(ctan_test_towardzero): Likewise.
+	(ctan_downward_test_data): Likewise.
+	(ctan_test_downward): Likewise.
+	(ctan_upward_test_data): Likewise.
+	(ctan_test_upward): Likewise.
+	(ctanh_test_data): Update call to AUTO_TESTS_c_c.
+	(ctanh_test): Use ALL_RM_TEST.
+	(ctanh_tonearest_test_data): Remove.
+	(ctanh_test_tonearest): Likewise.
+	(ctanh_towardzero_test_data): Likewise.
+	(ctanh_test_towardzero): Likewise.
+	(ctanh_downward_test_data): Likewise.
+	(ctanh_test_downward): Likewise.
+	(ctanh_upward_test_data): Likewise.
+	(ctanh_test_upward): Likewise.
+	(erf_test_data): Update call to AUTO_TESTS_f_f.
+	(erfc_test_data): Likewise.
+	(exp_test_data): Likewise.
+	(exp_test): Use ALL_RM_TEST.
+	(exp_tonearest_test_data): Remove.
+	(exp_test_tonearest): Likewise.
+	(exp_towardzero_test_data): Likewise.
+	(exp_test_towardzero): Likewise.
+	(exp_downward_test_data): Likewise.
+	(exp_test_downward): Likewise.
+	(exp_upward_test_data): Likewise.
+	(exp_test_upward): Likewise.
+	(exp10_test_data): Update call to AUTO_TESTS_f_f.
+	(exp10_test): Use ALL_RM_TEST.
+	(exp10_tonearest_test_data): Remove.
+	(exp10_test_tonearest): Likewise.
+	(exp10_towardzero_test_data): Likewise.
+	(exp10_test_towardzero): Likewise.
+	(exp10_downward_test_data): Likewise.
+	(exp10_test_downward): Likewise.
+	(exp10_upward_test_data): Likewise.
+	(exp10_test_upward): Likewise.
+	(exp2_test_data): Update call to AUTO_TESTS_f_f.
+	(expm1_test_data): Likewise.
+	(expm1_test): Use ALL_RM_TEST.
+	(expm1_tonearest_test_data): Remove.
+	(expm1_test_tonearest): Likewise.
+	(expm1_towardzero_test_data): Likewise.
+	(expm1_test_towardzero): Likewise.
+	(expm1_downward_test_data): Likewise.
+	(expm1_test_downward): Likewise.
+	(expm1_upward_test_data): Likewise.
+	(expm1_test_upward): Likewise.
+	(fma_test_data): Update call to AUTO_TESTS_fff_f.
+	(fma_test): Use ALL_RM_TEST.
+	(fma_towardzero_test_data): Remove.
+	(fma_test_towardzero): Likewise.
+	(fma_downward_test_data): Likewise.
+	(fma_test_downward): Likewise.
+	(fma_upward_test_data): Likewise.
+	(fma_test_upward): Likewise.
+	(hypot_test_data): Update call to AUTO_TESTS_ff_f.
+	(j0_test_data): Update call to AUTO_TESTS_f_f.
+	(j1_test_data): Likewise.
+	(jn_test_data): Update call to AUTO_TESTS_if_f.
+	(lgamma_test_data): Update call to AUTO_TESTS_f_f1.
+	(log_test_data): Update call to AUTO_TESTS_f_f.
+	(log10_test_data): Likewise.
+	(log1p_test_data): Likewise.
+	(log2_test_data): Likewise.
+	(pow_test_data): Update call to AUTO_TESTS_ff_f.
+	(pow_tonearest_test_data): Likewise.
+	(sin_test_data): Update call to AUTO_TESTS_f_f.
+	(sin_test): Use ALL_RM_TEST.
+	(sin_tonearest_test_data): Remove.
+	(sin_test_tonearest): Likewise.
+	(sin_towardzero_test_data): Likewise.
+	(sin_test_towardzero): Likewise.
+	(sin_downward_test_data): Likewise.
+	(sin_test_downward): Likewise.
+	(sin_upward_test_data): Likewise.
+	(sin_test_upward): Likewise.
+	(sincos_test_data): Update call to AUTO_TESTS_fFF_11.
+	(sinh_test_data): Update call to AUTO_TESTS_f_f.
+	(sinh_test): Use ALL_RM_TEST.
+	(sinh_tonearest_test_data): Remove.
+	(sinh_test_tonearest): Likewise.
+	(sinh_towardzero_test_data): Likewise.
+	(sinh_test_towardzero): Likewise.
+	(sinh_downward_test_data): Likewise.
+	(sinh_test_downward): Likewise.
+	(sinh_upward_test_data): Likewise.
+	(sinh_test_upward): Likewise.
+	(sqrt_test_data): Update call to AUTO_TESTS_f_f.
+	(sqrt_test): Use ALL_RM_TEST.
+	(sqrt_tonearest_test_data): Remove.
+	(sqrt_test_tonearest): Likewise.
+	(sqrt_towardzero_test_data): Likewise.
+	(sqrt_test_towardzero): Likewise.
+	(sqrt_downward_test_data): Likewise.
+	(sqrt_test_downward): Likewise.
+	(sqrt_upward_test_data): Likewise.
+	(sqrt_test_upward): Likewise.
+	(tan_test_data): Update call to AUTO_TESTS_f_f.
+	(tan_test): Use ALL_RM_TEST.
+	(tan_tonearest_test_data): Remove.
+	(tan_test_tonearest): Likewise.
+	(tan_towardzero_test_data): Likewise.
+	(tan_test_towardzero): Likewise.
+	(tan_downward_test_data): Likewise.
+	(tan_test_downward): Likewise.
+	(tan_upward_test_data): Likewise.
+	(tan_test_upward): Likewise.
+	(tanh_test_data): Update call to AUTO_TESTS_f_f.
+	(tgamma_test_data): Likewise.
+	(y0_test_data): Likewise.
+	(y1_test_data): Likewise.
+	(yn_test_data): Update call to AUTO_TESTS_if_f.
+	(main): Do not call removed functions.
 
 2014-03-19  Joseph Myers  <joseph@codesourcery.com>
 

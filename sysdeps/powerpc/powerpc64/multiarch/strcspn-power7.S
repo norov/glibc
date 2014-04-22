@@ -1,4 +1,5 @@
-/* Copyright (C) 2013-2014 Free Software Foundation, Inc.
+/* Optimized strcspn implementation for POWER7.
+   Copyright (C) 2014 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -15,30 +16,25 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-extern double modf (double, double *);
+#include <sysdep.h>
 
-#define CALL_BENCH_FUNC(j, i) modf (in[j].arg0, &i);
+#undef EALIGN
+#define EALIGN(name, alignt, words)				\
+  .section ".text";						\
+  ENTRY_2(__strcspn_power7)					\
+  .align ALIGNARG(alignt);					\
+  EALIGN_W_##words;						\
+  BODY_LABEL(__strcspn_power7):					\
+  cfi_startproc;						\
+  LOCALENTRY(__strcspn_power7)
 
-struct args
-{
-  volatile double arg0;
-} in[] =
-{
-  {  42.42 },
-  { -42.42 }
-};
+#undef END
+#define END(name)						\
+  cfi_endproc;							\
+  TRACEBACK(__strcspn_power7)					\
+  END_2(__strcspn_power7)
 
-#define NUM_VARIANTS 1
-#define NUM_SAMPLES(v) (sizeof (in) / sizeof (struct args))
+#undef libc_hidden_builtin_def
+#define libc_hidden_builtin_def(name)
 
-static volatile double ret = 0.0;
-#define BENCH_FUNC(v, j) \
-({									      \
-  double iptr;								      \
-  ret =  CALL_BENCH_FUNC (j, iptr);					      \
-})
-
-#define FUNCNAME "modf"
-#define VARIANT(v) FUNCNAME "()"
-
-#include "bench-skeleton.c"
+#include <sysdeps/powerpc/powerpc64/power7/strcspn.S>

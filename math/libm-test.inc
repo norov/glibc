@@ -1759,72 +1759,15 @@ static const struct test_f_f_data acos_test_data[] =
     TEST_f_f (acos, max_value, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
     TEST_f_f (acos, -max_value, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
 
-    AUTO_TESTS_f_f (acos, tonearest),
+    AUTO_TESTS_f_f (acos),
   };
 
 static void
 acos_test (void)
 {
-  START (acos, 0);
-  RUN_TEST_LOOP_f_f (acos, acos_test_data, );
-  END;
+  ALL_RM_TEST (acos, 0, acos_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
-
-static const struct test_f_f_data acos_tonearest_test_data[] =
-  {
-    AUTO_TESTS_f_f (acos, tonearest),
-  };
-
-static void
-acos_test_tonearest (void)
-{
-  START (acos_tonearest, 0);
-  RUN_TEST_LOOP_f_f (acos, acos_tonearest_test_data, FE_TONEAREST);
-  END;
-}
-
-
-static const struct test_f_f_data acos_towardzero_test_data[] =
-  {
-    AUTO_TESTS_f_f (acos, towardzero),
-  };
-
-static void
-acos_test_towardzero (void)
-{
-  START (acos_towardzero, 0);
-  RUN_TEST_LOOP_f_f (acos, acos_towardzero_test_data, FE_TOWARDZERO);
-  END;
-}
-
-
-static const struct test_f_f_data acos_downward_test_data[] =
-  {
-    AUTO_TESTS_f_f (acos, downward),
-  };
-
-static void
-acos_test_downward (void)
-{
-  START (acos_downward, 0);
-  RUN_TEST_LOOP_f_f (acos, acos_downward_test_data, FE_DOWNWARD);
-  END;
-}
-
-
-static const struct test_f_f_data acos_upward_test_data[] =
-  {
-    AUTO_TESTS_f_f (acos, upward),
-  };
-
-static void
-acos_test_upward (void)
-{
-  START (acos_upward, 0);
-  RUN_TEST_LOOP_f_f (acos, acos_upward_test_data, FE_UPWARD);
-  END;
-}
 
 static const struct test_f_f_data acosh_test_data[] =
   {
@@ -1843,7 +1786,7 @@ static const struct test_f_f_data acosh_test_data[] =
     TEST_f_f (acosh, -1.125L, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
     TEST_f_f (acosh, -max_value, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
 
-    AUTO_TESTS_f_f (acosh, tonearest),
+    AUTO_TESTS_f_f (acosh),
   };
 
 static void
@@ -1866,87 +1809,28 @@ static const struct test_f_f_data asin_test_data[] =
     TEST_f_f (asin, max_value, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
     TEST_f_f (asin, -max_value, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
 
-    AUTO_TESTS_f_f (asin, tonearest),
+    AUTO_TESTS_f_f (asin),
   };
 
 static void
 asin_test (void)
 {
-  START (asin, 0);
-  RUN_TEST_LOOP_f_f (asin, asin_test_data, );
-  END;
+  ALL_RM_TEST (asin, 0, asin_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
-
-static const struct test_f_f_data asin_tonearest_test_data[] =
-  {
-    AUTO_TESTS_f_f (asin, tonearest),
-  };
-
-static void
-asin_test_tonearest (void)
-{
-  START (asin_tonearest, 0);
-  RUN_TEST_LOOP_f_f (asin, asin_tonearest_test_data, FE_TONEAREST);
-  END;
-}
-
-
-static const struct test_f_f_data asin_towardzero_test_data[] =
-  {
-    AUTO_TESTS_f_f (asin, towardzero),
-  };
-
-static void
-asin_test_towardzero (void)
-{
-  START (asin_towardzero, 0);
-  RUN_TEST_LOOP_f_f (asin, asin_towardzero_test_data, FE_TOWARDZERO);
-  END;
-}
-
-
-static const struct test_f_f_data asin_downward_test_data[] =
-  {
-    AUTO_TESTS_f_f (asin, downward),
-  };
-
-static void
-asin_test_downward (void)
-{
-  START (asin_downward, 0);
-  RUN_TEST_LOOP_f_f (asin, asin_downward_test_data, FE_DOWNWARD);
-  END;
-}
-
-
-static const struct test_f_f_data asin_upward_test_data[] =
-  {
-    AUTO_TESTS_f_f (asin, upward),
-  };
-
-static void
-asin_test_upward (void)
-{
-  START (asin_upward, 0);
-  RUN_TEST_LOOP_f_f (asin, asin_upward_test_data, FE_UPWARD);
-  END;
-}
 
 static const struct test_f_f_data asinh_test_data[] =
   {
     TEST_f_f (asinh, plus_infty, plus_infty, NO_TEST_INLINE),
     TEST_f_f (asinh, minus_infty, minus_infty, NO_TEST_INLINE),
     TEST_f_f (asinh, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
-    AUTO_TESTS_f_f (asinh, tonearest),
+    AUTO_TESTS_f_f (asinh),
   };
 
 static void
 asinh_test (void)
 {
-  START (asinh, 0);
-  RUN_TEST_LOOP_f_f (asinh, asinh_test_data, );
-  END;
+  ALL_RM_TEST (asinh, 0, asinh_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 static const struct test_f_f_data atan_test_data[] =
@@ -1955,15 +1839,13 @@ static const struct test_f_f_data atan_test_data[] =
     TEST_f_f (atan, minus_infty, -M_PI_2l),
     TEST_f_f (atan, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_f_f (atan, tonearest),
+    AUTO_TESTS_f_f (atan),
   };
 
 static void
 atan_test (void)
 {
-  START (atan, 0);
-  RUN_TEST_LOOP_f_f (atan, atan_test_data, );
-  END;
+  ALL_RM_TEST (atan, 0, atan_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -1977,20 +1859,18 @@ static const struct test_f_f_data atanh_test_data[] =
     /* atanh (x) == qNaN plus invalid exception if |x| > 1.  */
     TEST_f_f (atanh, 1.125L, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
     TEST_f_f (atanh, -1.125L, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
-    TEST_f_f (atanh, max_value, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
-    TEST_f_f (atanh, -max_value, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
+    TEST_f_f (atanh, max_value, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM|NO_TEST_INLINE),
+    TEST_f_f (atanh, -max_value, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM|NO_TEST_INLINE),
     TEST_f_f (atanh, plus_infty, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
     TEST_f_f (atanh, minus_infty, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
 
-    AUTO_TESTS_f_f (atanh, tonearest),
+    AUTO_TESTS_f_f (atanh),
   };
 
 static void
 atanh_test (void)
 {
-  START (atanh, 0);
-  RUN_TEST_LOOP_f_f (atanh, atanh_test_data, );
-  END;
+  ALL_RM_TEST (atanh, 0, atanh_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 static const struct test_ff_f_data atan2_test_data[] =
@@ -2019,15 +1899,13 @@ static const struct test_ff_f_data atan2_test_data[] =
     TEST_ff_f (atan2, minus_infty, minus_infty, -M_PI_34l),
     TEST_ff_f (atan2, qnan_value, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_ff_f (atan2, tonearest),
+    AUTO_TESTS_ff_f (atan2),
   };
 
 static void
 atan2_test (void)
 {
-  START (atan2, 0);
-  RUN_TEST_LOOP_ff_f (atan2, atan2_test_data, );
-  END;
+  ALL_RM_TEST (atan2, 0, atan2_test_data, RUN_TEST_LOOP_ff_f, END);
 }
 
 static const struct test_c_f_data cabs_test_data[] =
@@ -2044,15 +1922,13 @@ static const struct test_c_f_data cabs_test_data[] =
 
     TEST_c_f (cabs, qnan_value, qnan_value, qnan_value),
 
-    AUTO_TESTS_c_f (cabs, tonearest),
+    AUTO_TESTS_c_f (cabs),
   };
 
 static void
 cabs_test (void)
 {
-  START (cabs, 0);
-  RUN_TEST_LOOP_c_f (cabs, cabs_test_data, );
-  END;
+  ALL_RM_TEST (cabs, 0, cabs_test_data, RUN_TEST_LOOP_c_f, END);
 }
 
 
@@ -3425,9 +3301,7 @@ static const struct test_c_c_data cacosh_test_data[] =
 static void
 cacosh_test (void)
 {
-  START (cacosh, 0);
-  RUN_TEST_LOOP_c_c (cacosh, cacosh_test_data, );
-  END_COMPLEX;
+  ALL_RM_TEST (cacosh, 0, cacosh_test_data, RUN_TEST_LOOP_c_c, END_COMPLEX);
 }
 
 
@@ -3463,15 +3337,13 @@ static const struct test_c_f_data carg_test_data[] =
 
     TEST_c_f (carg, qnan_value, qnan_value, qnan_value),
 
-    AUTO_TESTS_c_f (carg, tonearest),
+    AUTO_TESTS_c_f (carg),
   };
 
 static void
 carg_test (void)
 {
-  START (carg, 0);
-  RUN_TEST_LOOP_c_f (carg, carg_test_data, );
-  END;
+  ALL_RM_TEST (carg, 0, carg_test_data, RUN_TEST_LOOP_c_f, END);
 }
 
 static const struct test_c_c_data casin_test_data[] =
@@ -4165,9 +4037,7 @@ static const struct test_c_c_data casin_test_data[] =
 static void
 casin_test (void)
 {
-  START (casin, 0);
-  RUN_TEST_LOOP_c_c (casin, casin_test_data, );
-  END_COMPLEX;
+  ALL_RM_TEST (casin, 0, casin_test_data, RUN_TEST_LOOP_c_c, END_COMPLEX);
 }
 
 
@@ -4862,9 +4732,7 @@ static const struct test_c_c_data casinh_test_data[] =
 static void
 casinh_test (void)
 {
-  START (casinh, 0);
-  RUN_TEST_LOOP_c_c (casinh, casinh_test_data, );
-  END_COMPLEX;
+  ALL_RM_TEST (casinh, 0, casinh_test_data, RUN_TEST_LOOP_c_c, END_COMPLEX);
 }
 
 
@@ -5371,9 +5239,7 @@ static const struct test_c_c_data catan_test_data[] =
 static void
 catan_test (void)
 {
-  START (catan, 0);
-  RUN_TEST_LOOP_c_c (catan, catan_test_data, );
-  END_COMPLEX;
+  ALL_RM_TEST (catan, 0, catan_test_data, RUN_TEST_LOOP_c_c, END_COMPLEX);
 }
 
 static const struct test_c_c_data catanh_test_data[] =
@@ -5878,9 +5744,7 @@ static const struct test_c_c_data catanh_test_data[] =
 static void
 catanh_test (void)
 {
-  START (catanh, 0);
-  RUN_TEST_LOOP_c_c (catanh, catanh_test_data, );
-  END_COMPLEX;
+  ALL_RM_TEST (catanh, 0, catanh_test_data, RUN_TEST_LOOP_c_c, END_COMPLEX);
 }
 
 static const struct test_f_f_data cbrt_test_data[] =
@@ -5889,15 +5753,13 @@ static const struct test_f_f_data cbrt_test_data[] =
     TEST_f_f (cbrt, minus_infty, minus_infty),
     TEST_f_f (cbrt, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_f_f (cbrt, tonearest),
+    AUTO_TESTS_f_f (cbrt),
   };
 
 static void
 cbrt_test (void)
 {
-  START (cbrt, 0);
-  RUN_TEST_LOOP_f_f (cbrt, cbrt_test_data, );
-  END;
+  ALL_RM_TEST (cbrt, 0, cbrt_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -5948,15 +5810,13 @@ static const struct test_c_c_data ccos_test_data[] =
 
     TEST_c_c (ccos, qnan_value, qnan_value, qnan_value, qnan_value),
 
-    AUTO_TESTS_c_c (ccos, tonearest),
+    AUTO_TESTS_c_c (ccos),
   };
 
 static void
 ccos_test (void)
 {
-  START (ccos, 0);
-  RUN_TEST_LOOP_c_c (ccos, ccos_test_data, );
-  END_COMPLEX;
+  ALL_RM_TEST (ccos, 0, ccos_test_data, RUN_TEST_LOOP_c_c, END_COMPLEX);
 }
 
 
@@ -6007,15 +5867,13 @@ static const struct test_c_c_data ccosh_test_data[] =
 
     TEST_c_c (ccosh, qnan_value, qnan_value, qnan_value, qnan_value),
 
-    AUTO_TESTS_c_c (ccosh, tonearest),
+    AUTO_TESTS_c_c (ccosh),
   };
 
 static void
 ccosh_test (void)
 {
-  START (ccosh, 0);
-  RUN_TEST_LOOP_c_c (ccosh, ccosh_test_data, );
-  END_COMPLEX;
+  ALL_RM_TEST (ccosh, 0, ccosh_test_data, RUN_TEST_LOOP_c_c, END_COMPLEX);
 }
 
 
@@ -6174,7 +6032,7 @@ static const struct test_c_c_data cexp_test_data[] =
     TEST_c_c (cexp, 1, qnan_value, qnan_value, qnan_value, INVALID_EXCEPTION_OK),
     TEST_c_c (cexp, qnan_value, qnan_value, qnan_value, qnan_value),
 
-    AUTO_TESTS_c_c (cexp, tonearest),
+    AUTO_TESTS_c_c (cexp),
   };
 
 static void
@@ -6254,22 +6112,20 @@ static const struct test_c_c_data clog_test_data[] =
 
     TEST_c_c (clog, qnan_value, qnan_value, qnan_value, qnan_value),
 
-    AUTO_TESTS_c_c (clog, tonearest),
+    AUTO_TESTS_c_c (clog),
   };
 
 static void
 clog_test (void)
 {
-  START (clog, 0);
-  RUN_TEST_LOOP_c_c (clog, clog_test_data, );
-  END_COMPLEX;
+  ALL_RM_TEST (clog, 0, clog_test_data, RUN_TEST_LOOP_c_c, END_COMPLEX);
 }
 
 
 static const struct test_c_c_data clog10_test_data[] =
   {
-    TEST_c_c (clog10, minus_zero, 0, minus_infty, M_PIl, DIVIDE_BY_ZERO_EXCEPTION),
-    TEST_c_c (clog10, minus_zero, minus_zero, minus_infty, -M_PIl, DIVIDE_BY_ZERO_EXCEPTION),
+    TEST_c_c (clog10, minus_zero, 0, minus_infty, M_PI_LOG10El, DIVIDE_BY_ZERO_EXCEPTION),
+    TEST_c_c (clog10, minus_zero, minus_zero, minus_infty, -M_PI_LOG10El, DIVIDE_BY_ZERO_EXCEPTION),
 
     TEST_c_c (clog10, 0, 0, minus_infty, 0.0, DIVIDE_BY_ZERO_EXCEPTION),
     TEST_c_c (clog10, 0, minus_zero, minus_infty, minus_zero, DIVIDE_BY_ZERO_EXCEPTION),
@@ -6316,15 +6172,13 @@ static const struct test_c_c_data clog10_test_data[] =
 
     TEST_c_c (clog10, qnan_value, qnan_value, qnan_value, qnan_value),
 
-    AUTO_TESTS_c_c (clog10, tonearest),
+    AUTO_TESTS_c_c (clog10),
   };
 
 static void
 clog10_test (void)
 {
-  START (clog10, 0);
-  RUN_TEST_LOOP_c_c (clog10, clog10_test_data, );
-  END_COMPLEX;
+  ALL_RM_TEST (clog10, 0, clog10_test_data, RUN_TEST_LOOP_c_c, END_COMPLEX);
 }
 
 
@@ -6402,71 +6256,13 @@ static const struct test_f_f_data cos_test_data[] =
     TEST_f_f (cos, minus_infty, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
     TEST_f_f (cos, qnan_value, qnan_value, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
 
-    AUTO_TESTS_f_f (cos, tonearest),
+    AUTO_TESTS_f_f (cos),
   };
 
 static void
 cos_test (void)
 {
-  START (cos, 0);
-  RUN_TEST_LOOP_f_f (cos, cos_test_data, );
-  END;
-}
-
-
-static const struct test_f_f_data cos_tonearest_test_data[] =
-  {
-    AUTO_TESTS_f_f (cos, tonearest),
-  };
-
-static void
-cos_test_tonearest (void)
-{
-  START (cos_tonearest, 0);
-  RUN_TEST_LOOP_f_f (cos, cos_tonearest_test_data, FE_TONEAREST);
-  END;
-}
-
-
-static const struct test_f_f_data cos_towardzero_test_data[] =
-  {
-    AUTO_TESTS_f_f (cos, towardzero),
-  };
-
-static void
-cos_test_towardzero (void)
-{
-  START (cos_towardzero, 0);
-  RUN_TEST_LOOP_f_f (cos, cos_towardzero_test_data, FE_TOWARDZERO);
-  END;
-}
-
-
-static const struct test_f_f_data cos_downward_test_data[] =
-  {
-    AUTO_TESTS_f_f (cos, downward),
-  };
-
-static void
-cos_test_downward (void)
-{
-  START (cos_downward, 0);
-  RUN_TEST_LOOP_f_f (cos, cos_downward_test_data, FE_DOWNWARD);
-  END;
-}
-
-
-static const struct test_f_f_data cos_upward_test_data[] =
-  {
-    AUTO_TESTS_f_f (cos, upward),
-  };
-
-static void
-cos_test_upward (void)
-{
-  START (cos_upward, 0);
-  RUN_TEST_LOOP_f_f (cos, cos_upward_test_data, FE_UPWARD);
-  END;
+  ALL_RM_TEST (cos, 0, cos_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -6476,71 +6272,13 @@ static const struct test_f_f_data cosh_test_data[] =
     TEST_f_f (cosh, minus_infty, plus_infty, NO_TEST_INLINE),
     TEST_f_f (cosh, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_f_f (cosh, tonearest),
+    AUTO_TESTS_f_f (cosh),
   };
 
 static void
 cosh_test (void)
 {
-  START (cosh, 0);
-  RUN_TEST_LOOP_f_f (cosh, cosh_test_data, );
-  END;
-}
-
-
-static const struct test_f_f_data cosh_tonearest_test_data[] =
-  {
-    AUTO_TESTS_f_f (cosh, tonearest),
-  };
-
-static void
-cosh_test_tonearest (void)
-{
-  START (cosh_tonearest, 0);
-  RUN_TEST_LOOP_f_f (cosh, cosh_tonearest_test_data, FE_TONEAREST);
-  END;
-}
-
-
-static const struct test_f_f_data cosh_towardzero_test_data[] =
-  {
-    AUTO_TESTS_f_f (cosh, towardzero),
-  };
-
-static void
-cosh_test_towardzero (void)
-{
-  START (cosh_towardzero, 0);
-  RUN_TEST_LOOP_f_f (cosh, cosh_towardzero_test_data, FE_TOWARDZERO);
-  END;
-}
-
-
-static const struct test_f_f_data cosh_downward_test_data[] =
-  {
-    AUTO_TESTS_f_f (cosh, downward),
-  };
-
-static void
-cosh_test_downward (void)
-{
-  START (cosh_downward, 0);
-  RUN_TEST_LOOP_f_f (cosh, cosh_downward_test_data, FE_DOWNWARD);
-  END;
-}
-
-
-static const struct test_f_f_data cosh_upward_test_data[] =
-  {
-    AUTO_TESTS_f_f (cosh, upward),
-  };
-
-static void
-cosh_test_upward (void)
-{
-  START (cosh_upward, 0);
-  RUN_TEST_LOOP_f_f (cosh, cosh_upward_test_data, FE_UPWARD);
-  END;
+  ALL_RM_TEST (cosh, 0, cosh_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -6548,7 +6286,7 @@ static const struct test_cc_c_data cpow_test_data[] =
   {
     TEST_cc_c (cpow, qnan_value, qnan_value, qnan_value, qnan_value, qnan_value, qnan_value),
 
-    AUTO_TESTS_cc_c (cpow, tonearest),
+    AUTO_TESTS_cc_c (cpow),
   };
 
 static void
@@ -6717,15 +6455,15 @@ static const struct test_c_c_data csin_test_data[] =
 #endif
 
 #ifdef TEST_FLOAT
-    TEST_c_c (csin, 0x1p-149, 180, 1.043535896672617552965983803453927655332e33L, plus_infty, OVERFLOW_EXCEPTION),
+    TEST_c_c (csin, 0x1p-149, 180, 1.043535896672617552965983803453927655332e33L, plus_oflow, OVERFLOW_EXCEPTION),
 #endif
 
 #if defined TEST_DOUBLE || (defined TEST_LDOUBLE && LDBL_MAX_EXP == 1024)
-    TEST_c_c (csin, 0x1p-1074, 1440, 5.981479269486130556466515778180916082415e301L, plus_infty, OVERFLOW_EXCEPTION),
+    TEST_c_c (csin, 0x1p-1074, 1440, 5.981479269486130556466515778180916082415e301L, plus_oflow, OVERFLOW_EXCEPTION),
 #endif
 
 #if defined TEST_LDOUBLE && LDBL_MAX_EXP >= 16384
-    TEST_c_c (csin, 0x1p-16434L, 22730, 1.217853148905605987081057582351152052687e4924L, plus_infty, OVERFLOW_EXCEPTION),
+    TEST_c_c (csin, 0x1p-16434L, 22730, 1.217853148905605987081057582351152052687e4924L, plus_oflow, OVERFLOW_EXCEPTION),
 #endif
 
     TEST_c_c (csin, min_subnorm_value, min_value, min_subnorm_value, min_value, UNDERFLOW_EXCEPTION),
@@ -6735,9 +6473,7 @@ static const struct test_c_c_data csin_test_data[] =
 static void
 csin_test (void)
 {
-  START (csin, 0);
-  RUN_TEST_LOOP_c_c (csin, csin_test_data, );
-  END_COMPLEX;
+  ALL_RM_TEST (csin, 0, csin_test_data, RUN_TEST_LOOP_c_c, END_COMPLEX);
 }
 
 
@@ -6816,15 +6552,15 @@ static const struct test_c_c_data csinh_test_data[] =
 #endif
 
 #ifdef TEST_FLOAT
-    TEST_c_c (csinh, 180, 0x1p-149, plus_infty, 1.043535896672617552965983803453927655332e33L, OVERFLOW_EXCEPTION),
+    TEST_c_c (csinh, 180, 0x1p-149, plus_oflow, 1.043535896672617552965983803453927655332e33L, OVERFLOW_EXCEPTION),
 #endif
 
 #if defined TEST_DOUBLE || (defined TEST_LDOUBLE && LDBL_MAX_EXP == 1024)
-    TEST_c_c (csinh, 1440, 0x1p-1074, plus_infty, 5.981479269486130556466515778180916082415e301L, OVERFLOW_EXCEPTION),
+    TEST_c_c (csinh, 1440, 0x1p-1074, plus_oflow, 5.981479269486130556466515778180916082415e301L, OVERFLOW_EXCEPTION),
 #endif
 
 #if defined TEST_LDOUBLE && LDBL_MAX_EXP >= 16384
-    TEST_c_c (csinh, 22730, 0x1p-16434L, plus_infty, 1.217853148905605987081057582351152052687e4924L, OVERFLOW_EXCEPTION),
+    TEST_c_c (csinh, 22730, 0x1p-16434L, plus_oflow, 1.217853148905605987081057582351152052687e4924L, OVERFLOW_EXCEPTION),
 #endif
 
     TEST_c_c (csinh, min_subnorm_value, min_value, min_subnorm_value, min_value, UNDERFLOW_EXCEPTION),
@@ -6834,9 +6570,7 @@ static const struct test_c_c_data csinh_test_data[] =
 static void
 csinh_test (void)
 {
-  START (csinh, 0);
-  RUN_TEST_LOOP_c_c (csinh, csinh_test_data, );
-  END_COMPLEX;
+  ALL_RM_TEST (csinh, 0, csinh_test_data, RUN_TEST_LOOP_c_c, END_COMPLEX);
 }
 
 
@@ -6881,15 +6615,13 @@ static const struct test_c_c_data csqrt_test_data[] =
 
     TEST_c_c (csqrt, qnan_value, qnan_value, qnan_value, qnan_value),
 
-    AUTO_TESTS_c_c (csqrt, tonearest),
+    AUTO_TESTS_c_c (csqrt),
   };
 
 static void
 csqrt_test (void)
 {
-  START (csqrt, 0);
-  RUN_TEST_LOOP_c_c (csqrt, csqrt_test_data, );
-  END_COMPLEX;
+  ALL_RM_TEST (csqrt, 0, csqrt_test_data, RUN_TEST_LOOP_c_c, END_COMPLEX);
 }
 
 static const struct test_c_c_data ctan_test_data[] =
@@ -6929,71 +6661,13 @@ static const struct test_c_c_data ctan_test_data[] =
 
     TEST_c_c (ctan, qnan_value, qnan_value, qnan_value, qnan_value),
 
-    AUTO_TESTS_c_c (ctan, tonearest),
+    AUTO_TESTS_c_c (ctan),
   };
 
 static void
 ctan_test (void)
 {
-  START (ctan, 0);
-  RUN_TEST_LOOP_c_c (ctan, ctan_test_data, );
-  END_COMPLEX;
-}
-
-
-static const struct test_c_c_data ctan_tonearest_test_data[] =
-  {
-    AUTO_TESTS_c_c (ctan, tonearest),
-  };
-
-static void
-ctan_test_tonearest (void)
-{
-  START (ctan_tonearest, 0);
-  RUN_TEST_LOOP_c_c (ctan, ctan_tonearest_test_data, FE_TONEAREST);
-  END_COMPLEX;
-}
-
-
-static const struct test_c_c_data ctan_towardzero_test_data[] =
-  {
-    AUTO_TESTS_c_c (ctan, towardzero),
-  };
-
-static void
-ctan_test_towardzero (void)
-{
-  START (ctan_towardzero, 0);
-  RUN_TEST_LOOP_c_c (ctan, ctan_towardzero_test_data, FE_TOWARDZERO);
-  END_COMPLEX;
-}
-
-
-static const struct test_c_c_data ctan_downward_test_data[] =
-  {
-    AUTO_TESTS_c_c (ctan, downward),
-  };
-
-static void
-ctan_test_downward (void)
-{
-  START (ctan_downward, 0);
-  RUN_TEST_LOOP_c_c (ctan, ctan_downward_test_data, FE_DOWNWARD);
-  END_COMPLEX;
-}
-
-
-static const struct test_c_c_data ctan_upward_test_data[] =
-  {
-    AUTO_TESTS_c_c (ctan, upward),
-  };
-
-static void
-ctan_test_upward (void)
-{
-  START (ctan_upward, 0);
-  RUN_TEST_LOOP_c_c (ctan, ctan_upward_test_data, FE_UPWARD);
-  END_COMPLEX;
+  ALL_RM_TEST (ctan, 0, ctan_test_data, RUN_TEST_LOOP_c_c, END_COMPLEX);
 }
 
 
@@ -7033,71 +6707,13 @@ static const struct test_c_c_data ctanh_test_data[] =
 
     TEST_c_c (ctanh, qnan_value, qnan_value, qnan_value, qnan_value),
 
-    AUTO_TESTS_c_c (ctanh, tonearest),
+    AUTO_TESTS_c_c (ctanh),
   };
 
 static void
 ctanh_test (void)
 {
-  START (ctanh, 0);
-  RUN_TEST_LOOP_c_c (ctanh, ctanh_test_data, );
-  END_COMPLEX;
-}
-
-
-static const struct test_c_c_data ctanh_tonearest_test_data[] =
-  {
-    AUTO_TESTS_c_c (ctanh, tonearest),
-  };
-
-static void
-ctanh_test_tonearest (void)
-{
-  START (ctanh_tonearest, 0);
-  RUN_TEST_LOOP_c_c (ctanh, ctanh_tonearest_test_data, FE_TONEAREST);
-  END_COMPLEX;
-}
-
-
-static const struct test_c_c_data ctanh_towardzero_test_data[] =
-  {
-    AUTO_TESTS_c_c (ctanh, towardzero),
-  };
-
-static void
-ctanh_test_towardzero (void)
-{
-  START (ctanh_towardzero, 0);
-  RUN_TEST_LOOP_c_c (ctanh, ctanh_towardzero_test_data, FE_TOWARDZERO);
-  END_COMPLEX;
-}
-
-
-static const struct test_c_c_data ctanh_downward_test_data[] =
-  {
-    AUTO_TESTS_c_c (ctanh, downward),
-  };
-
-static void
-ctanh_test_downward (void)
-{
-  START (ctanh_downward, 0);
-  RUN_TEST_LOOP_c_c (ctanh, ctanh_downward_test_data, FE_DOWNWARD);
-  END_COMPLEX;
-}
-
-
-static const struct test_c_c_data ctanh_upward_test_data[] =
-  {
-    AUTO_TESTS_c_c (ctanh, upward),
-  };
-
-static void
-ctanh_test_upward (void)
-{
-  START (ctanh_upward, 0);
-  RUN_TEST_LOOP_c_c (ctanh, ctanh_upward_test_data, FE_UPWARD);
-  END_COMPLEX;
+  ALL_RM_TEST (ctanh, 0, ctanh_test_data, RUN_TEST_LOOP_c_c, END_COMPLEX);
 }
 
 
@@ -7107,15 +6723,13 @@ static const struct test_f_f_data erf_test_data[] =
     TEST_f_f (erf, minus_infty, -1),
     TEST_f_f (erf, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_f_f (erf, tonearest),
+    AUTO_TESTS_f_f (erf),
   };
 
 static void
 erf_test (void)
 {
-  START (erf, 0);
-  RUN_TEST_LOOP_f_f (erf, erf_test_data, );
-  END;
+  ALL_RM_TEST (erf, 0, erf_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -7125,15 +6739,13 @@ static const struct test_f_f_data erfc_test_data[] =
     TEST_f_f (erfc, minus_infty, 2.0),
     TEST_f_f (erfc, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_f_f (erfc, tonearest),
+    AUTO_TESTS_f_f (erfc),
   };
 
 static void
 erfc_test (void)
 {
-  START (erfc, 0);
-  RUN_TEST_LOOP_f_f (erfc, erfc_test_data, );
-  END;
+  ALL_RM_TEST (erfc, 0, erfc_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -7143,71 +6755,13 @@ static const struct test_f_f_data exp_test_data[] =
     TEST_f_f (exp, minus_infty, 0, NO_TEST_INLINE),
     TEST_f_f (exp, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_f_f (exp, tonearest),
+    AUTO_TESTS_f_f (exp),
   };
 
 static void
 exp_test (void)
 {
-  START (exp, 0);
-  RUN_TEST_LOOP_f_f (exp, exp_test_data, );
-  END;
-}
-
-
-static const struct test_f_f_data exp_tonearest_test_data[] =
-  {
-    AUTO_TESTS_f_f (exp, tonearest),
-  };
-
-static void
-exp_test_tonearest (void)
-{
-  START (exp_tonearest, 0);
-  RUN_TEST_LOOP_f_f (exp, exp_tonearest_test_data, FE_TONEAREST);
-  END;
-}
-
-
-static const struct test_f_f_data exp_towardzero_test_data[] =
-  {
-    AUTO_TESTS_f_f (exp, towardzero),
-  };
-
-static void
-exp_test_towardzero (void)
-{
-  START (exp_towardzero, 0);
-  RUN_TEST_LOOP_f_f (exp, exp_towardzero_test_data, FE_TOWARDZERO);
-  END;
-}
-
-
-static const struct test_f_f_data exp_downward_test_data[] =
-  {
-    AUTO_TESTS_f_f (exp, downward),
-  };
-
-static void
-exp_test_downward (void)
-{
-  START (exp_downward, 0);
-  RUN_TEST_LOOP_f_f (exp, exp_downward_test_data, FE_DOWNWARD);
-  END;
-}
-
-
-static const struct test_f_f_data exp_upward_test_data[] =
-  {
-    AUTO_TESTS_f_f (exp, upward),
-  };
-
-static void
-exp_test_upward (void)
-{
-  START (exp_upward, 0);
-  RUN_TEST_LOOP_f_f (exp, exp_upward_test_data, FE_UPWARD);
-  END;
+  ALL_RM_TEST (exp, 0, exp_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -7217,80 +6771,20 @@ static const struct test_f_f_data exp10_test_data[] =
     TEST_f_f (exp10, minus_infty, 0),
     TEST_f_f (exp10, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_f_f (exp10, tonearest),
+    AUTO_TESTS_f_f (exp10),
   };
 
 static void
 exp10_test (void)
 {
-  START (exp10, 0);
-  RUN_TEST_LOOP_f_f (exp10, exp10_test_data, );
-  END;
-}
-
-
-static const struct test_f_f_data exp10_tonearest_test_data[] =
-  {
-    AUTO_TESTS_f_f (exp10, tonearest),
-  };
-
-static void
-exp10_test_tonearest (void)
-{
-  START (exp10_tonearest, 0);
-  RUN_TEST_LOOP_f_f (exp10, exp10_tonearest_test_data, FE_TONEAREST);
-  END;
-}
-
-
-static const struct test_f_f_data exp10_towardzero_test_data[] =
-  {
-    AUTO_TESTS_f_f (exp10, towardzero),
-  };
-
-static void
-exp10_test_towardzero (void)
-{
-  START (exp10_towardzero, 0);
-  RUN_TEST_LOOP_f_f (exp10, exp10_towardzero_test_data, FE_TOWARDZERO);
-  END;
-}
-
-
-static const struct test_f_f_data exp10_downward_test_data[] =
-  {
-    AUTO_TESTS_f_f (exp10, downward),
-  };
-
-static void
-exp10_test_downward (void)
-{
-  START (exp10_downward, 0);
-  RUN_TEST_LOOP_f_f (exp10, exp10_downward_test_data, FE_DOWNWARD);
-  END;
-}
-
-
-static const struct test_f_f_data exp10_upward_test_data[] =
-  {
-    AUTO_TESTS_f_f (exp10, upward),
-  };
-
-static void
-exp10_test_upward (void)
-{
-  START (exp10_upward, 0);
-  RUN_TEST_LOOP_f_f (exp10, exp10_upward_test_data, FE_UPWARD);
-  END;
+  ALL_RM_TEST (exp10, 0, exp10_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 static void
 pow10_test (void)
 {
-  START (pow10, 0);
   /* pow10 uses the same test data as exp10.  */
-  RUN_TEST_LOOP_f_f (pow10, exp10_test_data, );
-  END;
+  ALL_RM_TEST (pow10, 0, exp10_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -7300,15 +6794,13 @@ static const struct test_f_f_data exp2_test_data[] =
     TEST_f_f (exp2, minus_infty, 0),
     TEST_f_f (exp2, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_f_f (exp2, tonearest),
+    AUTO_TESTS_f_f (exp2),
   };
 
 static void
 exp2_test (void)
 {
-  START (exp2, 0);
-  RUN_TEST_LOOP_f_f (exp2, exp2_test_data, );
-  END;
+  ALL_RM_TEST (exp2, 0, exp2_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -7318,71 +6810,13 @@ static const struct test_f_f_data expm1_test_data[] =
     TEST_f_f (expm1, minus_infty, -1, NO_TEST_INLINE),
     TEST_f_f (expm1, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_f_f (expm1, tonearest),
+    AUTO_TESTS_f_f (expm1),
   };
 
 static void
 expm1_test (void)
 {
-  START (expm1, 0);
-  RUN_TEST_LOOP_f_f (expm1, expm1_test_data, );
-  END;
-}
-
-
-static const struct test_f_f_data expm1_tonearest_test_data[] =
-  {
-    AUTO_TESTS_f_f (expm1, tonearest),
-  };
-
-static void
-expm1_test_tonearest (void)
-{
-  START (expm1_tonearest, 0);
-  RUN_TEST_LOOP_f_f (expm1, expm1_tonearest_test_data, FE_TONEAREST);
-  END;
-}
-
-
-static const struct test_f_f_data expm1_towardzero_test_data[] =
-  {
-    AUTO_TESTS_f_f (expm1, towardzero),
-  };
-
-static void
-expm1_test_towardzero (void)
-{
-  START (expm1_towardzero, 0);
-  RUN_TEST_LOOP_f_f (expm1, expm1_towardzero_test_data, FE_TOWARDZERO);
-  END;
-}
-
-
-static const struct test_f_f_data expm1_downward_test_data[] =
-  {
-    AUTO_TESTS_f_f (expm1, downward),
-  };
-
-static void
-expm1_test_downward (void)
-{
-  START (expm1_downward, 0);
-  RUN_TEST_LOOP_f_f (expm1, expm1_downward_test_data, FE_DOWNWARD);
-  END;
-}
-
-
-static const struct test_f_f_data expm1_upward_test_data[] =
-  {
-    AUTO_TESTS_f_f (expm1, upward),
-  };
-
-static void
-expm1_test_upward (void)
-{
-  START (expm1_upward, 0);
-  RUN_TEST_LOOP_f_f (expm1, expm1_upward_test_data, FE_UPWARD);
-  END;
+  ALL_RM_TEST (expm1, 0, expm1_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -7584,57 +7018,13 @@ static const struct test_fff_f_data fma_test_data[] =
     TEST_fff_f (fma, minus_infty, minus_infty, plus_infty, plus_infty),
     TEST_fff_f (fma, plus_infty, minus_infty, minus_infty, minus_infty),
 
-    AUTO_TESTS_fff_f (fma, tonearest),
+    AUTO_TESTS_fff_f (fma),
   };
 
 static void
 fma_test (void)
 {
-  START (fma, 1);
-  RUN_TEST_LOOP_fff_f (fma, fma_test_data, );
-  END;
-}
-
-
-static const struct test_fff_f_data fma_towardzero_test_data[] =
-  {
-    AUTO_TESTS_fff_f (fma, towardzero),
-  };
-
-static void
-fma_test_towardzero (void)
-{
-  START (fma_towardzero, 1);
-  RUN_TEST_LOOP_fff_f (fma, fma_towardzero_test_data, FE_TOWARDZERO);
-  END;
-}
-
-
-static const struct test_fff_f_data fma_downward_test_data[] =
-  {
-    AUTO_TESTS_fff_f (fma, downward),
-  };
-
-static void
-fma_test_downward (void)
-{
-  START (fma_downward, 1);
-  RUN_TEST_LOOP_fff_f (fma, fma_downward_test_data, FE_DOWNWARD);
-  END;
-}
-
-
-static const struct test_fff_f_data fma_upward_test_data[] =
-  {
-    AUTO_TESTS_fff_f (fma, upward),
-  };
-
-static void
-fma_test_upward (void)
-{
-  START (fma_upward, 1);
-  RUN_TEST_LOOP_fff_f (fma, fma_upward_test_data, FE_UPWARD);
-  END;
+  ALL_RM_TEST (fma, 1, fma_test_data, RUN_TEST_LOOP_fff_f, END);
 }
 
 
@@ -7796,6 +7186,15 @@ static const struct test_f_f1_data frexp_test_data[] =
 
     TEST_fI_f1 (frexp, 12.8L, 0.8L, 4, NO_INEXACT_EXCEPTION),
     TEST_fI_f1 (frexp, -27.34L, -0.854375L, 5, NO_INEXACT_EXCEPTION),
+
+#if defined TEST_LDOUBLE && LDBL_MANT_DIG >= 106
+    TEST_fI_f1 (frexp, 1.0L-0x1p-106L, 1.0L-0x1p-106L, 0, NO_INEXACT_EXCEPTION),
+    TEST_fI_f1 (frexp, 1.0L, 0.5L, 1, NO_INEXACT_EXCEPTION),
+    TEST_fI_f1 (frexp, 1.0L+0x1p-105L, 0.5L+0x1p-106L, 1, NO_INEXACT_EXCEPTION),
+    TEST_fI_f1 (frexp, -1.0L+0x1p-106L, -1.0L+0x1p-106L, 0, NO_INEXACT_EXCEPTION),
+    TEST_fI_f1 (frexp, -1.0L, -0.5L, 1, NO_INEXACT_EXCEPTION),
+    TEST_fI_f1 (frexp, -1.0L-0x1p-105L, -0.5L-0x1p-106L, 1, NO_INEXACT_EXCEPTION),
+#endif
   };
 
 static void
@@ -7818,15 +7217,13 @@ static const struct test_ff_f_data hypot_test_data[] =
 
     TEST_ff_f (hypot, qnan_value, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_ff_f (hypot, tonearest),
+    AUTO_TESTS_ff_f (hypot),
   };
 
 static void
 hypot_test (void)
 {
-  START (hypot, 0);
-  RUN_TEST_LOOP_ff_f (hypot, hypot_test_data, );
-  END;
+  ALL_RM_TEST (hypot, 0, hypot_test_data, RUN_TEST_LOOP_ff_f, END);
 }
 
 
@@ -8107,15 +7504,13 @@ static const struct test_f_f_data j0_test_data[] =
     TEST_f_f (j0, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
     TEST_f_f (j0, plus_infty, 0),
 
-    AUTO_TESTS_f_f (j0, tonearest),
+    AUTO_TESTS_f_f (j0),
   };
 
 static void
 j0_test (void)
 {
-  START (j0, 0);
-  RUN_TEST_LOOP_f_f (j0, j0_test_data, );
-  END;
+  ALL_RM_TEST (j0, 0, j0_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -8125,15 +7520,13 @@ static const struct test_f_f_data j1_test_data[] =
     TEST_f_f (j1, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
     TEST_f_f (j1, plus_infty, 0),
 
-    AUTO_TESTS_f_f (j1, tonearest),
+    AUTO_TESTS_f_f (j1),
   };
 
 static void
 j1_test (void)
 {
-  START (j1, 0);
-  RUN_TEST_LOOP_f_f (j1, j1_test_data, );
-  END;
+  ALL_RM_TEST (j1, 0, j1_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 static const struct test_if_f_data jn_test_data[] =
@@ -8155,7 +7548,7 @@ static const struct test_if_f_data jn_test_data[] =
     TEST_if_f (jn, 10, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
     TEST_if_f (jn, 10, plus_infty, 0),
 
-    AUTO_TESTS_if_f (jn, tonearest),
+    AUTO_TESTS_if_f (jn),
   };
 
 static void
@@ -8179,24 +7572,20 @@ static const struct test_f_f1_data lgamma_test_data[] =
     TEST_f_f1 (lgamma, minus_infty, plus_infty, IGNORE),
     TEST_f_f1 (lgamma, -max_value, plus_infty, IGNORE, DIVIDE_BY_ZERO_EXCEPTION|ERRNO_ERANGE),
 
-    AUTO_TESTS_f_f1 (lgamma, tonearest),
+    AUTO_TESTS_f_f1 (lgamma),
   };
 
 static void
 lgamma_test (void)
 {
-  START (lgamma, 0);
-  RUN_TEST_LOOP_f_f1 (lgamma, lgamma_test_data, , signgam);
-  END;
+  ALL_RM_TEST (lgamma, 0, lgamma_test_data, RUN_TEST_LOOP_f_f1, END, signgam);
 }
 
 static void
 gamma_test (void)
 {
-  START (gamma, 0);
   /* gamma uses the same test data as lgamma.  */
-  RUN_TEST_LOOP_f_f1 (gamma, lgamma_test_data, , signgam);
-  END;
+  ALL_RM_TEST (gamma, 0, lgamma_test_data, RUN_TEST_LOOP_f_f1, END, signgam);
 }
 
 
@@ -8384,15 +7773,13 @@ static const struct test_f_f_data log_test_data[] =
     TEST_f_f (log, plus_infty, plus_infty),
     TEST_f_f (log, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_f_f (log, tonearest),
+    AUTO_TESTS_f_f (log),
   };
 
 static void
 log_test (void)
 {
-  START (log, 0);
-  RUN_TEST_LOOP_f_f (log, log_test_data, );
-  END;
+  ALL_RM_TEST (log, 0, log_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -8409,7 +7796,7 @@ static const struct test_f_f_data log10_test_data[] =
     TEST_f_f (log10, plus_infty, plus_infty),
     TEST_f_f (log10, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_f_f (log10, tonearest),
+    AUTO_TESTS_f_f (log10),
   };
 
 static void
@@ -8431,15 +7818,13 @@ static const struct test_f_f_data log1p_test_data[] =
     TEST_f_f (log1p, plus_infty, plus_infty),
     TEST_f_f (log1p, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_f_f (log1p, tonearest),
+    AUTO_TESTS_f_f (log1p),
   };
 
 static void
 log1p_test (void)
 {
-  START (log1p, 0);
-  RUN_TEST_LOOP_f_f (log1p, log1p_test_data, );
-  END;
+  ALL_RM_TEST (log1p, 0, log1p_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -8455,7 +7840,7 @@ static const struct test_f_f_data log2_test_data[] =
     TEST_f_f (log2, plus_infty, plus_infty),
     TEST_f_f (log2, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_f_f (log2, tonearest),
+    AUTO_TESTS_f_f (log2),
   };
 
 static void
@@ -8918,6 +8303,14 @@ static const struct test_ff_f_data nextafter_test_data[] =
     // XXX Enable once gcc is fixed.
     //TEST_ff_f (nextafter, 0x0.00000040000000000000p-16385L, -0.1L, 0x0.0000003ffffffff00000p-16385L),
 #endif
+#if defined TEST_LDOUBLE && LDBL_MANT_DIG == 106
+    TEST_ff_f (nextafter, 1.0L, -10.0L, 1.0L-0x1p-106L, NO_EXCEPTION),
+    TEST_ff_f (nextafter, 1.0L, 10.0L, 1.0L+0x1p-105L, NO_EXCEPTION),
+    TEST_ff_f (nextafter, 1.0L-0x1p-106L, 10.0L, 1.0L, NO_EXCEPTION),
+    TEST_ff_f (nextafter, -1.0L, -10.0L, -1.0L-0x1p-105L, NO_EXCEPTION),
+    TEST_ff_f (nextafter, -1.0L, 10.0L, -1.0L+0x1p-106L, NO_EXCEPTION),
+    TEST_ff_f (nextafter, -1.0L+0x1p-106L, -10.0L, -1.0L, NO_EXCEPTION),
+#endif
 
     /* XXX We need the hexadecimal FP number representation here for further
        tests.  */
@@ -9302,7 +8695,7 @@ static const struct test_ff_f_data pow_test_data[] =
     TEST_ff_f (pow, -min_value, 0.5, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
     TEST_ff_f (pow, -min_value, 1.5, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
     TEST_ff_f (pow, -min_value, 1000.5, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
-    AUTO_TESTS_ff_f (pow, tonearest),
+    AUTO_TESTS_ff_f (pow),
   };
 
 static void
@@ -9317,7 +8710,7 @@ pow_test (void)
 
 static const struct test_ff_f_data pow_tonearest_test_data[] =
   {
-    AUTO_TESTS_ff_f (pow, tonearest),
+    AUTO_TESTS_ff_f (pow),
   };
 
 static void
@@ -9703,55 +9096,74 @@ round_test (void)
 
 static const struct test_ff_f_data scalb_test_data[] =
   {
-    TEST_ff_f (scalb, 2.0, 0.5, qnan_value, INVALID_EXCEPTION),
-    TEST_ff_f (scalb, 3.0, -2.5, qnan_value, INVALID_EXCEPTION),
+    TEST_ff_f (scalb, 2.0, 0.5, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
+    TEST_ff_f (scalb, 3.0, -2.5, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
 
-    TEST_ff_f (scalb, 0, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
-    TEST_ff_f (scalb, 1, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
+    TEST_ff_f (scalb, 0, qnan_value, qnan_value, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, 1, qnan_value, qnan_value, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
 
-    TEST_ff_f (scalb, 1, 0, 1),
-    TEST_ff_f (scalb, -1, 0, -1),
+    TEST_ff_f (scalb, 1, 0, 1, ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, -1, 0, -1, ERRNO_UNCHANGED),
 
-    TEST_ff_f (scalb, 0, plus_infty, qnan_value, INVALID_EXCEPTION),
-    TEST_ff_f (scalb, minus_zero, plus_infty, qnan_value, INVALID_EXCEPTION),
+    TEST_ff_f (scalb, 0, plus_infty, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
+    TEST_ff_f (scalb, minus_zero, plus_infty, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
 
-    TEST_ff_f (scalb, 0, 2, 0),
-    TEST_ff_f (scalb, minus_zero, -4, minus_zero),
-    TEST_ff_f (scalb, 0, 0, 0),
-    TEST_ff_f (scalb, minus_zero, 0, minus_zero),
-    TEST_ff_f (scalb, 0, -1, 0),
-    TEST_ff_f (scalb, minus_zero, -10, minus_zero),
-    TEST_ff_f (scalb, 0, minus_infty, 0),
-    TEST_ff_f (scalb, minus_zero, minus_infty, minus_zero),
+    TEST_ff_f (scalb, 0, 2, 0, ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, minus_zero, -4, minus_zero, ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, 0, 0, 0, ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, minus_zero, 0, minus_zero, ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, 0, -1, 0, ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, minus_zero, -10, minus_zero, ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, 0, minus_infty, 0, ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, minus_zero, minus_infty, minus_zero, ERRNO_UNCHANGED),
 
-    TEST_ff_f (scalb, plus_infty, -1, plus_infty),
-    TEST_ff_f (scalb, minus_infty, -10, minus_infty),
-    TEST_ff_f (scalb, plus_infty, 0, plus_infty),
-    TEST_ff_f (scalb, minus_infty, 0, minus_infty),
-    TEST_ff_f (scalb, plus_infty, 2, plus_infty),
-    TEST_ff_f (scalb, minus_infty, 100, minus_infty),
+    TEST_ff_f (scalb, plus_infty, -1, plus_infty, ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, minus_infty, -10, minus_infty, ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, plus_infty, 0, plus_infty, ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, minus_infty, 0, minus_infty, ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, plus_infty, 2, plus_infty, ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, minus_infty, 100, minus_infty, ERRNO_UNCHANGED),
 
-    TEST_ff_f (scalb, 0.1L, minus_infty, 0.0),
-    TEST_ff_f (scalb, -0.1L, minus_infty, minus_zero),
+    TEST_ff_f (scalb, 0.1L, minus_infty, 0.0, ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, -0.1L, minus_infty, minus_zero, ERRNO_UNCHANGED),
 
-    TEST_ff_f (scalb, 1, plus_infty, plus_infty),
-    TEST_ff_f (scalb, -1, plus_infty, minus_infty),
-    TEST_ff_f (scalb, plus_infty, plus_infty, plus_infty),
-    TEST_ff_f (scalb, minus_infty, plus_infty, minus_infty),
+    TEST_ff_f (scalb, 1, plus_infty, plus_infty, ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, -1, plus_infty, minus_infty, ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, plus_infty, plus_infty, plus_infty, ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, minus_infty, plus_infty, minus_infty, ERRNO_UNCHANGED),
 
-    TEST_ff_f (scalb, plus_infty, minus_infty, qnan_value, INVALID_EXCEPTION),
-    TEST_ff_f (scalb, minus_infty, minus_infty, qnan_value, INVALID_EXCEPTION),
+    TEST_ff_f (scalb, plus_infty, minus_infty, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
+    TEST_ff_f (scalb, minus_infty, minus_infty, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
 
-    TEST_ff_f (scalb, qnan_value, 1, qnan_value, NO_INEXACT_EXCEPTION),
-    TEST_ff_f (scalb, 1, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
-    TEST_ff_f (scalb, qnan_value, 0, qnan_value, NO_INEXACT_EXCEPTION),
-    TEST_ff_f (scalb, 0, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
-    TEST_ff_f (scalb, qnan_value, plus_infty, qnan_value, NO_INEXACT_EXCEPTION),
-    TEST_ff_f (scalb, plus_infty, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
-    TEST_ff_f (scalb, qnan_value, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
+    TEST_ff_f (scalb, qnan_value, 1, qnan_value, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, 1, qnan_value, qnan_value, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, qnan_value, 0.5, qnan_value, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, 0.5, qnan_value, qnan_value, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, qnan_value, 0, qnan_value, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, 0, qnan_value, qnan_value, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, qnan_value, plus_infty, qnan_value, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, plus_infty, qnan_value, qnan_value, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, qnan_value, qnan_value, qnan_value, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
 
-    TEST_ff_f (scalb, 0.8L, 4, 12.8L),
-    TEST_ff_f (scalb, -0.854375L, 5, -27.34L),
+    TEST_ff_f (scalb, max_value, max_value, plus_oflow, OVERFLOW_EXCEPTION|ERRNO_PLUS_OFLOW),
+    TEST_ff_f (scalb, max_value, -max_value, plus_uflow, UNDERFLOW_EXCEPTION|ERRNO_PLUS_UFLOW),
+    TEST_ff_f (scalb, 1, max_value, plus_oflow, OVERFLOW_EXCEPTION|ERRNO_PLUS_OFLOW),
+    TEST_ff_f (scalb, 1, -max_value, plus_uflow, UNDERFLOW_EXCEPTION|ERRNO_PLUS_UFLOW),
+    TEST_ff_f (scalb, min_value, max_value, plus_oflow, OVERFLOW_EXCEPTION|ERRNO_PLUS_OFLOW),
+    TEST_ff_f (scalb, min_value, -max_value, plus_uflow, UNDERFLOW_EXCEPTION|ERRNO_PLUS_UFLOW),
+    TEST_ff_f (scalb, min_subnorm_value, max_value, plus_oflow, OVERFLOW_EXCEPTION|ERRNO_PLUS_OFLOW),
+    TEST_ff_f (scalb, min_subnorm_value, -max_value, plus_uflow, UNDERFLOW_EXCEPTION|ERRNO_PLUS_UFLOW),
+    TEST_ff_f (scalb, -max_value, max_value, minus_oflow, OVERFLOW_EXCEPTION|ERRNO_MINUS_OFLOW),
+    TEST_ff_f (scalb, -max_value, -max_value, minus_uflow, UNDERFLOW_EXCEPTION|ERRNO_MINUS_UFLOW),
+    TEST_ff_f (scalb, -1, max_value, minus_oflow, OVERFLOW_EXCEPTION|ERRNO_MINUS_OFLOW),
+    TEST_ff_f (scalb, -1, -max_value, minus_uflow, UNDERFLOW_EXCEPTION|ERRNO_MINUS_UFLOW),
+    TEST_ff_f (scalb, -min_value, max_value, minus_oflow, OVERFLOW_EXCEPTION|ERRNO_MINUS_OFLOW),
+    TEST_ff_f (scalb, -min_value, -max_value, minus_uflow, UNDERFLOW_EXCEPTION|ERRNO_MINUS_UFLOW),
+    TEST_ff_f (scalb, -min_subnorm_value, max_value, minus_oflow, OVERFLOW_EXCEPTION|ERRNO_MINUS_OFLOW),
+    TEST_ff_f (scalb, -min_subnorm_value, -max_value, minus_uflow, UNDERFLOW_EXCEPTION|ERRNO_MINUS_UFLOW),
+
+    TEST_ff_f (scalb, 0.8L, 4, 12.8L, ERRNO_UNCHANGED),
+    TEST_ff_f (scalb, -0.854375L, 5, -27.34L, ERRNO_UNCHANGED),
   };
 
 static void
@@ -9914,71 +9326,13 @@ static const struct test_f_f_data sin_test_data[] =
     TEST_f_f (sin, minus_infty, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
     TEST_f_f (sin, qnan_value, qnan_value, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
 
-    AUTO_TESTS_f_f (sin, tonearest),
+    AUTO_TESTS_f_f (sin),
   };
 
 static void
 sin_test (void)
 {
-  START (sin, 0);
-  RUN_TEST_LOOP_f_f (sin, sin_test_data, );
-  END;
-}
-
-
-static const struct test_f_f_data sin_tonearest_test_data[] =
-  {
-    AUTO_TESTS_f_f (sin, tonearest),
-  };
-
-static void
-sin_test_tonearest (void)
-{
-  START (sin_tonearest, 0);
-  RUN_TEST_LOOP_f_f (sin, sin_tonearest_test_data, FE_TONEAREST);
-  END;
-}
-
-
-static const struct test_f_f_data sin_towardzero_test_data[] =
-  {
-    AUTO_TESTS_f_f (sin, towardzero),
-  };
-
-static void
-sin_test_towardzero (void)
-{
-  START (sin_towardzero, 0);
-  RUN_TEST_LOOP_f_f (sin, sin_towardzero_test_data, FE_TOWARDZERO);
-  END;
-}
-
-
-static const struct test_f_f_data sin_downward_test_data[] =
-  {
-    AUTO_TESTS_f_f (sin, downward),
-  };
-
-static void
-sin_test_downward (void)
-{
-  START (sin_downward, 0);
-  RUN_TEST_LOOP_f_f (sin, sin_downward_test_data, FE_DOWNWARD);
-  END;
-}
-
-
-static const struct test_f_f_data sin_upward_test_data[] =
-  {
-    AUTO_TESTS_f_f (sin, upward),
-  };
-
-static void
-sin_test_upward (void)
-{
-  START (sin_upward, 0);
-  RUN_TEST_LOOP_f_f (sin, sin_upward_test_data, FE_UPWARD);
-  END;
+  ALL_RM_TEST (sin, 0, sin_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -9988,7 +9342,7 @@ static const struct test_fFF_11_data sincos_test_data[] =
     TEST_fFF_11 (sincos, minus_infty, qnan_value, qnan_value, INVALID_EXCEPTION),
     TEST_fFF_11 (sincos, qnan_value, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_fFF_11 (sincos, tonearest),
+    AUTO_TESTS_fFF_11 (sincos),
   };
 
 static void
@@ -9996,9 +9350,7 @@ sincos_test (void)
 {
   FLOAT sin_res, cos_res;
 
-  START (sincos, 0);
-  RUN_TEST_LOOP_fFF_11 (sincos, sincos_test_data, , sin_res, cos_res);
-  END;
+  ALL_RM_TEST (sincos, 0, sincos_test_data, RUN_TEST_LOOP_fFF_11, END, sin_res, cos_res);
 }
 
 static const struct test_f_f_data sinh_test_data[] =
@@ -10007,71 +9359,13 @@ static const struct test_f_f_data sinh_test_data[] =
     TEST_f_f (sinh, minus_infty, minus_infty, NO_TEST_INLINE),
     TEST_f_f (sinh, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_f_f (sinh, tonearest),
+    AUTO_TESTS_f_f (sinh),
   };
 
 static void
 sinh_test (void)
 {
-  START (sinh, 0);
-  RUN_TEST_LOOP_f_f (sinh, sinh_test_data, );
-  END;
-}
-
-
-static const struct test_f_f_data sinh_tonearest_test_data[] =
-  {
-    AUTO_TESTS_f_f (sinh, tonearest),
-  };
-
-static void
-sinh_test_tonearest (void)
-{
-  START (sinh_tonearest, 0);
-  RUN_TEST_LOOP_f_f (sinh, sinh_tonearest_test_data, FE_TONEAREST);
-  END;
-}
-
-
-static const struct test_f_f_data sinh_towardzero_test_data[] =
-  {
-    AUTO_TESTS_f_f (sinh, towardzero),
-  };
-
-static void
-sinh_test_towardzero (void)
-{
-  START (sinh_towardzero, 0);
-  RUN_TEST_LOOP_f_f (sinh, sinh_towardzero_test_data, FE_TOWARDZERO);
-  END;
-}
-
-
-static const struct test_f_f_data sinh_downward_test_data[] =
-  {
-    AUTO_TESTS_f_f (sinh, downward),
-  };
-
-static void
-sinh_test_downward (void)
-{
-  START (sinh_downward, 0);
-  RUN_TEST_LOOP_f_f (sinh, sinh_downward_test_data, FE_DOWNWARD);
-  END;
-}
-
-
-static const struct test_f_f_data sinh_upward_test_data[] =
-  {
-    AUTO_TESTS_f_f (sinh, upward),
-  };
-
-static void
-sinh_test_upward (void)
-{
-  START (sinh_upward, 0);
-  RUN_TEST_LOOP_f_f (sinh, sinh_upward_test_data, FE_UPWARD);
-  END;
+  ALL_RM_TEST (sinh, 0, sinh_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -10085,99 +9379,13 @@ static const struct test_f_f_data sqrt_test_data[] =
     TEST_f_f (sqrt, -max_value, qnan_value, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM),
     TEST_f_f (sqrt, minus_infty, qnan_value, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM),
 
-    AUTO_TESTS_f_f (sqrt, tonearest),
+    AUTO_TESTS_f_f (sqrt),
   };
 
 static void
 sqrt_test (void)
 {
-  START (sqrt, 1);
-  RUN_TEST_LOOP_f_f (sqrt, sqrt_test_data, );
-  END;
-}
-
-static const struct test_f_f_data sqrt_tonearest_test_data[] =
-  {
-    TEST_f_f (sqrt, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
-    TEST_f_f (sqrt, plus_infty, plus_infty, NO_INEXACT_EXCEPTION),
-
-    /* sqrt (x) == qNaN plus invalid exception for x < 0.  */
-    TEST_f_f (sqrt, -1, qnan_value, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM),
-    TEST_f_f (sqrt, -max_value, qnan_value, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM),
-    TEST_f_f (sqrt, minus_infty, qnan_value, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM),
-
-    AUTO_TESTS_f_f (sqrt, tonearest),
-  };
-
-static void
-sqrt_test_tonearest (void)
-{
-  START (sqrt_tonearest, 1);
-  RUN_TEST_LOOP_f_f (sqrt, sqrt_tonearest_test_data, FE_TONEAREST);
-  END;
-}
-
-static const struct test_f_f_data sqrt_towardzero_test_data[] =
-  {
-    TEST_f_f (sqrt, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
-    TEST_f_f (sqrt, plus_infty, plus_infty, NO_INEXACT_EXCEPTION),
-
-    /* sqrt (x) == qNaN plus invalid exception for x < 0.  */
-    TEST_f_f (sqrt, -1, qnan_value, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM),
-    TEST_f_f (sqrt, -max_value, qnan_value, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM),
-    TEST_f_f (sqrt, minus_infty, qnan_value, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM),
-
-    AUTO_TESTS_f_f (sqrt, towardzero),
-  };
-
-static void
-sqrt_test_towardzero (void)
-{
-  START (sqrt_towardzero, 1);
-  RUN_TEST_LOOP_f_f (sqrt, sqrt_towardzero_test_data, FE_TOWARDZERO);
-  END;
-}
-
-static const struct test_f_f_data sqrt_downward_test_data[] =
-  {
-    TEST_f_f (sqrt, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
-    TEST_f_f (sqrt, plus_infty, plus_infty, NO_INEXACT_EXCEPTION),
-
-    /* sqrt (x) == qNaN plus invalid exception for x < 0.  */
-    TEST_f_f (sqrt, -1, qnan_value, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM),
-    TEST_f_f (sqrt, -max_value, qnan_value, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM),
-    TEST_f_f (sqrt, minus_infty, qnan_value, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM),
-
-    AUTO_TESTS_f_f (sqrt, downward),
-  };
-
-static void
-sqrt_test_downward (void)
-{
-  START (sqrt_downward, 1);
-  RUN_TEST_LOOP_f_f (sqrt, sqrt_downward_test_data, FE_DOWNWARD);
-  END;
-}
-
-static const struct test_f_f_data sqrt_upward_test_data[] =
-  {
-    TEST_f_f (sqrt, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
-    TEST_f_f (sqrt, plus_infty, plus_infty, NO_INEXACT_EXCEPTION),
-
-    /* sqrt (x) == qNaN plus invalid exception for x < 0.  */
-    TEST_f_f (sqrt, -1, qnan_value, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM),
-    TEST_f_f (sqrt, -max_value, qnan_value, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM),
-    TEST_f_f (sqrt, minus_infty, qnan_value, NO_INEXACT_EXCEPTION|INVALID_EXCEPTION|ERRNO_EDOM),
-
-    AUTO_TESTS_f_f (sqrt, upward),
-  };
-
-static void
-sqrt_test_upward (void)
-{
-  START (sqrt_upward, 1);
-  RUN_TEST_LOOP_f_f (sqrt, sqrt_upward_test_data, FE_UPWARD);
-  END;
+  ALL_RM_TEST (sqrt, 1, sqrt_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -10187,71 +9395,13 @@ static const struct test_f_f_data tan_test_data[] =
     TEST_f_f (tan, minus_infty, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
     TEST_f_f (tan, qnan_value, qnan_value, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
 
-    AUTO_TESTS_f_f (tan, tonearest),
+    AUTO_TESTS_f_f (tan),
   };
 
 static void
 tan_test (void)
 {
-  START (tan, 0);
-  RUN_TEST_LOOP_f_f (tan, tan_test_data, );
-  END;
-}
-
-
-static const struct test_f_f_data tan_tonearest_test_data[] =
-  {
-    AUTO_TESTS_f_f (tan, tonearest),
-  };
-
-static void
-tan_test_tonearest (void)
-{
-  START (tan_tonearest, 0);
-  RUN_TEST_LOOP_f_f (tan, tan_tonearest_test_data, FE_TONEAREST);
-  END;
-}
-
-
-static const struct test_f_f_data tan_towardzero_test_data[] =
-  {
-    AUTO_TESTS_f_f (tan, towardzero),
-  };
-
-static void
-tan_test_towardzero (void)
-{
-  START (tan_towardzero, 0);
-  RUN_TEST_LOOP_f_f (tan, tan_towardzero_test_data, FE_TOWARDZERO);
-  END;
-}
-
-
-static const struct test_f_f_data tan_downward_test_data[] =
-  {
-    AUTO_TESTS_f_f (tan, downward),
-  };
-
-static void
-tan_test_downward (void)
-{
-  START (tan_downward, 0);
-  RUN_TEST_LOOP_f_f (tan, tan_downward_test_data, FE_DOWNWARD);
-  END;
-}
-
-
-static const struct test_f_f_data tan_upward_test_data[] =
-  {
-    AUTO_TESTS_f_f (tan, upward),
-  };
-
-static void
-tan_test_upward (void)
-{
-  START (tan_upward, 0);
-  RUN_TEST_LOOP_f_f (tan, tan_upward_test_data, FE_UPWARD);
-  END;
+  ALL_RM_TEST (tan, 0, tan_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -10261,15 +9411,13 @@ static const struct test_f_f_data tanh_test_data[] =
     TEST_f_f (tanh, minus_infty, -1, NO_TEST_INLINE),
     TEST_f_f (tanh, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_f_f (tanh, tonearest),
+    AUTO_TESTS_f_f (tanh),
   };
 
 static void
 tanh_test (void)
 {
-  START (tanh, 0);
-  RUN_TEST_LOOP_f_f (tanh, tanh_test_data, );
-  END;
+  ALL_RM_TEST (tanh, 0, tanh_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 static const struct test_f_f_data tgamma_test_data[] =
@@ -10284,7 +9432,7 @@ static const struct test_f_f_data tgamma_test_data[] =
     TEST_f_f (tgamma, minus_infty, qnan_value, INVALID_EXCEPTION|ERRNO_EDOM),
     TEST_f_f (tgamma, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_f_f (tgamma, tonearest),
+    AUTO_TESTS_f_f (tgamma),
   };
 
 static void
@@ -10427,15 +9575,13 @@ static const struct test_f_f_data y0_test_data[] =
     TEST_f_f (y0, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
     TEST_f_f (y0, plus_infty, 0),
 
-    AUTO_TESTS_f_f (y0, tonearest),
+    AUTO_TESTS_f_f (y0),
   };
 
 static void
 y0_test (void)
 {
-  START (y0, 0);
-  RUN_TEST_LOOP_f_f (y0, y0_test_data, );
-  END;
+  ALL_RM_TEST (y0, 0, y0_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -10450,15 +9596,13 @@ static const struct test_f_f_data y1_test_data[] =
     TEST_f_f (y1, plus_infty, 0),
     TEST_f_f (y1, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_f_f (y1, tonearest),
+    AUTO_TESTS_f_f (y1),
   };
 
 static void
 y1_test (void)
 {
-  START (y1, 0);
-  RUN_TEST_LOOP_f_f (y1, y1_test_data, );
-  END;
+  ALL_RM_TEST (y1, 0, y1_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -10523,7 +9667,7 @@ static const struct test_if_f_data yn_test_data[] =
     TEST_if_f (yn, 10, plus_infty, 0),
     TEST_if_f (yn, 10, qnan_value, qnan_value, NO_INEXACT_EXCEPTION),
 
-    AUTO_TESTS_if_f (yn, tonearest),
+    AUTO_TESTS_if_f (yn),
   };
 
 static void
@@ -10761,67 +9905,27 @@ main (int argc, char **argv)
 
   /* Trigonometric functions:  */
   acos_test ();
-  acos_test_tonearest ();
-  acos_test_towardzero ();
-  acos_test_downward ();
-  acos_test_upward ();
   asin_test ();
-  asin_test_tonearest ();
-  asin_test_towardzero ();
-  asin_test_downward ();
-  asin_test_upward ();
   atan_test ();
   atan2_test ();
   cos_test ();
-  cos_test_tonearest ();
-  cos_test_towardzero ();
-  cos_test_downward ();
-  cos_test_upward ();
   sin_test ();
-  sin_test_tonearest ();
-  sin_test_towardzero ();
-  sin_test_downward ();
-  sin_test_upward ();
   sincos_test ();
   tan_test ();
-  tan_test_tonearest ();
-  tan_test_towardzero ();
-  tan_test_downward ();
-  tan_test_upward ();
 
   /* Hyperbolic functions:  */
   acosh_test ();
   asinh_test ();
   atanh_test ();
   cosh_test ();
-  cosh_test_tonearest ();
-  cosh_test_towardzero ();
-  cosh_test_downward ();
-  cosh_test_upward ();
   sinh_test ();
-  sinh_test_tonearest ();
-  sinh_test_towardzero ();
-  sinh_test_downward ();
-  sinh_test_upward ();
   tanh_test ();
 
   /* Exponential and logarithmic functions:  */
   exp_test ();
-  exp_test_tonearest ();
-  exp_test_towardzero ();
-  exp_test_downward ();
-  exp_test_upward ();
   exp10_test ();
-  exp10_test_tonearest ();
-  exp10_test_towardzero ();
-  exp10_test_downward ();
-  exp10_test_upward ();
   exp2_test ();
   expm1_test ();
-  expm1_test_tonearest ();
-  expm1_test_towardzero ();
-  expm1_test_downward ();
-  expm1_test_upward ();
   frexp_test ();
   ldexp_test ();
   log_test ();
@@ -10847,10 +9951,6 @@ main (int argc, char **argv)
   pow_test_downward ();
   pow_test_upward ();
   sqrt_test ();
-  sqrt_test_tonearest ();
-  sqrt_test_towardzero ();
-  sqrt_test_downward ();
-  sqrt_test_upward ();
 
   /* Error and gamma functions:  */
   erf_test ();
@@ -10889,9 +9989,6 @@ main (int argc, char **argv)
 
   /* Multiply and add:  */
   fma_test ();
-  fma_test_towardzero ();
-  fma_test_downward ();
-  fma_test_upward ();
 
   /* Comparison macros:  */
   isgreater_test ();
@@ -10924,15 +10021,7 @@ main (int argc, char **argv)
   csinh_test ();
   csqrt_test ();
   ctan_test ();
-  ctan_test_tonearest ();
-  ctan_test_towardzero ();
-  ctan_test_downward ();
-  ctan_test_upward ();
   ctanh_test ();
-  ctanh_test_tonearest ();
-  ctanh_test_towardzero ();
-  ctanh_test_downward ();
-  ctanh_test_upward ();
 
   /* Bessel functions:  */
   j0_test ();

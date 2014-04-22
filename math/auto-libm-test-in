@@ -61,9 +61,8 @@ asin -0x0.ffffffffffffp0
 asin 0x0.ffffffffffffffffp0
 asin -0x0.ffffffffffffffffp0
 # Bug 16351: underflow exception may be missing.
-# Bug 16599: spurious underflow may occur.
 asin min missing-underflow
-asin -min missing-underflow spurious-underflow:dbl-64:x86
+asin -min missing-underflow
 asin min_subnorm missing-underflow
 asin -min_subnorm missing-underflow
 
@@ -158,13 +157,12 @@ atan2 -min -max
 atan2 min_subnorm -max
 atan2 -min_subnorm -max
 # Bug 15319: underflow exception may be missing.
-# Bug 16349: errno setting may be missing.
 atan2 1 max missing-underflow
 atan2 -1 max missing-underflow
-atan2 min max missing-underflow missing-errno
-atan2 -min max missing-underflow missing-errno
-atan2 min_subnorm max missing-underflow missing-errno
-atan2 -min_subnorm max missing-underflow missing-errno
+atan2 min max missing-underflow
+atan2 -min max missing-underflow
+atan2 min_subnorm max missing-underflow
+atan2 -min_subnorm max missing-underflow
 
 atanh 0
 atanh -0
@@ -175,9 +173,8 @@ atanh 0x1p-5
 atanh 0x1p-10
 atanh 0x1.2345p-20
 # Bug 16352: underflow exception may be missing.
-# Bug 16357: spurious underflow may occur.
-atanh min missing-underflow spurious-underflow:ldbl-96-intel:x86
-atanh -min missing-underflow spurious-underflow:ldbl-96-intel:x86
+atanh min missing-underflow
+atanh -min missing-underflow
 atanh min_subnorm missing-underflow
 atanh -min_subnorm missing-underflow
 
@@ -833,20 +830,36 @@ exp 0.75
 exp 50.0
 exp 88.72269439697265625
 exp 709.75
-# Bug 16284: results on directed rounding may be incorrect.
 # GCC bug 59666: results on directed rounding may be incorrect.
-exp 1000.0 xfail-rounding:dbl-64 xfail-rounding:ldbl-128ibm
-exp 710 xfail-rounding:dbl-64 xfail-rounding:ldbl-128ibm
+exp 1000.0 xfail-rounding:ldbl-128ibm
+exp 710 xfail-rounding:ldbl-128ibm
 exp -1234
-# Bug 16284: results on directed rounding may be incorrect.
 # GCC bug 59666: results on directed rounding may be incorrect.
-exp 0x2.c679d1f73f0fb628p+8 xfail-rounding:dbl-64 xfail-rounding:ldbl-128ibm
-exp 1e5 xfail-rounding:dbl-64 xfail-rounding:ldbl-128ibm
-exp max xfail-rounding:dbl-64 xfail-rounding:ldbl-128ibm
+exp 0x2.c679d1f73f0fb628p+8 xfail-rounding:ldbl-128ibm
+exp 1e5 xfail-rounding:ldbl-128ibm
+exp max xfail-rounding:ldbl-128ibm
 exp -7.4444006192138124e+02
 exp -0x1.75f113c30b1c8p+9
 exp -max
 exp -11342.8125
+exp 0x1p-10
+exp -0x1p-10
+exp 0x1p-20
+exp -0x1p-20
+exp 0x1p-30
+exp -0x1p-30
+exp 0x1p-40
+exp -0x1p-40
+exp 0x1p-50
+exp -0x1p-50
+exp 0x1p-60
+exp -0x1p-60
+exp 0x1p-100
+exp -0x1p-100
+exp min
+exp -min
+exp min_subnorm
+exp -min_subnorm
 
 exp10 0
 exp10 -0
@@ -856,27 +869,22 @@ exp10 36
 exp10 -36
 exp10 305
 exp10 -305
-# Bug 16284: results on directed rounding may be incorrect.
 # GCC bug 59666: results on directed rounding may be incorrect.
-exp10 4932 xfail-rounding:flt-32 xfail-rounding:ldbl-128ibm
+exp10 4932 xfail-rounding:ldbl-128ibm
 # Bug 16361: underflow exception may be misssing
 exp10 -4932 missing-underflow:ldbl-96-intel:x86 missing-underflow:ldbl-96-intel:x86_64
-# Bug 16284: results on directed rounding may be incorrect.
 # GCC bug 59666: results on directed rounding may be incorrect.
-exp10 1e5 xfail-rounding:flt-32 xfail-rounding:ldbl-128ibm
+exp10 1e5 xfail-rounding:ldbl-128ibm
 exp10 -1e5
-# Bug 16284: results on directed rounding may be incorrect.
 # GCC bug 59666: results on directed rounding may be incorrect.
-exp10 1e6 xfail-rounding:flt-32 xfail-rounding:ldbl-128ibm
+exp10 1e6 xfail-rounding:ldbl-128ibm
 exp10 -1e6
-# Bug 16284: results on directed rounding may be incorrect.
 # GCC bug 59666: results on directed rounding may be incorrect.
-exp10 max xfail-rounding:flt-32 xfail-rounding:ldbl-128ibm
+exp10 max xfail-rounding:ldbl-128ibm
 exp10 -max
 exp10 0.75
-# Bug 16284: results on directed rounding may be incorrect.
 # GCC bug 59666: results on directed rounding may be incorrect.
-exp10 0x1.348e45573a1dd72cp+8 xfail-rounding:flt-32 xfail-rounding:dbl-64 xfail-rounding:ldbl-128ibm
+exp10 0x1.348e45573a1dd72cp+8 xfail-rounding:ldbl-128ibm
 
 exp2 0
 exp2 -0

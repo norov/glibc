@@ -22,6 +22,9 @@ int
 fegetenv (fenv_t *envp)
 {
   __asm__ ("fnstenv %0\n"
+	   /* fnstenv changes the exception mask, so load back the
+	      stored environment.  */
+	   "fldenv %0\n"
 	   "stmxcsr %1" : "=m" (*envp), "=m" (envp->__mxcsr));
 
   /* Success.  */

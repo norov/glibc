@@ -22,9 +22,12 @@
 subdir := benchtests
 
 include ../Makeconfig
+bench-math := acos acosh asin asinh atan atanh cos cosh exp exp2 ffs ffsll \
+	      log log2 modf pow rint sin sincos sinh sqrt tan tanh
 
-bench := acos acosh asin asinh atan atanh cos cosh exp exp2 log log2 modf pow \
-	 rint sin sincos sinh sqrt tan tanh
+bench-pthread := pthread_once
+
+bench := $(bench-math) $(bench-pthread)
 
 # String function benchmarks.
 string-bench := bcopy bzero memccpy memchr memcmp memcpy memmem memmove \
@@ -38,26 +41,12 @@ stdlib-bench := strtod
 
 benchset := $(string-bench-all) $(stdlib-bench)
 
-LDLIBS-bench-acos = -lm
-LDLIBS-bench-acosh = -lm
-LDLIBS-bench-asin = -lm
-LDLIBS-bench-asinh = -lm
-LDLIBS-bench-atan = -lm
-LDLIBS-bench-atanh = -lm
-LDLIBS-bench-cos = -lm
-LDLIBS-bench-cosh = -lm
-LDLIBS-bench-exp = -lm
-LDLIBS-bench-exp2 = -lm
-LDLIBS-bench-log = -lm
-LDLIBS-bench-log2 = -lm
-LDLIBS-bench-pow = -lm
-LDLIBS-bench-rint = -lm
-LDLIBS-bench-sin = -lm
-LDLIBS-bench-sinh = -lm
-LDLIBS-bench-sqrt = -lm
-LDLIBS-bench-tan = -lm
-LDLIBS-bench-tanh = -lm
-LDLIBS-bench-sincos = -lm
+CFLAGS-bench-ffs.c += -fno-builtin
+CFLAGS-bench-ffsll.c += -fno-builtin
+
+$(addprefix $(objpfx)bench-,$(bench-math)): $(common-objpfx)math/libm.so
+$(addprefix $(objpfx)bench-,$(bench-pthread)): \
+	$(common-objpfx)nptl/libpthread.so
 
 
 
@@ -86,11 +75,19 @@ ifdef USE_CLOCK_GETTIME
 CPPFLAGS-nonlib += -DUSE_CLOCK_GETTIME
 endif
 
+DETAILED_OPT :=
+
+ifdef DETAILED
+DETAILED_OPT := -d
+endif
+
 # This makes sure CPPFLAGS-nonlib and CFLAGS-nonlib are passed
 # for all these modules.
 cpp-srcs-left := $(binaries-benchset:=.c) $(binaries-bench:=.c)
 lib := nonlib
 include $(patsubst %,$(..)cppflags-iterator.mk,$(cpp-srcs-left))
+
+extra-objs += json-lib.o
 
 bench-deps := bench-skeleton.c bench-timing.h Makefile
 
@@ -98,11 +95,14 @@ run-bench = $(test-wrapper-env) \
 	    GCONV_PATH=$(common-objpfx)iconvdata LC_ALL=C \
 	    $($*-ENV) $(rtld-prefix) $${run}
 
+timing-type := $(objpfx)bench-timing-type
+
 bench-clean:
 	rm -f $(binaries-bench) $(addsuffix .o,$(binaries-bench))
 	rm -f $(binaries-benchset) $(addsuffix .o,$(binaries-benchset))
+	rm -f $(timing-type) $(addsuffix .o,$(timing-type))
 
-bench: bench-set bench-func
+bench: $(timing-type) bench-set bench-func
 
 bench-set: $(binaries-benchset)
 	for run in $^; do \
@@ -110,17 +110,30 @@ bench-set: $(binaries-benchset)
 	  $(run-bench) > $${run}.out; \
 	done
 
+# Build and execute the benchmark functions.  This target generates JSON
+# formatted bench.out.  Each of the programs produce independent JSON output,
+# so one could even execute them individually and process it using any JSON
+# capable language or tool.
 bench-func: $(binaries-bench)
-	{ for run in $^; do \
+	{ timing_type=$$($(timing-type)); \
+	echo "{\"timing_type\": \"$${timing_type}\","; \
+	echo " \"functions\": {"; \
+	for run in $^; do \
+	  if ! [ "x$${run}" = "x$<" ]; then \
+	    echo ","; \
+	  fi; \
 	  echo "Running $${run}" >&2; \
-	  $(run-bench); \
-	done; } > $(objpfx)bench.out-tmp; \
+	  $(run-bench) $(DETAILED_OPT); \
+	done; \
+	echo; \
+	echo " }"; \
+	echo "}"; } > $(objpfx)bench.out-tmp; \
 	if [ -f $(objpfx)bench.out ]; then \
 	  mv -f $(objpfx)bench.out $(objpfx)bench.out.old; \
 	fi; \
 	mv -f $(objpfx)bench.out-tmp $(objpfx)bench.out
 
-$(binaries-bench) $(binaries-benchset): %: %.o \
+$(timing-type) $(binaries-bench) $(binaries-benchset): %: %.o $(objpfx)json-lib.o \
   $(sort $(filter $(common-objpfx)lib%,$(link-libc))) \
   $(addprefix $(csu-objpfx),start.o) $(+preinit) $(+postinit)
 	$(+link)
@@ -129,5 +142,5 @@ $(objpfx)bench-%.c: %-inputs $(bench-deps)
 	{ if [ -n "$($*-INCLUDE)" ]; then \
 	  cat $($*-INCLUDE); \
 	fi; \
-	$(..)scripts/bench.pl $(patsubst %-inputs,%,$<); } > $@-tmp
+	$(.)scripts/bench.py $(patsubst %-inputs,%,$<); } > $@-tmp
 	mv -f $@-tmp $@

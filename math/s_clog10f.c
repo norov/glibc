@@ -25,6 +25,9 @@
 /* log_10 (2).  */
 #define M_LOG10_2f 0.3010299956639811952137388947244930267682f
 
+/* pi * log10 (e).  */
+#define M_PI_LOG10Ef 1.364376353841841347485783625431355770210f
+
 __complex__ float
 __clog10f (__complex__ float x)
 {
@@ -35,7 +38,7 @@ __clog10f (__complex__ float x)
   if (__glibc_unlikely (rcls == FP_ZERO && icls == FP_ZERO))
     {
       /* Real and imaginary part are 0.0.  */
-      __imag__ result = signbit (__real__ x) ? M_PI : 0.0;
+      __imag__ result = signbit (__real__ x) ? M_PI_LOG10Ef : 0.0;
       __imag__ result = __copysignf (__imag__ result, __imag__ x);
       /* Yes, the following line raises an exception.  */
       __real__ result = -1.0 / fabsf (__real__ x);
@@ -71,14 +74,9 @@ __clog10f (__complex__ float x)
 	  float absy2 = absy * absy;
 	  if (absy2 <= FLT_MIN * 2.0f * (float) M_LN10)
 	    {
-#if __FLT_EVAL_METHOD__ == 0
-	      __real__ result
-		= (absy2 / 2.0f - absy2 * absy2 / 4.0f) * (float) M_LOG10E;
-#else
-	      volatile float force_underflow = absy2 * absy2 / 4.0f;
-	      __real__ result
-		= (absy2 / 2.0f - force_underflow) * (float) M_LOG10E;
-#endif
+	      float force_underflow = absy2 * absy2;
+	      __real__ result = absy2 * ((float) M_LOG10E / 2.0f);
+	      math_force_eval (force_underflow);
 	    }
 	  else
 	    __real__ result = __log1pf (absy2) * ((float) M_LOG10E / 2.0f);

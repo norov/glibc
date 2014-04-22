@@ -32,6 +32,9 @@
 /* log_10 (2).  */
 #define M_LOG10_2l 0.3010299956639811952137388947244930267682L
 
+/* pi * log10 (e).  */
+#define M_PI_LOG10El 1.364376353841841347485783625431355770210L
+
 __complex__ long double
 __clog10l (__complex__ long double x)
 {
@@ -42,7 +45,7 @@ __clog10l (__complex__ long double x)
   if (__glibc_unlikely (rcls == FP_ZERO && icls == FP_ZERO))
     {
       /* Real and imaginary part are 0.0.  */
-      __imag__ result = signbit (__real__ x) ? M_PIl : 0.0;
+      __imag__ result = signbit (__real__ x) ? M_PI_LOG10El : 0.0;
       __imag__ result = __copysignl (__imag__ result, __imag__ x);
       /* Yes, the following line raises an exception.  */
       __real__ result = -1.0 / fabsl (__real__ x);
@@ -77,8 +80,11 @@ __clog10l (__complex__ long double x)
 	{
 	  long double absy2 = absy * absy;
 	  if (absy2 <= LDBL_MIN * 2.0L * M_LN10l)
-	    __real__ result
-	      = (absy2 / 2.0L - absy2 * absy2 / 4.0L) * M_LOG10El;
+	    {
+	      long double force_underflow = absy2 * absy2;
+	      __real__ result = absy2 * (M_LOG10El / 2.0);
+	      math_force_eval (force_underflow);
+	    }
 	  else
 	    __real__ result = __log1pl (absy2) * (M_LOG10El / 2.0L);
 	}

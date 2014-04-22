@@ -1,3 +1,18 @@
+2014-04-11  Torvald Riegel  <triegel@redhat.com>
+
+	[BZ #15215]
+	* sysdeps/unix/sysv/linux/hppa/nptl/pthread_once.c: Remove file.
+
+2014-04-09  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* ports/sysdeps/unix/sysv/linux/hppa/nptl/bits/pthreadtypes.h
+	(__PTHREAD_SPIN): Moved defintion from pthread.h.
+
+2014-03-18  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/hppa/dl-fptr.c: Include <dl-unmap-segments.h>.
+	(_dl_unmap): Use _dl_unmap_segments in place of __munmap.
+
 2014-02-28  Roland McGrath  <roland@hack.frob.com>
 
 	* sysdeps/hppa/nptl/tls.h (TLS_TCB_AT_TP): New macro.
