@@ -1,3 +1,13 @@
+2014-06-13  Manjunath Matti  <mmatti@caviumnetworks.com>
+
+	Backported: Fix ARM build with GCC 4.10 merge.
+	2014-05-20  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/arm/unwind-forcedunwind.c
+	(libgcc_s_resume): Use __attribute_used__.
+	* sysdeps/unix/sysv/linux/arm/unwind-resume.c (libgcc_s_resume):
+	Likewise.
+
 2012-08-29  Andrew Pinski  <apinski@cavium.com>	
 
 	* ports/sysdeps/mips/preconfigure: Append octeon3 to the machine

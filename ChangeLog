@@ -1,3 +1,10 @@
+2014-05-20  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/arm/unwind-forcedunwind.c
+	(libgcc_s_resume): Use __attribute_used__.
+	* sysdeps/unix/sysv/linux/arm/unwind-resume.c (libgcc_s_resume):
+	Likewise.
+
 2014-04-24  Ian Bolton  <ian.bolton@arm.com>
 
 	* sysdeps/aarch64/fpu/fclrexcpt.c (feclearexcept): Don't write to
