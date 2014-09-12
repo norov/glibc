@@ -16,6 +16,9 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
+#ifndef _AARCH64_SYSDEP_H
+#define _AARCH64_SYSDEP_H
+
 #include <sysdeps/generic/sysdep.h>
 
 #ifdef	__ASSEMBLER__
@@ -96,3 +99,5 @@
 #define mcount		_mcount
 
 #endif	/* __ASSEMBLER__ */
+
+#endif  /* _AARCH64_SYSDEP_H */
