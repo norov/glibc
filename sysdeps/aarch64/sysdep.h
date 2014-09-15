@@ -21,6 +21,12 @@
 
 #include <sysdeps/generic/sysdep.h>
 
+#ifdef __LP64__
+#define AARCH64_R(NAME)		R_AARCH64_ ## NAME
+#else
+#define AARCH64_R(NAME)		R_AARCH64_P32_ ## NAME
+#endif
+
 #ifdef	__ASSEMBLER__
 
 /* Syntactic details of assembler.  */
