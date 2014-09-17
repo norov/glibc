@@ -42,7 +42,7 @@ ENTRY (__sigsetjmp)
 	stp	x27, x28, [x0, #JB_X27<<3]
 
 #ifdef PTR_MANGLE
-	PTR_MANGLE (x4, x30, x3, x2)
+	PTR_MANGLE (4, 30, 3, 2)
 	stp	x29,  x4, [x0, #JB_X29<<3]
 #else
 	stp	x29, x30, [x0, #JB_X29<<3]
@@ -57,7 +57,7 @@ ENTRY (__sigsetjmp)
 	stp	d14, d15, [x0, #JB_D14<<3]
 #ifdef PTR_MANGLE
 	mov	x4, sp
-	PTR_MANGLE (x5, x4, x3, x2)
+	PTR_MANGLE (5, 4, 3, 2)
 	str	x5, [x0, #JB_SP<<3]
 #else
 	mov	x2,  sp
