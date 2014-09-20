@@ -74,7 +74,7 @@
 	cfi_startproc
 	.align 2
 _dl_tlsdesc_return:
-	ldr	x0, [x0, #8]
+	ldr	PTR_REG (0), [x0, #PTR_SIZE]
 	RET
 	cfi_endproc
 	.size	_dl_tlsdesc_return, .-_dl_tlsdesc_return
@@ -127,8 +127,9 @@ _dl_tlsdesc_undefweak:
 	   from [x0,#8] here happens after the initialization of td->arg.  */
 	ldar	xzr, [x0]
 	ldr	x0, [x0, #8]
+	ldr	PTR_REG (0), [x0, #PTR_SIZE]
 	mrs	x1, tpidr_el0
-	sub	x0, x0, x1
+	sub	PTR_REG (0), PTR_REG (0), PTR_REG (1)
 	ldr	x1, [sp], #16
 	cfi_adjust_cfa_offset (-16)
 	RET
@@ -189,20 +190,20 @@ _dl_tlsdesc_dynamic:
 	   td->entry in _dl_tlsdesc_resolve_rela_fixup ensuring that the load
 	   from [x0,#8] here happens after the initialization of td->arg.  */
 	ldar	xzr, [x0]
-	ldr	x1, [x0,#8]
-	ldr	x0, [x4]
-	ldr	x3, [x1,#16]
-	ldr	x2, [x0]
-	cmp	x3, x2
+	ldr	PTR_REG (1), [x0,#PTR_SIZE]
+	ldr	PTR_REG (0), [x4]
+	ldr	PTR_REG (3), [x1,#(PTR_SIZE * 2)]
+	ldr	PTR_REG (2), [x0]
+	cmp	PTR_REG (3), PTR_REG (2)
 	b.hi	2f
-	ldr	x2, [x1]
-	add	x0, x0, x2, lsl #4
-	ldr	x0, [x0]
+	ldr	PTR_REG (2), [x1]
+	add	PTR_REG (0), PTR_REG (0), PTR_REG (2), lsl #(PTR_LOG_SIZE + 1)
+	ldr	PTR_REG (0), [x0]
 	cmn	x0, #0x1
 	b.eq	2f
-	ldr	x1, [x1,#8]
-	add	x0, x0, x1
-	sub	x0, x0, x4
+	ldr	PTR_REG (1), [x1,#(PTR_SIZE * 2)]
+	add	PTR_REG (0), PTR_REG (0), PTR_REG (1)
+	sub	PTR_REG (0), PTR_REG (0), PTR_REG (4)
 1:
 	ldp	 x1,  x2, [sp, #32+16*0]
 	ldp	 x3,  x4, [sp, #32+16*1]
@@ -233,7 +234,7 @@ _dl_tlsdesc_dynamic:
 	bl	__tls_get_addr
 
 	mrs	x1, tpidr_el0
-	sub	x0, x0, x1
+	sub	PTR_REG (0), PTR_REG (0), PTR_REG (1)
 
 	RESTORE_Q_REGISTERS
 
@@ -279,13 +280,13 @@ _dl_tlsdesc_resolve_rela:
 
 	SAVE_Q_REGISTERS
 
-	ldr	x1, [x3, #8]
+	ldr	PTR_REG (1), [x3, #PTR_SIZE]
 	bl	_dl_tlsdesc_resolve_rela_fixup
 
 	RESTORE_Q_REGISTERS
 
 	ldr	x0, [sp, #32+16*8]
-	ldr	x1, [x0]
+	ldr	PTR_REG (1), [x0]
 	blr	x1
 
 	ldp	 x1,  x4, [sp, #32+16*0]
@@ -346,7 +347,7 @@ _dl_tlsdesc_resolve_hold:
 	RESTORE_Q_REGISTERS
 
 	ldr	x0, [sp, #32+16*9]
-	ldr	x1, [x0]
+	ldr	PTR_REG (1), [x0]
 	blr	x1
 
 	ldp	 x1,  x2, [sp, #32+16*0]
