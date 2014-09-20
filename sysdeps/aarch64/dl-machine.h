@@ -188,7 +188,7 @@ _dl_start_user:								\n\
 	adrp	x16, _rtld_local					\n\
         add	" PTR "16, " PTR "16, #:lo12:_rtld_local		\n\
         ldr	" PTR "0, [x16]						\n\
-	bl	_dl_init_internal					\n\
+	bl	_dl_init						\n\
 	// load the finalizer function					\n\
 	adrp	x0, _dl_fini						\n\
 	add	" PTR "0, " PTR "0, #:lo12:_dl_fini			\n\
