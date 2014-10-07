@@ -15,12 +15,16 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#define __WORDSIZE	64
+#ifdef __LP64__
+# define __WORDSIZE	64
+#else
+# define __WORDSIZE	32
+#endif
 
-/* LP64 ABI has a 64bit time_t.
+/* LP64 and ILP32s ABI uses a 64bit time_t.
    This allows aarch32 and AARCH64 applications
    both access utmp. */
 #define __WORDSIZE_TIME64_COMPAT32	1
 
-/* LP64 use the 64bit system call interface. */
+/* LP64 and ILP32 use the 64bit system call interface. */
 #define __SYSCALL_WORDSIZE 64
