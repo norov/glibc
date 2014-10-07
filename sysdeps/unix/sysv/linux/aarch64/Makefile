@@ -23,13 +23,21 @@ endif
 
 abi-variants := lp64
 abi-variants += lp64_be
+abi-variants += ilp32
+abi-variants += ilp32_be
 
 ifeq (,$(filter $(default-abi),$(abi-variants)))
 Unknown ABI, must be one of $(abi-variants)
 endif
 
-abi-lp64-options := -U__AARCH64EB__
-abi-lp64-condition := !defined __AARCH64EB__
+abi-lp64-options := -U__AARCH64EB__ -D__LP64__ -U__ILP32__
+abi-lp64-condition := __WORDSIZE == 64 && !defined __AARCH64EB__
 
-abi-lp64_be-options := -D__AARCH64EB__
-abi-lp64_be-condition := defined __AARCH64EB__
+abi-lp64_be-options := -D__AARCH64EB__ -D__LP64__ -U__ILP32__
+abi-lp64_be-condition := __WORDSIZE == 64 && defined __AARCH64EB__
+
+abi-ilp32-options := -U__AARCH64EB__ -U__LP64__ -D__ILP32__
+abi-ilp32-condition := __WORDSIZE == 32 && !defined __AARCH64EB__
+
+abi-ilp32_be-options := -D__AARCH64EB__ -U__LP64__ -D__ILP32__
+abi-ilp32_be-condition := __WORDSIZE == 32 && defined __AARCH64EB__
