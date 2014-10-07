@@ -2,9 +2,10 @@
 
 #if defined __s390x__
 # define __WORDSIZE	64
+# define __WORDSIZE32_SIZE_ULONG	0
 #else
 # define __WORDSIZE	32
-# define __WORDSIZE32_SIZE_ULONG       1
+# define __WORDSIZE32_SIZE_ULONG	1
 #endif
 
 #if !defined __NO_LONG_DOUBLE_MATH && !defined __LONG_DOUBLE_MATH_OPTIONAL
@@ -17,3 +18,6 @@
 #  define __NO_LONG_DOUBLE_MATH        1
 # endif
 #endif
+
+#define __WORDSIZE32_PTRDIFF_LONG	0
+#define __WORDSIZE_TIME64_COMPAT32	0

@@ -10,4 +10,9 @@
 # define __WORDSIZE_TIME64_COMPAT32	1
 /* Both x86-64 and x32 use the 64-bit system call interface.  */
 # define __SYSCALL_WORDSIZE		64
+#else
+# define __WORDSIZE_TIME64_COMPAT32	0
 #endif
+
+#define __WORDSIZE32_SIZE_ULONG		0
+#define __WORDSIZE32_PTRDIFF_LONG	0

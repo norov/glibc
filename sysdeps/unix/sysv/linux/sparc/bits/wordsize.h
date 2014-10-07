@@ -18,3 +18,7 @@
 #  endif
 # endif
 #endif
+
+#define __WORDSIZE32_SIZE_ULONG		0
+#define __WORDSIZE32_PTRDIFF_LONG	0
+#define __WORDSIZE_TIME64_COMPAT32	0
