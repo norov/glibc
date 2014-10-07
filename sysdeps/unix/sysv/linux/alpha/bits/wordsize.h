@@ -17,6 +17,8 @@
 
 #define __WORDSIZE	64
 
+#define __WORDSIZE_TIME64_COMPAT32	0
+
 #if !defined __NO_LONG_DOUBLE_MATH && !defined __LONG_DOUBLE_MATH_OPTIONAL
 
 /* Signal that we didn't used to have a `long double'. The changes all
