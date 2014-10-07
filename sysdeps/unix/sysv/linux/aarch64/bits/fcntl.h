@@ -25,7 +25,11 @@
 #define __O_NOFOLLOW	0100000
 #define __O_DIRECT	0200000
 
-#define __O_LARGEFILE	0
+#ifdef __ILP32__
+# define __O_LARGEFILE	0400000
+#else
+# define __O_LARGEFILE	0
+#endif
 
 # define F_GETLK64	5
 # define F_SETLK64	6
