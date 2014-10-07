@@ -1,0 +1,2 @@
+#define XSTAT_IS_XSTAT64	1
+#define STAT_IS_KERNEL_STAT
