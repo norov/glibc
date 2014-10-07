@@ -248,8 +248,13 @@ typedef unsigned long long int	uintmax_t;
 #  define PTRDIFF_MIN		(-9223372036854775807L-1)
 #  define PTRDIFF_MAX		(9223372036854775807L)
 # else
-#  define PTRDIFF_MIN		(-2147483647-1)
-#  define PTRDIFF_MAX		(2147483647)
+#  if __WORDSIZE32_PTRDIFF_LONG
+#    define PTRDIFF_MIN		(-2147483647L-1)
+#    define PTRDIFF_MAX		(2147483647L)
+#  else
+#    define PTRDIFF_MIN		(-2147483647-1)
+#    define PTRDIFF_MAX		(2147483647)
+#  endif
 # endif
 
 /* Limits of `sig_atomic_t'.  */
