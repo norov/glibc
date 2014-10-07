@@ -37,7 +37,7 @@
     __label__ out;							      \
     __label__ iserr;							      \
     INTERNAL_SYSCALL_DECL (sc_err);					      \
-    long int sc_ret;							      \
+    __syscall_slong_t sc_ret;						      \
 									      \
     __typeof (__vdso_##name) vdsop = __vdso_##name;			      \
     PTR_DEMANGLE (vdsop);						      \
@@ -64,7 +64,7 @@
 #  define INTERNAL_VSYSCALL(name, err, nr, args...)			      \
   ({									      \
     __label__ out;							      \
-    long v_ret;								      \
+    __syscall_slong_t v_ret;						      \
 									      \
     __typeof (__vdso_##name) vdsop = __vdso_##name;			      \
     PTR_DEMANGLE (vdsop);						      \
