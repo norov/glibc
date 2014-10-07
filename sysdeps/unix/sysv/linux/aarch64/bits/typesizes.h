@@ -73,6 +73,15 @@
 /* And for rlim_t and rlim64_t.  */
 #define __RLIM_T_MATCHES_RLIM64_T			1
 
+/* And for __blkcnt_t and __blkcnt64_t.  */
+# define __BLKCNT_T_TYPE_MATCHES_BLKCNT64_T_TYPE	1
+
+/* And for __fsblkcnt_t and __fsblkcnt64_t.  */
+# define __FSBLKCNT_T_TYPE_MATCHES_FSBLKCNT64_T_TYPE	1
+
+/* And for __fsbilcnt_t and __fsbilcnt64_t.  */
+# define __FSFILCNT_T_TYPE_MATCHES_FSFILCNT64_T_TYPE	1
+
 /* Number of descriptors that can fit in an `fd_set'.  */
 #define	__FD_SETSIZE		1024
 
