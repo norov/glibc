@@ -1,6 +1,7 @@
-wordsize-64
-ieee754/ldbl-128
+aarch64
+wordsize-32
 ieee754/dbl-64/wordsize-64
 ieee754/dbl-64
 ieee754/flt-32
 aarch64/soft-fp
+ieee754/ldbl-128
