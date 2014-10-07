@@ -9,3 +9,5 @@ else
   LIBC_SLIBDIR_RTLDDIR([lib64], [lib])
 fi
 
+ldd_rewrite_script=$dir/ldd-rewrite.sed
+
