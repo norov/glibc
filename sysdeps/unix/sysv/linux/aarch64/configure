@@ -31,3 +31,5 @@ case "$prefix" in
 esac
 fi
 
+ldd_rewrite_script=$dir/ldd-rewrite.sed
+
