@@ -1,5 +1,5 @@
 /* sigstack, sigaltstack definitions.
-   Copyright (C) 2015 Free Software Foundation, Inc.
+   Copyright (C) 1998, 1999 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -39,13 +39,12 @@ enum
 };
 
 /* Minimum stack size for a signal handler.  */
-#define MINSIGSTKSZ	5120
+#define MINSIGSTKSZ    5120
 
 /* System default stack size.  */
-#define SIGSTKSZ	16384
+#define SIGSTKSZ       16384
 
-
-/* Alternate, preferred interface.  */
+/* Alternate, preferred interface. */
 typedef struct sigaltstack
   {
     void *ss_sp;
