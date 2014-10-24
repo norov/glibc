@@ -49,16 +49,20 @@ typedef __suseconds_t suseconds_t;
 # define __suseconds_t_defined
 #endif
 
+/* The fd_set member is required to be an array of longs by XPG4.2.  */
+#ifndef __FD_MASK_TYPE
+#define __FD_MASK_TYPE long
+#define __FD_MASK_CONST(a) a##ul
+#endif
 
-/* The fd_set member is required to be an array of longs.  */
-typedef long int __fd_mask;
+typedef __FD_MASK_TYPE __fd_mask;
 
 /* Some versions of <linux/posix_types.h> define this macros.  */
 #undef	__NFDBITS
 /* It's easier to assume 8-bit bytes than to get CHAR_BIT.  */
 #define __NFDBITS	(8 * (int) sizeof (__fd_mask))
 #define	__FD_ELT(d)	((d) / __NFDBITS)
-#define	__FD_MASK(d)	((__fd_mask) (1UL << ((d) % __NFDBITS)))
+#define	__FD_MASK(d)	((__fd_mask) (__FD_MASK_CONST(1) << ((d) % __NFDBITS)))
 
 /* fd_set for select and pselect.  */
 typedef struct
