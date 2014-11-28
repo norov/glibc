@@ -1,3 +1,10 @@
+2014-10-30  Andrew Senkevich  <andrew.n.senkevich@gmail.com>
+
+	* sysdeps/i386/tls-macros.h (TLS_IE, TLS_LD, TLS_GD): Keep
+	define in PIC mode only if gcc version < 5.0
+	* sysdeps/unix/sysv/linux/i386/sysdep.h (check_consistency):
+	Keep define only if gcc version < 5.0
+
 2014-06-13  Manjunath Matti  <mmatti@caviumnetworks.com>
 
 	Backported: Fix ARM build with GCC 4.10 merge.
