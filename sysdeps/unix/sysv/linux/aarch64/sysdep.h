@@ -58,19 +58,8 @@
   .text;								      \
   ENTRY (name);								      \
     DO_CALL (syscall_name, args);					      \
-    cmn x0, #4095;
-
-/* Notice the use of 'RET' instead of 'ret' the assembler is case
-   insensitive and eglibc already uses the preprocessor symbol 'ret'
-   so we use the upper case 'RET' to force through a ret instruction
-   to the assembler */
-# define PSEUDO_RET							      \
-    b.cs 1f;								      \
-    RET;								      \
-    1:                                                                        \
-    b SYSCALL_ERROR
-# undef ret
-# define ret PSEUDO_RET
+    cmn x0, #4095;							      \
+    b.cs .Lsyscall_error;
 
 # undef	PSEUDO_END
 # define PSEUDO_END(name)						      \
@@ -83,19 +72,11 @@
   ENTRY (name);								      \
     DO_CALL (syscall_name, args);
 
-/* Notice the use of 'RET' instead of 'ret' the assembler is case
-   insensitive and eglibc already uses the preprocessor symbol 'ret'
-   so we use the upper case 'RET' to force through a ret instruction
-   to the assembler */
-# define PSEUDO_RET_NOERRNO						      \
-    RET;
-
-# undef ret_NOERRNO
-# define ret_NOERRNO PSEUDO_RET_NOERRNO
-
 # undef	PSEUDO_END_NOERRNO
 # define PSEUDO_END_NOERRNO(name)					      \
   END (name)
+
+# define ret_NOERRNO ret
 
 /* The function has to return the error code.  */
 # undef	PSEUDO_ERRVAL
@@ -109,47 +90,39 @@
 # define PSEUDO_END_ERRVAL(name) \
   END (name)
 
-# define ret_ERRVAL PSEUDO_RET_NOERRNO
+# define ret_ERRVAL ret
 
-# if NOT_IN_libc
-#  define SYSCALL_ERROR __local_syscall_error
+# if !IS_IN (libc)
+#  define SYSCALL_ERROR  .Lsyscall_error
 #  if RTLD_PRIVATE_ERRNO
 #   define SYSCALL_ERROR_HANDLER				\
-__local_syscall_error:						\
+.Lsyscall_error:						\
 	adrp	x1, C_SYMBOL_NAME(rtld_errno);			\
-	add	x1, x1, #:lo12:C_SYMBOL_NAME(rtld_errno);	\
 	neg     w0, w0;						\
-	str     w0, [x1];					\
+	str     w0, [x1, :lo12:C_SYMBOL_NAME(rtld_errno)];	\
 	mov	x0, -1;						\
 	RET;
 #  else
 
 #   define SYSCALL_ERROR_HANDLER				\
-__local_syscall_error:						\
-	stp     x29, x30, [sp, -32]!;				\
-	cfi_adjust_cfa_offset (32);				\
-	cfi_rel_offset (x29, 0);				\
-	cfi_rel_offset (x30, 8);				\
-        add     x29, sp, 0;					\
-        str     x19, [sp,16];					\
-	neg	x19, x0;					\
-	bl	C_SYMBOL_NAME(__errno_location);		\
-	str	w19, [x0];					\
+.Lsyscall_error:						\
+	adrp	x1, :gottprel:errno;				\
+	neg	w2, w0;						\
+	ldr	x1, [x1, :gottprel_lo12:errno];			\
+	mrs	x3, tpidr_el0;					\
 	mov	x0, -1;						\
-        ldr     x19, [sp,16];					\
-        ldp     x29, x30, [sp], 32;				\
-	cfi_adjust_cfa_offset (-32);				\
-	cfi_restore (x29);					\
-	cfi_restore (x30);					\
+	str	w2, [x1, x3];					\
 	RET;
 #  endif
 # else
-#  define SYSCALL_ERROR_HANDLER	/* Nothing here; code in sysdep.S is used.  */
 #  define SYSCALL_ERROR __syscall_error
+#  define SYSCALL_ERROR_HANDLER                                 \
+.Lsyscall_error:                                                \
+	b	__syscall_error;
 # endif
 
 /* Linux takes system call args in registers:
-	syscall number	in the SVC instruction
+	syscall number	x8
 	arg 1		x0
 	arg 2		x1
 	arg 3		x2
@@ -173,28 +146,8 @@ __local_syscall_error:						\
 
 # undef	DO_CALL
 # define DO_CALL(syscall_name, args)		\
-    DOARGS_##args				\
     mov x8, SYS_ify (syscall_name);		\
-    svc 0;					\
-    UNDOARGS_##args
-
-# define DOARGS_0 /* nothing */
-# define DOARGS_1 /* nothing */
-# define DOARGS_2 /* nothing */
-# define DOARGS_3 /* nothing */
-# define DOARGS_4 /* nothing */
-# define DOARGS_5 /* nothing */
-# define DOARGS_6 /* nothing */
-# define DOARGS_7 /* nothing */
-
-# define UNDOARGS_0 /* nothing */
-# define UNDOARGS_1 /* nothing */
-# define UNDOARGS_2 /* nothing */
-# define UNDOARGS_3 /* nothing */
-# define UNDOARGS_4 /* nothing */
-# define UNDOARGS_5 /* nothing */
-# define UNDOARGS_6 /* nothing */
-# define UNDOARGS_7 /* nothing */
+    svc 0
 
 #else /* not __ASSEMBLER__ */
 
@@ -261,7 +214,7 @@ __local_syscall_error:						\
     LOAD_ARGS_##nr (args)					\
     asm volatile ("blr %1"					\
 		  : "=r" (_x0)					\
-		  : "r" (funcptr), ASM_ARGS_##nr		\
+		  : "r" (funcptr) ASM_ARGS_##nr			\
 		  : "x30", "memory");				\
     (long) _x0;							\
   })
@@ -284,17 +237,15 @@ __local_syscall_error:						\
 
 # undef INTERNAL_SYSCALL_RAW
 # define INTERNAL_SYSCALL_RAW(name, err, nr, args...)		\
-  ({ unsigned long _sys_result;					\
+  ({ long _sys_result;						\
      {								\
        LOAD_ARGS_##nr (args)					\
        register long _x8 asm ("x8") = (name);			\
        asm volatile ("svc	0	// syscall " # name     \
-		     : "+r" (_x0), "+r" (_x8)			\
-		     : ASM_ARGS_##nr				\
-		     : "memory", CLOBBER_ARGS_##nr);		\
+		     : "=r" (_x0) : "r"(_x8) ASM_ARGS_##nr : "memory");	\
        _sys_result = _x0;					\
      }								\
-     (long) _sys_result; })
+     _sys_result; })
 
 # undef INTERNAL_SYSCALL
 # define INTERNAL_SYSCALL(name, err, nr, args...)		\
@@ -311,54 +262,44 @@ __local_syscall_error:						\
 # undef INTERNAL_SYSCALL_ERRNO
 # define INTERNAL_SYSCALL_ERRNO(val, err)	(-(val))
 
-# define CLOBBER_ARGS_0       CLOBBER_ARGS_1
-# define CLOBBER_ARGS_1 "x1", CLOBBER_ARGS_2
-# define CLOBBER_ARGS_2 "x2", CLOBBER_ARGS_3
-# define CLOBBER_ARGS_3 "x3", CLOBBER_ARGS_4
-# define CLOBBER_ARGS_4 "x4", CLOBBER_ARGS_5
-# define CLOBBER_ARGS_5 "x5", CLOBBER_ARGS_6
-# define CLOBBER_ARGS_6 "x6", CLOBBER_ARGS_7
-# define CLOBBER_ARGS_7 \
-  "x7", "x9", "x10", "x11", "x12", "x13", "x14", "x15", "x16", "x17", "x18"
-
 # define LOAD_ARGS_0()				\
   register long _x0 asm ("x0");
-
-# define ASM_ARGS_0
 # define LOAD_ARGS_1(x0)			\
   long _x0tmp = (long) (x0);			\
   LOAD_ARGS_0 ()				\
   _x0 = _x0tmp;
-# define ASM_ARGS_1	"r" (_x0)
 # define LOAD_ARGS_2(x0, x1)			\
   long _x1tmp = (long) (x1);			\
   LOAD_ARGS_1 (x0)				\
   register long _x1 asm ("x1") = _x1tmp;
-# define ASM_ARGS_2	ASM_ARGS_1, "r" (_x1)
 # define LOAD_ARGS_3(x0, x1, x2)		\
   long _x2tmp = (long) (x2);			\
   LOAD_ARGS_2 (x0, x1)				\
   register long _x2 asm ("x2") = _x2tmp;
-# define ASM_ARGS_3	ASM_ARGS_2, "r" (_x2)
 # define LOAD_ARGS_4(x0, x1, x2, x3)		\
   long _x3tmp = (long) (x3);			\
   LOAD_ARGS_3 (x0, x1, x2)			\
   register long _x3 asm ("x3") = _x3tmp;
-# define ASM_ARGS_4	ASM_ARGS_3, "r" (_x3)
 # define LOAD_ARGS_5(x0, x1, x2, x3, x4)	\
   long _x4tmp = (long) (x4);			\
   LOAD_ARGS_4 (x0, x1, x2, x3)			\
   register long _x4 asm ("x4") = _x4tmp;
-# define ASM_ARGS_5	ASM_ARGS_4, "r" (_x4)
 # define LOAD_ARGS_6(x0, x1, x2, x3, x4, x5)	\
   long _x5tmp = (long) (x5);			\
   LOAD_ARGS_5 (x0, x1, x2, x3, x4)		\
   register long _x5 asm ("x5") = _x5tmp;
-# define ASM_ARGS_6	ASM_ARGS_5, "r" (_x5)
 # define LOAD_ARGS_7(x0, x1, x2, x3, x4, x5, x6)\
   long _x6tmp = (long) (x6);			\
   LOAD_ARGS_6 (x0, x1, x2, x3, x4, x5)		\
   register long _x6 asm ("x6") = _x6tmp;
+
+# define ASM_ARGS_0
+# define ASM_ARGS_1	, "r" (_x0)
+# define ASM_ARGS_2	ASM_ARGS_1, "r" (_x1)
+# define ASM_ARGS_3	ASM_ARGS_2, "r" (_x2)
+# define ASM_ARGS_4	ASM_ARGS_3, "r" (_x3)
+# define ASM_ARGS_5	ASM_ARGS_4, "r" (_x4)
+# define ASM_ARGS_6	ASM_ARGS_5, "r" (_x5)
 # define ASM_ARGS_7	ASM_ARGS_6, "r" (_x6)
 
 # undef INTERNAL_SYSCALL_NCS
@@ -368,8 +309,9 @@ __local_syscall_error:						\
 #endif	/* __ASSEMBLER__ */
 
 /* Pointer mangling is supported for AArch64.  */
-#if (defined NOT_IN_libc && defined IS_IN_rtld) || \
-  (!defined SHARED && (!defined NOT_IN_libc || defined IS_IN_libpthread))
+#if (IS_IN (rtld) || \
+     (!defined SHARED && (IS_IN (libc) \
+			  || IS_IN (libpthread))))
 # ifdef __ASSEMBLER__
 #  define PTR_MANGLE(dst, src, guard, tmp)                                \
   LDST_PCREL (ldr, guard, tmp, C_SYMBOL_NAME(__pointer_chk_guard_local)); \

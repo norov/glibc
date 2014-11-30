@@ -17,13 +17,13 @@
 
 #include <errno.h>
 #include <signal.h>
-#include <string.h>	/* Neede for string function builtin redirection.  */
+#include <string.h>  /* Needed for string function builtin redirection.  */
 #include <unistd.h>
 
 #include <sysdep.h>
 #include <sys/syscall.h>
 
-#include <kernel-features.h>
+#include <nptl/pthreadP.h>              /* SIGCANCEL, SIGSETXID */
 
 
 /* Get and/or change the set of blocked signals.  */

@@ -170,7 +170,7 @@ _dl_start_user:\n\
 	ldr	r0, .L_LOADED\n\
 	ldr	r0, [sl, r0]\n\
 	@ call _dl_init\n\
-	bl	_dl_init_internal(PLT)\n\
+	bl	_dl_init(PLT)\n\
 	@ load the finalizer function\n\
 	ldr	r0, .L_FINI_PROC\n\
 	add	r0, sl, r0\n\
@@ -279,6 +279,7 @@ elf_machine_plt_value (struct link_map *map, const Elf32_Rel *reloc,
 /* ARM never uses Elf32_Rela relocations for the dynamic linker.
    Prelinked libraries may use Elf32_Rela though.  */
 #define ELF_MACHINE_NO_RELA defined RTLD_BOOTSTRAP
+#define ELF_MACHINE_NO_REL 0
 
 /* Names of the architecture-specific auditing callback functions.  */
 #define ARCH_LA_PLTENTER arm_gnu_pltenter
@@ -452,7 +453,10 @@ elf_machine_rel (struct link_map *map, const Elf32_Rel *reloc,
 	    else
 # endif
 	      {
-		value = sym->st_value + td->argument.value;
+		if (ELF32_R_SYM (reloc->r_info) == STN_UNDEF)
+		  value = td->argument.value;
+		else
+		  value = sym->st_value;
 
 # ifndef RTLD_BOOTSTRAP
 #  ifndef SHARED
@@ -570,6 +574,32 @@ elf_machine_rela (struct link_map *map, const Elf32_Rela *reloc,
 	case R_ARM_ABS32:
 	  *reloc_addr = value + reloc->r_addend;
 	  break;
+#  ifdef RESOLVE_CONFLICT_FIND_MAP
+	case R_ARM_TLS_DESC:
+	  {
+	    struct tlsdesc volatile *td =
+	      (struct tlsdesc volatile *) reloc_addr;
+
+	    RESOLVE_CONFLICT_FIND_MAP (map, reloc_addr);
+
+	    /* Make sure we know what's going on.  */
+	    assert (td->entry
+		    == (void *) (D_PTR (map, l_info[ADDRIDX (DT_TLSDESC_PLT)])
+				 + map->l_addr));
+	    assert (map->l_info[ADDRIDX (DT_TLSDESC_GOT)]);
+
+	    /* Set up the lazy resolver and store the pointer to our link
+	       map in _GLOBAL_OFFSET_TABLE[1] now as for a prelinked
+	       binary elf_machine_runtime_setup() is not called and hence
+	       neither has been initialized.  */
+	    *(Elf32_Addr *) (D_PTR (map, l_info[ADDRIDX (DT_TLSDESC_GOT)])
+			     + map->l_addr)
+	      = (Elf32_Addr) &_dl_tlsdesc_lazy_resolver;
+	    ((Elf32_Addr *) D_PTR (map, l_info[DT_PLTGOT]))[1]
+	      = (Elf32_Addr) map;
+	  }
+	  break;
+#  endif /* RESOLVE_CONFLICT_FIND_MAP */
 	case R_ARM_PC24:
           relocate_pc24 (map, value, reloc_addr, reloc->r_addend);
 	  break;
@@ -594,7 +624,7 @@ elf_machine_rela (struct link_map *map, const Elf32_Rela *reloc,
 	    }
 	  break;
 	case R_ARM_IRELATIVE:
-	  value = map->l_addr + *reloc_addr;
+	  value = map->l_addr + reloc->r_addend;
 	  value = ((Elf32_Addr (*) (int)) value) (GLRO(dl_hwcap));
 	  *reloc_addr = value;
 	  break;
@@ -649,9 +679,11 @@ elf_machine_lazy_rel (struct link_map *map,
 	(struct tlsdesc volatile *)reloc_addr;
 
       /* The linker must have given us the parameter we need in the
-	 first GOT entry, and left the second one empty. We fill the
-	 last with the resolver address */
-      assert (td->entry == 0);
+	 first GOT entry, and left the second one empty.  The latter
+	 will have been preset by the prelinker if used though.
+	 We fill it with the resolver address.  */
+      assert (td->entry == 0
+	      || map->l_info[VALIDX (DT_GNU_PRELINKED)] != NULL);
       td->entry = (void*)(D_PTR (map, l_info[ADDRIDX (DT_TLSDESC_PLT)])
 			  + map->l_addr);
     }

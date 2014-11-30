@@ -197,6 +197,7 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
 
 /* The SPARC never uses Elf32_Rel relocations.  */
 #define ELF_MACHINE_NO_REL 1
+#define ELF_MACHINE_NO_RELA 0
 
 /* Undo the sub %sp, 6*4, %sp; add %sp, 22*4, %o0 below to get at the
    value we want in __libc_stack_end.  */
@@ -281,7 +282,7 @@ _dl_start_user:\n\
 	add	%o3, 4, %o3\n\
 	mov	%i5, %o1\n\
 	add	%o2, %o3, %o3\n\
-	call	_dl_init_internal\n\
+	call	_dl_init\n\
 	 ld	[%o0], %o0\n\
   /* Pass our finalizer function to the user in %g1.  */\n\
 	" RTLD_GOT_ADDRESS(%l7, %g1, _dl_fini) "\n\

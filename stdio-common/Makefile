@@ -118,14 +118,6 @@ CFLAGS-scanf17.c = -I../libio -I../stdlib -I../wcsmbs -I../time -I../string \
 
 # We know the test has a format string problem.
 CFLAGS-tst-sprintf.c = -Wno-format
-tst-sprintf-ENV = LOCPATH=$(common-objpfx)localedata
-tst-sscanf-ENV = LOCPATH=$(common-objpfx)localedata
-tst-swprintf-ENV = LOCPATH=$(common-objpfx)localedata
-tst-swscanf-ENV = LOCPATH=$(common-objpfx)localedata
-test-vfprintf-ENV = LOCPATH=$(common-objpfx)localedata
-scanf13-ENV = LOCPATH=$(common-objpfx)localedata
-bug14-ENV = LOCPATH=$(common-objpfx)localedata
-tst-grouping-ENV = LOCPATH=$(common-objpfx)localedata
 
 CPPFLAGS += $(libio-mtsafe)
 
@@ -137,9 +129,4 @@ $(objpfx)tst-setvbuf1-cmp.out: tst-setvbuf1.expect $(objpfx)tst-setvbuf1.out
 	cmp $^ > $@; \
 	$(evaluate-test)
 
-ifeq ($(build-shared),yes)
-link-libm = $(common-objpfx)math/libm.so
-else
-link-libm = $(common-objpfx)math/libm.a
-endif
-$(objpfx)tst-printf-round: $(link-libm)
+$(objpfx)tst-printf-round: $(libm)

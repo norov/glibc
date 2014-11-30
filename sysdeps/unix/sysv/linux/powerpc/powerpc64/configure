@@ -1,6 +1,19 @@
 # This file is generated from configure.ac by Autoconf.  DO NOT EDIT!
  # Local configure fragment for sysdeps/unix/sysv/linux/powerpc/powerpc64/.
 
+test -n "$slibdir" ||
+case "$prefix" in
+/usr | /usr/)
+  slibdir=/lib64
+  libc_cv_rtlddir=/lib64
+  if test "$libdir" = '${exec_prefix}/lib'; then
+    libdir='${exec_prefix}/lib64';
+    # Locale data can be shared between 32-bit and 64-bit libraries.
+    libc_cv_localedir='${exec_prefix}/lib/locale'
+  fi
+  ;;
+esac
+
 # Define default-abi according to compiler flags.
 
 
@@ -20,7 +33,7 @@ do
     for ac_prog in grep ggrep; do
     for ac_exec_ext in '' $ac_executable_extensions; do
       ac_path_GREP="$as_dir/$ac_prog$ac_exec_ext"
-      { test -f "$ac_path_GREP" && $as_test_x "$ac_path_GREP"; } || continue
+      as_fn_executable_p "$ac_path_GREP" || continue
 # Check for GNU ac_path_GREP and select it if it is found.
   # Check for GNU $ac_path_GREP
 case `"$ac_path_GREP" --version 2>&1` in
@@ -86,7 +99,7 @@ do
     for ac_prog in egrep; do
     for ac_exec_ext in '' $ac_executable_extensions; do
       ac_path_EGREP="$as_dir/$ac_prog$ac_exec_ext"
-      { test -f "$ac_path_EGREP" && $as_test_x "$ac_path_EGREP"; } || continue
+      as_fn_executable_p "$ac_path_EGREP" || continue
 # Check for GNU ac_path_EGREP and select it if it is found.
   # Check for GNU $ac_path_EGREP
 case `"$ac_path_EGREP" --version 2>&1` in
@@ -160,6 +173,9 @@ $as_echo "$libc_cv_ppc64_elfv2_abi" >&6; }
 if test $libc_cv_ppc64_elfv2_abi = yes; then
   config_vars="$config_vars
 default-abi = 64-v2"
+  # For shlib-versions.
+  $as_echo "#define HAVE_ELFV2_ABI 1" >>confdefs.h
+
 else
   config_vars="$config_vars
 default-abi = 64-v1"

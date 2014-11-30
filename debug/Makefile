@@ -113,18 +113,6 @@ CFLAGS-tst-lfschk3.c = -Wno-format
 CFLAGS-tst-lfschk4.cc = -Wno-format
 CFLAGS-tst-lfschk5.cc = -Wno-format
 CFLAGS-tst-lfschk6.cc = -Wno-format
-tst-chk1-ENV = LOCPATH=$(common-objpfx)localedata
-tst-chk2-ENV = LOCPATH=$(common-objpfx)localedata
-tst-chk3-ENV = LOCPATH=$(common-objpfx)localedata
-tst-chk4-ENV = LOCPATH=$(common-objpfx)localedata
-tst-chk5-ENV = LOCPATH=$(common-objpfx)localedata
-tst-chk6-ENV = LOCPATH=$(common-objpfx)localedata
-tst-lfschk1-ENV = LOCPATH=$(common-objpfx)localedata
-tst-lfschk2-ENV = LOCPATH=$(common-objpfx)localedata
-tst-lfschk3-ENV = LOCPATH=$(common-objpfx)localedata
-tst-lfschk4-ENV = LOCPATH=$(common-objpfx)localedata
-tst-lfschk5-ENV = LOCPATH=$(common-objpfx)localedata
-tst-lfschk6-ENV = LOCPATH=$(common-objpfx)localedata
 LDLIBS-tst-chk4 = -lstdc++
 LDLIBS-tst-chk5 = -lstdc++
 LDLIBS-tst-chk6 = -lstdc++
@@ -150,9 +138,6 @@ tests = backtrace-tst tst-longjmp_chk tst-chk1 tst-chk2 tst-chk3 \
 	tst-chk4 tst-chk5 tst-chk6 tst-lfschk4 tst-lfschk5 tst-lfschk6 \
 	tst-longjmp_chk2 tst-backtrace2 tst-backtrace3 tst-backtrace4 \
 	tst-backtrace5 tst-backtrace6
-
-tests-ifunc := $(stpcpy_chk strcpy_chk:%=test-%-ifunc)
-tests += $(tests-ifunc)
 
 extra-libs = libSegFault libpcprofile
 extra-libs-others = $(extra-libs)

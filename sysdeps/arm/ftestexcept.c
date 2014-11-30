@@ -16,25 +16,17 @@
    License along with the GNU C Library.  If not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <fenv.h>
-#include <fpu_control.h>
+#include <fenv_private.h>
 #include <arm-features.h>
 
 
 int
 fetestexcept (int excepts)
 {
-  if (ARM_HAVE_VFP)
-    {
-      fexcept_t temp;
+  /* Return no exception flags if a VFP unit isn't present.  */
+  if (!ARM_HAVE_VFP)
+    return 0;
 
-      /* Get current exceptions.  */
-      _FPU_GETCW(temp);
-
-      return temp & excepts & FE_ALL_EXCEPT;
-    }
-
-  /* Unsupported, return 0.  */
-  return 0;
+  return libc_fetestexcept_vfp (excepts);
 }
 libm_hidden_def (fetestexcept)

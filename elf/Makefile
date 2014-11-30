@@ -70,8 +70,8 @@ install-others	= $(inst_rtlddir)/$(rtld-installed-name)
 install-bin-script = ldd
 endif
 
-others		= sprof sln pldd
-install-bin	= sprof pldd
+others		= sprof sln
+install-bin	= sprof
 others-static   = sln
 install-rootsbin = sln
 sln-modules	:= static-stubs
@@ -88,8 +88,6 @@ extra-objs	+= $(ldconfig-modules:=.o)
 endif
 endif
 
-pldd-modules := xmalloc
-
 # To find xmalloc.c and xstrdup.c
 vpath %.c ../locale/programs
 
@@ -98,7 +96,7 @@ extra-objs += sotruss-lib.os sotruss-lib.so
 install-others += $(inst_auditdir)/sotruss-lib.so
 install-bin-script += sotruss
 generated += sotruss
-CPPFLAGS-sotruss-lib = -DNOT_IN_libc
+libof-sotruss-lib = extramodules
 $(objpfx)sotruss-lib.so: $(objpfx)sotruss-lib.os
 	$(build-module-asneeded)
 $(objpfx)sotruss-lib.so: $(common-objpfx)libc.so $(objpfx)ld.so \
@@ -123,7 +121,7 @@ tests = tst-tls1 tst-tls2 tst-tls9 tst-leaks1 \
 	tst-auxv
 tests-static = tst-tls1-static tst-tls2-static tst-stackguard1-static \
 	       tst-leaks1-static tst-array1-static tst-array5-static \
-	       tst-ptrguard1-static
+	       tst-ptrguard1-static tst-dl-iter-static
 ifeq (yes,$(build-shared))
 tests-static += tst-tls9-static
 tst-tls9-static-ENV = \
@@ -355,10 +353,16 @@ $(objpfx)ld.so: $(objpfx)librtld.os $(ld-map)
 	  | $(AWK) '($$7 ~ /^UND(|EF)$$/ && $$1 != "0:" && $$4 != "REGISTER") { print; p=1 } END { exit p != 0 }'
 	mv -f $@.new $@
 
-# interp.c exists just to get this string into the libraries.
-CFLAGS-interp.c = -D'RUNTIME_LINKER="$(rtlddir)/$(rtld-installed-name)"' \
-		  -DNOT_IN_libc=1
-$(objpfx)interp.os: $(common-objpfx)config.make
+# interp.c exists just to get the runtime linker path into libc.so.
+$(objpfx)interp.os: $(elf-objpfx)runtime-linker.h
+
+$(elf-objpfx)runtime-linker.h: $(elf-objpfx)runtime-linker.st; @:
+$(elf-objpfx)runtime-linker.st: $(common-objpfx)config.make
+	$(name-target-directory)
+	echo '#define RUNTIME_LINKER "$(rtlddir)/$(rtld-installed-name)"' \
+		> ${@:st=T}
+	$(move-if-change) ${@:st=T} ${@:st=h}
+	touch $@
 
 ifneq (ld.so,$(rtld-installed-name))
 # Make sure ld.so.1 exists in the build directory so we can link
@@ -430,17 +434,17 @@ $(objpfx)sln: $(sln-modules:%=$(objpfx)%.o)
 
 $(objpfx)ldconfig: $(ldconfig-modules:%=$(objpfx)%.o)
 
-$(objpfx)pldd: $(pldd-modules:%=$(objpfx)%.o)
-
 SYSCONF-FLAGS := -D'SYSCONFDIR="$(sysconfdir)"'
 CFLAGS-ldconfig.c = $(SYSCONF-FLAGS) -D'LIBDIR="$(libdir)"' \
-		    -D'SLIBDIR="$(slibdir)"' -DIS_IN_ldconfig=1
+		    -D'SLIBDIR="$(slibdir)"'
+libof-ldconfig = ldconfig
 CFLAGS-dl-cache.c = $(SYSCONF-FLAGS)
 CFLAGS-cache.c = $(SYSCONF-FLAGS)
 CFLAGS-rtld.c = $(SYSCONF-FLAGS)
 
-CPPFLAGS-.os += $(if $(filter $(@F),$(patsubst %,%.os,$(all-rtld-routines))),\
-		     -DNOT_IN_libc=1 -DIS_IN_rtld=1 -DIN_LIB=rtld)
+cpp-srcs-left := $(all-rtld-routines:=.os)
+lib := rtld
+include $(patsubst %,$(..)cppflags-iterator.mk,$(cpp-srcs-left))
 
 test-modules = $(addprefix $(objpfx),$(addsuffix .so,$(strip $(modules-names))))
 generated += $(addsuffix .so,$(strip $(modules-names)))
@@ -525,8 +529,8 @@ LDFLAGS-tst-initordera2.so = $(no-as-needed)
 LDFLAGS-tst-initordera3.so = $(no-as-needed)
 LDFLAGS-tst-initordera4.so = $(no-as-needed)
 LDFLAGS-tst-initorderb2.so = $(no-as-needed)
-LDFLAGS-tst-tlsmod5.so = -nostdlib
-LDFLAGS-tst-tlsmod6.so = -nostdlib
+LDFLAGS-tst-tlsmod5.so = -nostdlib $(no-as-needed)
+LDFLAGS-tst-tlsmod6.so = -nostdlib $(no-as-needed)
 
 testobj1.so-no-z-defs = yes
 testobj3.so-no-z-defs = yes
@@ -595,7 +599,6 @@ $(objpfx)neededtest3: $(libdl)
 $(objpfx)neededtest3.out: $(objpfx)neededobj1.so $(objpfx)neededobj2.so \
 			  $(objpfx)neededobj3.so $(objpfx)neededobj4.so
 
-neededtest4-ENV = LC_ALL=C LANGUAGE=C
 $(objpfx)neededtest4: $(libdl) $(objpfx)neededobj1.so
 $(objpfx)neededtest4.out: $(objpfx)neededobj5.so $(objpfx)neededobj6.so
 
@@ -657,7 +660,7 @@ $(objpfx)vismain: $(addprefix $(objpfx),vismod1.so vismod2.so)
 $(objpfx)vismain.out: $(addprefix $(objpfx),vismod3.so)
 vismain-ENV = LD_PRELOAD=$(addprefix $(objpfx),vismod3.so)
 
-$(objpfx)noload: $(objpfx)testobj1.so $(common-objpfx)dlfcn/libdl.so
+$(objpfx)noload: $(objpfx)testobj1.so $(libdl)
 LDFLAGS-noload = -rdynamic $(no-as-needed)
 $(objpfx)noload.out: $(objpfx)testobj5.so
 
@@ -715,7 +718,8 @@ $(objpfx)lateglobal.out: $(objpfx)ltglobmod1.so $(objpfx)ltglobmod2.so
 $(objpfx)tst-pathopt: $(libdl)
 $(objpfx)tst-pathopt.out: tst-pathopt.sh $(objpfx)tst-pathopt \
 			  $(objpfx)pathoptobj.so
-	$(SHELL) $< $(common-objpfx) '$(test-wrapper-env)'; \
+	$(SHELL) $< $(common-objpfx) '$(test-wrapper-env)' \
+		 '$(run-program-env)'; \
 	$(evaluate-test)
 
 $(objpfx)tst-rtld-load-self.out: tst-rtld-load-self.sh $(objpfx)ld.so
@@ -902,7 +906,7 @@ CFLAGS-tst-pie2.c += $(pie-ccflag)
 $(objpfx)tst-pie1: $(objpfx)tst-piemod1.so
 
 ifeq (yes,$(build-shared))
-all-built-dso := $(common-objpfx)libc.so \
+all-built-dso := $(common-objpfx)elf/ld.so $(common-objpfx)libc.so \
 		 $(filter-out $(common-objpfx)linkobj/libc.so, \
 			      $(sort $(wildcard $(addprefix $(common-objpfx), \
 							    */lib*.so \
@@ -961,6 +965,7 @@ common-generated += $(all-built-dso:$(common-objpfx)%=%.jmprel)
 
 localplt-built-dso := $(addprefix $(common-objpfx),\
 				  libc.so \
+				  elf/ld.so \
 				  math/libm.so \
 				  rt/librt.so \
 				  dlfcn/libdl.so \
@@ -1015,7 +1020,7 @@ $(objpfx)tst-audit9: $(libdl)
 $(objpfx)tst-audit9.out: $(objpfx)tst-auditmod9a.so $(objpfx)tst-auditmod9b.so
 tst-audit9-ENV = LD_AUDIT=$(objpfx)tst-auditmod9a.so
 
-$(objpfx)tst-audit8: $(common-objpfx)math/libm.so
+$(objpfx)tst-audit8: $(libm)
 $(objpfx)tst-audit8.out: $(objpfx)tst-auditmod1.so
 tst-audit8-ENV = LD_AUDIT=$(objpfx)tst-auditmod1.so
 
@@ -1159,8 +1164,7 @@ $(objpfx)tst-unused-dep.out: $(objpfx)testobj1.so
 	LD_TRACE_LOADED_OBJECTS=1 \
 	LD_DEBUG=unused \
 	LD_PRELOAD= \
-	$(elf-objpfx)${rtld-installed-name} \
-	  --library-path $(rpath-link)$(patsubst %,:%,$(sysdep-library-path)) \
+	$(rtld-prefix) \
 	  $< > $@; \
 	$(evaluate-test)
 

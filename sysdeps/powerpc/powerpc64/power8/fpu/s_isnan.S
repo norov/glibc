@@ -17,14 +17,9 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <sysdep.h>
-#include <endian.h>
 #include <math_ldbl_opt.h>
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-#define MFVSRD_R3_V1  .byte 0x66,0x00,0x23,0x7c     /* mfvsrd  r3,vs1  */
-#else
-#define MFVSRD_R3_V1  .byte 0x7c,0x23,0x00,0x66     /* mfvsrd  r3,vs1  */
-#endif
+#define MFVSRD_R3_V1  .long 0x7c230066     /* mfvsrd  r3,vs1  */
 
 /* int [r3] __isnan([f1] x)  */
 
@@ -53,7 +48,7 @@ strong_alias (__isnan, __isnanl)
 weak_alias (__isnan, isnanl)
 #endif
 
-#ifndef IS_IN_libm
+#if !IS_IN (libm)
 # if LONG_DOUBLE_COMPAT(libc, GLIBC_2_0)
 compat_symbol (libc, __isnan, __isnanl, GLIBC_2_0);
 compat_symbol (libc, isnan, isnanl, GLIBC_2_0);

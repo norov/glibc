@@ -86,7 +86,8 @@ tests		:= tstgetopt testfnm runtests runptests	     \
 		   tst-getaddrinfo3 tst-fnmatch2 tst-cpucount tst-cpuset \
 		   bug-getopt1 bug-getopt2 bug-getopt3 bug-getopt4 \
 		   bug-getopt5 tst-getopt_long1 bug-regex34 bug-regex35 \
-		   tst-pathconf tst-getaddrinfo4 tst-rxspencer-no-utf8
+		   tst-pathconf tst-getaddrinfo4 tst-rxspencer-no-utf8 \
+		   tst-fnmatch3 bug-regex36 tst-getaddrinfo5
 xtests		:= bug-ga2
 ifeq (yes,$(build-shared))
 test-srcs	:= globtest
@@ -112,7 +113,7 @@ generated += $(addprefix wordexp-test-result, 1 2 3 4 5 6 7 8 9 10) \
 	     tst-boost.mtrace bug-ga2.mtrace bug-ga2-mem.out \
 	     bug-glob2.mtrace bug-glob2-mem.out tst-vfork3-mem.out \
 	     tst-vfork3.mtrace getconf.speclist tst-fnmatch-mem.out \
-	     tst-fnmatch.mtrace
+	     tst-fnmatch.mtrace bug-regex36.mtrace
 
 ifeq ($(run-built-tests),yes)
 ifeq (yes,$(build-shared))
@@ -129,7 +130,7 @@ tests-special += $(objpfx)bug-regex2-mem.out $(objpfx)bug-regex14-mem.out \
 		 $(objpfx)tst-rxspencer-no-utf8-mem.out $(objpfx)tst-pcre-mem.out \
 		 $(objpfx)tst-boost-mem.out $(objpfx)tst-getconf.out \
 		 $(objpfx)bug-glob2-mem.out $(objpfx)tst-vfork3-mem.out \
-		 $(objpfx)tst-fnmatch-mem.out
+		 $(objpfx)tst-fnmatch-mem.out $(objpfx)bug-regex36-mem.out
 xtests-special += $(objpfx)bug-ga2-mem.out
 endif
 
@@ -143,7 +144,8 @@ $(objpfx)globtest.out: globtest.sh $(objpfx)globtest
 		'$(test-program-prefix)' '$(test-wrapper-env)'; \
 	$(evaluate-test)
 $(objpfx)wordexp-tst.out: wordexp-tst.sh $(objpfx)wordexp-test
-	$(SHELL) $< $(common-objpfx) '$(test-program-prefix)'; \
+	$(SHELL) $< $(common-objpfx) '$(test-program-prefix-before-env)' \
+		 '$(run-program-env)' '$(test-program-prefix-after-env)'; \
 	$(evaluate-test)
 endif
 endif
@@ -203,30 +205,8 @@ tst-dir-ARGS = `pwd` `cd $(common-objdir)/$(subdir); pwd` `cd $(common-objdir); 
 tst-chmod-ARGS = $(objdir)
 tst-vfork3-ARGS = --test-dir=$(objpfx)
 
-tst-fnmatch-ENV = LOCPATH=$(common-objpfx)localedata
-tst-regexloc-ENV = LOCPATH=$(common-objpfx)localedata
-bug-regex1-ENV = LOCPATH=$(common-objpfx)localedata
-tst-regex-ENV = LOCPATH=$(common-objpfx)localedata
-tst-regex2-ENV = LOCPATH=$(common-objpfx)localedata
-bug-regex5-ENV = LOCPATH=$(common-objpfx)localedata
-bug-regex6-ENV = LOCPATH=$(common-objpfx)localedata
-bug-regex17-ENV = LOCPATH=$(common-objpfx)localedata
-bug-regex18-ENV = LOCPATH=$(common-objpfx)localedata
-bug-regex19-ENV = LOCPATH=$(common-objpfx)localedata
-bug-regex20-ENV = LOCPATH=$(common-objpfx)localedata
-bug-regex22-ENV = LOCPATH=$(common-objpfx)localedata
-bug-regex23-ENV = LOCPATH=$(common-objpfx)localedata
-bug-regex25-ENV = LOCPATH=$(common-objpfx)localedata
-bug-regex26-ENV = LOCPATH=$(common-objpfx)localedata
-bug-regex30-ENV = LOCPATH=$(common-objpfx)localedata
-bug-regex32-ENV = LOCPATH=$(common-objpfx)localedata
-bug-regex33-ENV = LOCPATH=$(common-objpfx)localedata
-bug-regex34-ENV = LOCPATH=$(common-objpfx)localedata
-bug-regex35-ENV = LOCPATH=$(common-objpfx)localedata
 tst-rxspencer-ARGS = --utf8 rxspencer/tests
 tst-rxspencer-no-utf8-ARGS = rxspencer/tests
-tst-rxspencer-ENV = LOCPATH=$(common-objpfx)localedata
-tst-rxspencer-no-utf8-ENV = LOCPATH=$(common-objpfx)localedata
 tst-pcre-ARGS = PCRE.tests
 tst-boost-ARGS = BOOST.tests
 bug-glob1-ARGS = "$(objpfx)"
@@ -278,6 +258,12 @@ bug-regex31-ENV = MALLOC_TRACE=$(objpfx)bug-regex31.mtrace
 
 $(objpfx)bug-regex31-mem.out: $(objpfx)bug-regex31.out
 	$(common-objpfx)malloc/mtrace $(objpfx)bug-regex31.mtrace > $@; \
+	$(evaluate-test)
+
+bug-regex36-ENV = MALLOC_TRACE=$(objpfx)bug-regex36.mtrace
+
+$(objpfx)bug-regex36-mem.out: $(objpfx)bug-regex36.out
+	$(common-objpfx)malloc/mtrace $(objpfx)bug-regex36.mtrace > $@; \
 	$(evaluate-test)
 
 tst-vfork3-ENV = MALLOC_TRACE=$(objpfx)tst-vfork3.mtrace

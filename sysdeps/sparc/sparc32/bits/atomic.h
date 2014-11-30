@@ -47,6 +47,9 @@ typedef uintptr_t uatomicptr_t;
 typedef intmax_t atomic_max_t;
 typedef uintmax_t uatomic_max_t;
 
+#define __HAVE_64B_ATOMICS 0
+#define USE_ATOMIC_COMPILER_BUILTINS 0
+
 
 /* We have no compare and swap, just test and set.
    The following implementation contends on 64 global locks
@@ -343,8 +346,8 @@ extern uint64_t _dl_hwcap __attribute__((weak));
 #define atomic_write_barrier()						\
   do {									\
      if (__atomic_is_v9)						\
-       /* membar  #StoreLoad | #StoreStore */				\
-       __asm __volatile (".word 0x8143e00a" : : : "memory");		\
+       /* membar  #LoadStore | #StoreStore */				\
+       __asm __volatile (".word 0x8143e00c" : : : "memory");		\
      else								\
        __asm __volatile ("" : : : "memory");				\
   } while (0)

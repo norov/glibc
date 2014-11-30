@@ -188,7 +188,7 @@ _dl_start_user:\n\
 .L_dl_skip_args:\n\
 	.long _dl_skip_args@GOT\n\
 .L_dl_init:\n\
-	.long _dl_init_internal@PLT\n\
+	.long _dl_init@PLT\n\
 .L_dl_loaded:\n\
 	.long _rtld_local@GOT\n\
 .L_dl_fini:\n\
@@ -251,6 +251,7 @@ elf_machine_plt_value (struct link_map *map, const Elf32_Rela *reloc,
 
 /* SH never uses Elf32_Rel relocations.	 */
 #define ELF_MACHINE_NO_REL 1
+#define ELF_MACHINE_NO_RELA 0
 
 #ifdef RESOLVE_MAP
 

@@ -33,11 +33,9 @@ _OtsCvtXQ (long al, long ah, long _round)
   _round = _round & 3;
 
   FP_INIT_ROUNDMODE;
-  FP_UNPACK_RAW_Q(A, a);
+  AXP_UNPACK_RAW_Q(A, a);
   FP_TO_INT_Q(r, A, 64, s);
-
-  if (s > 0 && (_fex &= FP_EX_INVALID))
-    FP_HANDLE_EXCEPTIONS;
+  FP_HANDLE_EXCEPTIONS;
 
   return r;
 }

@@ -22,7 +22,7 @@
 #include <sysdeps/unix/x86_64/sysdep.h>
 #include <tls.h>
 
-#ifdef IS_IN_rtld
+#if IS_IN (rtld)
 # include <dl-sysdep.h>		/* Defines RTLD_PRIVATE_ERRNO.  */
 #endif
 
@@ -115,7 +115,7 @@
   neg %eax;					\
   movl %eax, (%rcx)
 # else
-#  ifndef NOT_IN_libc
+#  if IS_IN (libc)
 #   define SYSCALL_ERROR_ERRNO __libc_errno
 #  else
 #   define SYSCALL_ERROR_ERRNO errno
@@ -393,7 +393,7 @@
 
 
 /* Pointer mangling support.  */
-#if defined NOT_IN_libc && defined IS_IN_rtld
+#if IS_IN (rtld)
 /* We cannot use the thread descriptor because in ld.so we use setjmp
    earlier than the descriptor is initialized.  */
 # ifdef __ASSEMBLER__

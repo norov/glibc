@@ -17,34 +17,17 @@
    License along with the GNU C Library.  If not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <fenv.h>
-#include <fpu_control.h>
+#include <fenv_private.h>
 #include <arm-features.h>
 
 
 int
-__fegetexceptflag (fexcept_t *flagp, int excepts)
+fegetexceptflag (fexcept_t *flagp, int excepts)
 {
-  if (ARM_HAVE_VFP)
-    {
-      unsigned long temp;
+  /* Fail if a VFP unit isn't present.  */
+  if (!ARM_HAVE_VFP)
+    return 1;
 
-      /* Get the current exceptions.  */
-      _FPU_GETCW (temp);
-
-      *flagp = temp & excepts & FE_ALL_EXCEPT;
-
-      /* Success.  */
-      return 0;
-    }
-
-  /* Unsupported, so fail.  */
-  return 1;
+  *flagp = libc_fetestexcept_vfp (excepts);
+  return 0;
 }
-
-#include <shlib-compat.h>
-#if SHLIB_COMPAT (libm, GLIBC_2_1, GLIBC_2_2)
-strong_alias (__fegetexceptflag, __old_fegetexceptflag)
-compat_symbol (libm, __old_fegetexceptflag, fegetexceptflag, GLIBC_2_1);
-#endif
-versioned_symbol (libm, __fegetexceptflag, fegetexceptflag, GLIBC_2_2);

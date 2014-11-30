@@ -39,9 +39,6 @@
 
 #define VERSTAG(tag)	(DT_NUM + DT_THISPROCNUM + DT_VERSIONTAGIDX (tag))
 
-/* We need this string more than once.  */
-static const char undefined_msg[] = "undefined symbol: ";
-
 
 struct sym_val
   {
@@ -95,11 +92,10 @@ check_match (const char *const undef_name,
 {
   unsigned int stt = ELFW(ST_TYPE) (sym->st_info);
   assert (ELF_RTYPE_CLASS_PLT == 1);
-  if (__builtin_expect ((sym->st_value == 0 /* No value.  */
+  if (__glibc_unlikely ((sym->st_value == 0 /* No value.  */
 			 && stt != STT_TLS)
 			|| ELF_MACHINE_SYM_NO_MATCH (sym)
-			|| (type_class & (sym->st_shndx == SHN_UNDEF)),
-			0))
+			|| (type_class & (sym->st_shndx == SHN_UNDEF))))
     return NULL;
 
   /* Ignore all but STT_NOTYPE, STT_OBJECT, STT_FUNC,
@@ -186,6 +182,165 @@ check_match (const char *const undef_name,
   return sym;
 }
 
+/* Utility function for do_lookup_unique.  Add a symbol to TABLE.  */
+static void
+enter_unique_sym (struct unique_sym *table, size_t size,
+                  unsigned int hash, const char *name,
+                  const ElfW(Sym) *sym, const struct link_map *map)
+{
+  size_t idx = hash % size;
+  size_t hash2 = 1 + hash % (size - 2);
+  while (table[idx].name != NULL)
+    {
+      idx += hash2;
+      if (idx >= size)
+        idx -= size;
+    }
+
+  table[idx].hashval = hash;
+  table[idx].name = name;
+  table[idx].sym = sym;
+  table[idx].map = map;
+}
+
+/* Utility function for do_lookup_x. Lookup an STB_GNU_UNIQUE symbol
+   in the unique symbol table, creating a new entry if necessary.
+   Return the matching symbol in RESULT.  */
+static void
+do_lookup_unique (const char *undef_name, uint_fast32_t new_hash,
+		  const struct link_map *map, struct sym_val *result,
+		  int type_class, const ElfW(Sym) *sym, const char *strtab,
+		  const ElfW(Sym) *ref, const struct link_map *undef_map)
+{
+  /* We have to determine whether we already found a symbol with this
+     name before.  If not then we have to add it to the search table.
+     If we already found a definition we have to use it.  */
+
+  struct unique_sym_table *tab
+    = &GL(dl_ns)[map->l_ns]._ns_unique_sym_table;
+
+  __rtld_lock_lock_recursive (tab->lock);
+
+  struct unique_sym *entries = tab->entries;
+  size_t size = tab->size;
+  if (entries != NULL)
+    {
+      size_t idx = new_hash % size;
+      size_t hash2 = 1 + new_hash % (size - 2);
+      while (1)
+	{
+	  if (entries[idx].hashval == new_hash
+	      && strcmp (entries[idx].name, undef_name) == 0)
+	    {
+	      if ((type_class & ELF_RTYPE_CLASS_COPY) != 0)
+		{
+		  /* We possibly have to initialize the central
+		     copy from the copy addressed through the
+		     relocation.  */
+		  result->s = sym;
+		  result->m = (struct link_map *) map;
+		}
+	      else
+		{
+		  result->s = entries[idx].sym;
+		  result->m = (struct link_map *) entries[idx].map;
+		}
+	      __rtld_lock_unlock_recursive (tab->lock);
+	      return;
+	    }
+
+	  if (entries[idx].name == NULL)
+	    break;
+
+	  idx += hash2;
+	  if (idx >= size)
+	    idx -= size;
+	}
+
+      if (size * 3 <= tab->n_elements * 4)
+	{
+	  /* Expand the table.  */
+#ifdef RTLD_CHECK_FOREIGN_CALL
+	  /* This must not happen during runtime relocations.  */
+	  assert (!RTLD_CHECK_FOREIGN_CALL);
+#endif
+	  size_t newsize = _dl_higher_prime_number (size + 1);
+	  struct unique_sym *newentries
+	    = calloc (sizeof (struct unique_sym), newsize);
+	  if (newentries == NULL)
+	    {
+	    nomem:
+	      __rtld_lock_unlock_recursive (tab->lock);
+	      _dl_fatal_printf ("out of memory\n");
+	    }
+
+	  for (idx = 0; idx < size; ++idx)
+	    if (entries[idx].name != NULL)
+	      enter_unique_sym (newentries, newsize, entries[idx].hashval,
+                                entries[idx].name, entries[idx].sym,
+                                entries[idx].map);
+
+	  tab->free (entries);
+	  tab->size = newsize;
+	  size = newsize;
+	  entries = tab->entries = newentries;
+	  tab->free = free;
+	}
+    }
+  else
+    {
+#ifdef RTLD_CHECK_FOREIGN_CALL
+      /* This must not happen during runtime relocations.  */
+      assert (!RTLD_CHECK_FOREIGN_CALL);
+#endif
+
+#ifdef SHARED
+      /* If tab->entries is NULL, but tab->size is not, it means
+	 this is the second, conflict finding, lookup for
+	 LD_TRACE_PRELINKING in _dl_debug_bindings.  Don't
+	 allocate anything and don't enter anything into the
+	 hash table.  */
+      if (__glibc_unlikely (tab->size))
+	{
+	  assert (GLRO(dl_debug_mask) & DL_DEBUG_PRELINK);
+	  goto success;
+	}
+#endif
+
+#define INITIAL_NUNIQUE_SYM_TABLE 31
+      size = INITIAL_NUNIQUE_SYM_TABLE;
+      entries = calloc (sizeof (struct unique_sym), size);
+      if (entries == NULL)
+	goto nomem;
+
+      tab->entries = entries;
+      tab->size = size;
+      tab->free = free;
+    }
+
+  if ((type_class & ELF_RTYPE_CLASS_COPY) != 0)
+    enter_unique_sym (entries, size, new_hash, strtab + sym->st_name, ref,
+	   undef_map);
+  else
+    {
+      enter_unique_sym (entries, size,
+                        new_hash, strtab + sym->st_name, sym, map);
+
+      if (map->l_type == lt_loaded)
+	/* Make sure we don't unload this object by
+	   setting the appropriate flag.  */
+	((struct link_map *) map)->l_flags_1 |= DF_1_NODELETE;
+    }
+  ++tab->n_elements;
+
+#ifdef SHARED
+ success:
+#endif
+  __rtld_lock_unlock_recursive (tab->lock);
+
+  result->s = sym;
+  result->m = (struct link_map *) map;
+}
 
 /* Inner part of the lookup functions.  We return a value > 0 if we
    found the symbol, the value 0 if nothing is found and < 0 if
@@ -252,8 +407,8 @@ do_lookup_x (const char *undef_name, uint_fast32_t new_hash,
 	  unsigned int hashbit2 = ((new_hash >> map->l_gnu_shift)
 				   & (__ELF_NATIVE_CLASS - 1));
 
-	  if (__builtin_expect ((bitmask_word >> hashbit1)
-				& (bitmask_word >> hashbit2) & 1, 0))
+	  if (__glibc_unlikely ((bitmask_word >> hashbit1)
+				& (bitmask_word >> hashbit2) & 1))
 	    {
 	      Elf32_Word bucket = map->l_gnu_buckets[new_hash
 						     % map->l_nbuckets];
@@ -308,7 +463,7 @@ do_lookup_x (const char *undef_name, uint_fast32_t new_hash,
       if (sym != NULL)
 	{
 	found_it:
-	  switch (__builtin_expect (ELFW(ST_BIND) (sym->st_info), STB_GLOBAL))
+	  switch (ELFW(ST_BIND) (sym->st_info))
 	    {
 	    case STB_WEAK:
 	      /* Weak definition.  Use this value if we don't find another.  */
@@ -323,157 +478,15 @@ do_lookup_x (const char *undef_name, uint_fast32_t new_hash,
 		}
 	      /* FALLTHROUGH */
 	    case STB_GLOBAL:
-	    success:
 	      /* Global definition.  Just what we need.  */
 	      result->s = sym;
 	      result->m = (struct link_map *) map;
 	      return 1;
 
 	    case STB_GNU_UNIQUE:;
-	      /* We have to determine whether we already found a
-		 symbol with this name before.  If not then we have to
-		 add it to the search table.  If we already found a
-		 definition we have to use it.  */
-	      void enter (struct unique_sym *table, size_t size,
-			  unsigned int hash, const char *name,
-			  const ElfW(Sym) *sym, const struct link_map *map)
-	      {
-		size_t idx = hash % size;
-		size_t hash2 = 1 + hash % (size - 2);
-		while (table[idx].name != NULL)
-		  {
-		    idx += hash2;
-		    if (idx >= size)
-		      idx -= size;
-		  }
-
-		table[idx].hashval = hash;
-		table[idx].name = name;
-		table[idx].sym = sym;
-		table[idx].map = map;
-	      }
-
-	      struct unique_sym_table *tab
-		= &GL(dl_ns)[map->l_ns]._ns_unique_sym_table;
-
-	      __rtld_lock_lock_recursive (tab->lock);
-
-	      struct unique_sym *entries = tab->entries;
-	      size_t size = tab->size;
-	      if (entries != NULL)
-		{
-		  size_t idx = new_hash % size;
-		  size_t hash2 = 1 + new_hash % (size - 2);
-		  while (1)
-		    {
-		      if (entries[idx].hashval == new_hash
-			  && strcmp (entries[idx].name, undef_name) == 0)
-			{
-			  if ((type_class & ELF_RTYPE_CLASS_COPY) != 0)
-			    {
-			      /* We possibly have to initialize the central
-				 copy from the copy addressed through the
-				 relocation.  */
-			      result->s = sym;
-			      result->m = (struct link_map *) map;
-			    }
-			  else
-			    {
-			      result->s = entries[idx].sym;
-			      result->m = (struct link_map *) entries[idx].map;
-			    }
-			  __rtld_lock_unlock_recursive (tab->lock);
-			  return 1;
-			}
-
-		      if (entries[idx].name == NULL)
-			break;
-
-		      idx += hash2;
-		      if (idx >= size)
-			idx -= size;
-		    }
-
-		  if (size * 3 <= tab->n_elements * 4)
-		    {
-		      /* Expand the table.  */
-#ifdef RTLD_CHECK_FOREIGN_CALL
-		      /* This must not happen during runtime relocations.  */
-		      assert (!RTLD_CHECK_FOREIGN_CALL);
-#endif
-		      size_t newsize = _dl_higher_prime_number (size + 1);
-		      struct unique_sym *newentries
-			= calloc (sizeof (struct unique_sym), newsize);
-		      if (newentries == NULL)
-			{
-			nomem:
-			  __rtld_lock_unlock_recursive (tab->lock);
-			  _dl_fatal_printf ("out of memory\n");
-			}
-
-		      for (idx = 0; idx < size; ++idx)
-			if (entries[idx].name != NULL)
-			  enter (newentries, newsize, entries[idx].hashval,
-				 entries[idx].name, entries[idx].sym,
-				 entries[idx].map);
-
-		      tab->free (entries);
-		      tab->size = newsize;
-		      size = newsize;
-		      entries = tab->entries = newentries;
-		      tab->free = free;
-		    }
-		}
-	      else
-		{
-#ifdef RTLD_CHECK_FOREIGN_CALL
-		  /* This must not happen during runtime relocations.  */
-		  assert (!RTLD_CHECK_FOREIGN_CALL);
-#endif
-
-#ifdef SHARED
-		  /* If tab->entries is NULL, but tab->size is not, it means
-		     this is the second, conflict finding, lookup for
-		     LD_TRACE_PRELINKING in _dl_debug_bindings.  Don't
-		     allocate anything and don't enter anything into the
-		     hash table.  */
-		  if (__glibc_unlikely (tab->size))
-		    {
-		      assert (GLRO(dl_debug_mask) & DL_DEBUG_PRELINK);
-		      __rtld_lock_unlock_recursive (tab->lock);
-		      goto success;
-		    }
-#endif
-
-#define INITIAL_NUNIQUE_SYM_TABLE 31
-		  size = INITIAL_NUNIQUE_SYM_TABLE;
-		  entries = calloc (sizeof (struct unique_sym), size);
-		  if (entries == NULL)
-		    goto nomem;
-
-		  tab->entries = entries;
-		  tab->size = size;
-		  tab->free = free;
-		}
-
-	      if ((type_class & ELF_RTYPE_CLASS_COPY) != 0)
-		enter (entries, size, new_hash, strtab + sym->st_name, ref,
-		       undef_map);
-	      else
-		{
-		  enter (entries, size, new_hash, strtab + sym->st_name, sym,
-			 map);
-
-		  if (map->l_type == lt_loaded)
-		    /* Make sure we don't unload this object by
-		       setting the appropriate flag.  */
-		    ((struct link_map *) map)->l_flags_1 |= DF_1_NODELETE;
-		}
-	      ++tab->n_elements;
-
-	      __rtld_lock_unlock_recursive (tab->lock);
-
-	      goto success;
+	      do_lookup_unique (undef_name, new_hash, map, result, type_class,
+				sym, strtab, ref, undef_map);
+	      return 1;
 
 	    default:
 	      /* Local symbols are ignored.  */
@@ -484,7 +497,7 @@ do_lookup_x (const char *undef_name, uint_fast32_t new_hash,
       /* If this current map is the one mentioned in the verneed entry
 	 and we have not found a weak entry, it is a bug.  */
       if (symidx == STN_UNDEF && version != NULL && version->filename != NULL
-	  && __builtin_expect (_dl_name_match_p (version->filename, map), 0))
+	  && __glibc_unlikely (_dl_name_match_p (version->filename, map)))
 	return -1;
     }
   while (++i < n);
@@ -765,7 +778,7 @@ _dl_lookup_symbol_x (const char *undef_name, struct link_map *undef_map,
       if (res > 0)
 	break;
 
-      if (__builtin_expect (res, 0) < 0 && skip_map == NULL)
+      if (__glibc_unlikely (res < 0) && skip_map == NULL)
 	{
 	  /* Oh, oh.  The file named in the relocation entry does not
 	     contain the needed symbol.  This code is never reached
@@ -803,7 +816,7 @@ _dl_lookup_symbol_x (const char *undef_name, struct link_map *undef_map,
 	  /* XXX We cannot translate the message.  */
 	  _dl_signal_cerror (0, DSO_FILENAME (reference_name),
 			     N_("symbol lookup error"),
-			     make_string (undefined_msg, undef_name,
+			     make_string ("undefined symbol: ", undef_name,
 					  versionstr, versionname));
 	}
       *ref = NULL;
@@ -846,7 +859,7 @@ _dl_lookup_symbol_x (const char *undef_name, struct link_map *undef_map,
      in the global scope which was dynamically loaded.  In this case
      we have to prevent the latter from being unloaded unless the
      UNDEF_MAP object is also unloaded.  */
-  if (__builtin_expect (current_value.m->l_type == lt_loaded, 0)
+  if (__glibc_unlikely (current_value.m->l_type == lt_loaded)
       /* Don't do this for explicit lookups as opposed to implicit
 	 runtime lookups.  */
       && (flags & DL_LOOKUP_ADD_DEPENDENCY) != 0
@@ -863,8 +876,8 @@ _dl_lookup_symbol_x (const char *undef_name, struct link_map *undef_map,
   if (__glibc_unlikely (current_value.m->l_used == 0))
     current_value.m->l_used = 1;
 
-  if (__builtin_expect (GLRO(dl_debug_mask)
-			& (DL_DEBUG_BINDINGS|DL_DEBUG_PRELINK), 0))
+  if (__glibc_unlikely (GLRO(dl_debug_mask)
+			& (DL_DEBUG_BINDINGS|DL_DEBUG_PRELINK)))
     _dl_debug_bindings (undef_name, undef_map, ref,
 			&current_value, version, type_class, protected);
 
@@ -881,9 +894,9 @@ _dl_setup_hash (struct link_map *map)
 {
   Elf_Symndx *hash;
 
-  if (__builtin_expect (map->l_info[DT_ADDRTAGIDX (DT_GNU_HASH) + DT_NUM
+  if (__glibc_likely (map->l_info[DT_ADDRTAGIDX (DT_GNU_HASH) + DT_NUM
 				    + DT_THISPROCNUM + DT_VERSIONTAGNUM
-				    + DT_EXTRANUM + DT_VALNUM] != NULL, 1))
+				    + DT_EXTRANUM + DT_VALNUM] != NULL))
     {
       Elf32_Word *hash32
 	= (void *) D_PTR (map, l_info[DT_ADDRTAGIDX (DT_GNU_HASH) + DT_NUM
@@ -962,10 +975,10 @@ _dl_debug_bindings (const char *undef_name, struct link_map *undef_map,
 		       type_class, undef_map);
 	  if (val.s != value->s || val.m != value->m)
 	    conflict = 1;
-	  else if (__builtin_expect (undef_map->l_symbolic_in_local_scope, 0)
+	  else if (__glibc_unlikely (undef_map->l_symbolic_in_local_scope)
 		   && val.s
-		   && __builtin_expect (ELFW(ST_BIND) (val.s->st_info),
-					STB_GLOBAL) == STB_GNU_UNIQUE)
+		   && __glibc_unlikely (ELFW(ST_BIND) (val.s->st_info)
+					== STB_GNU_UNIQUE))
 	    {
 	      /* If it is STB_GNU_UNIQUE and undef_map's l_local_scope
 		 contains any DT_SYMBOLIC libraries, unfortunately there
@@ -999,11 +1012,11 @@ _dl_debug_bindings (const char *undef_name, struct link_map *undef_map,
 
       if (value->s)
 	{
-	  if (__builtin_expect (ELFW(ST_TYPE) (value->s->st_info)
-				== STT_TLS, 0))
+	  if (__glibc_unlikely (ELFW(ST_TYPE) (value->s->st_info)
+				== STT_TLS))
 	    type_class = 4;
-	  else if (__builtin_expect (ELFW(ST_TYPE) (value->s->st_info)
-				     == STT_GNU_IFUNC, 0))
+	  else if (__glibc_unlikely (ELFW(ST_TYPE) (value->s->st_info)
+				     == STT_GNU_IFUNC))
 	    type_class |= 8;
 	}
 

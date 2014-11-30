@@ -16,25 +16,12 @@
    License along with the GNU C Library.  If not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <fenv.h>
-#include <fpu_control.h>
-#include <arm-features.h>
+#include <get-rounding-mode.h>
 
 
 int
 fegetround (void)
 {
-  if (ARM_HAVE_VFP)
-    {
-      unsigned int temp;
-
-      /* Get the current environment.  */
-      _FPU_GETCW (temp);
-
-      return temp & FE_TOWARDZERO;
-    }
-
-  /* The current soft-float implementation only handles TONEAREST.  */
-  return FE_TONEAREST;
+  return get_rounding_mode ();
 }
 libm_hidden_def (fegetround)

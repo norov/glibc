@@ -105,9 +105,9 @@ install-symbolic-link: subdir_install
 	rm -f $(symbolic-link-list)
 
 install:
-	-test ! -x $(common-objpfx)elf/ldconfig || LC_ALL=C LANGUAGE=C \
-	  $(common-objpfx)elf/ldconfig $(addprefix -r ,$(install_root)) \
-				       $(slibdir) $(libdir)
+	-test ! -x $(elf-objpfx)ldconfig || LC_ALL=C \
+	  $(elf-objpfx)ldconfig $(addprefix -r ,$(install_root)) \
+				$(slibdir) $(libdir)
 ifneq (no,$(PERL))
 ifeq (/usr,$(prefix))
 ifeq (,$(install_root))
@@ -284,7 +284,7 @@ installed-headers = argp/argp.h assert/assert.h catgets/nl_types.h \
 		    malloc/obstack.h malloc/mcheck.h math/math.h \
 		    math/complex.h math/fenv.h math/tgmath.h misc/sys/uio.h \
 		    $(wildcard nis/rpcsvc/*.h) nptl_db/thread_db.h \
-		    nptl/sysdeps/pthread/pthread.h nptl/semaphore.h \
+		    sysdeps/nptl/pthread.h nptl/semaphore.h \
 		    nss/nss.h posix/sys/utsname.h posix/sys/times.h \
 		    posix/sys/wait.h posix/sys/types.h posix/unistd.h \
 		    posix/glob.h posix/regex.h posix/wordexp.h posix/fnmatch.h\

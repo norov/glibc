@@ -60,7 +60,8 @@ tests = tst_swprintf tst_wprintf tst_swscanf tst_wscanf tst_getwc tst_putwc   \
 	tst-wmemstream1 tst-wmemstream2 \
 	bug-memstream1 bug-wmemstream1 \
 	tst-setvbuf1 tst-popen1 tst-fgetwc bug-wsetpos tst-fseek \
-	tst-fwrite-error tst-ftell-partial-wide tst-ftell-active-handler
+	tst-fwrite-error tst-ftell-partial-wide tst-ftell-active-handler \
+	tst-ftell-append tst-fputws
 ifeq (yes,$(build-shared))
 # Add test-fopenloc only if shared library is enabled since it depends on
 # shared localedata objects.
@@ -147,19 +148,7 @@ CFLAGS-tst_putwc.c = -DOBJPFX=\"$(objpfx)\"
 
 tst_wprintf2-ARGS = "Some Text"
 
-tst-widetext-ENV = LOCPATH=$(common-objpfx)localedata LANGUAGE=C
-tst-fopenloc-ENV = LOCPATH=$(common-objpfx)localedata \
-		   MALLOC_TRACE=$(objpfx)tst-fopenloc.mtrace
-tst-fgetws-ENV = LOCPATH=$(common-objpfx)localedata
-tst-ungetwc1-ENV = LOCPATH=$(common-objpfx)localedata
-tst-ungetwc2-ENV = LOCPATH=$(common-objpfx)localedata
-bug-ungetwc2-ENV = LOCPATH=$(common-objpfx)localedata
-tst-swscanf-ENV = LOCPATH=$(common-objpfx)localedata
-bug-ftell-ENV = LOCPATH=$(common-objpfx)localedata
-tst-fgetwc-ENV = LOCPATH=$(common-objpfx)localedata
-tst-fseek-ENV = LOCPATH=$(common-objpfx)localedata
-tst-ftell-partial-wide-ENV = LOCPATH=$(common-objpfx)localedata
-tst-ftell-active-handler-ENV = LOCPATH=$(common-objpfx)localedata
+tst-fopenloc-ENV = MALLOC_TRACE=$(objpfx)tst-fopenloc.mtrace
 
 generated += tst-fopenloc.mtrace tst-fopenloc.check
 

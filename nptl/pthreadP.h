@@ -32,6 +32,8 @@
 #include <atomic.h>
 #include <kernel-features.h>
 #include <errno.h>
+#include <nptl-signals.h>
+
 
 /* Atomic operations on TLS memory.  */
 #ifndef THREAD_ATOMIC_CMPXCHG_VAL
@@ -159,6 +161,12 @@ enum
 #define FUTEX_TID_MASK		0x3fffffff
 
 
+/* pthread_once definitions.  See __pthread_once for how these are used.  */
+#define __PTHREAD_ONCE_INPROGRESS	1
+#define __PTHREAD_ONCE_DONE		2
+#define __PTHREAD_ONCE_FORK_GEN_INCR	4
+
+
 /* Internal variables.  */
 
 
@@ -180,11 +188,6 @@ hidden_proto (__stack_user)
 /* Attribute handling.  */
 extern struct pthread_attr *__attr_list attribute_hidden;
 extern int __attr_list_lock attribute_hidden;
-
-/* First available RT signal.  */
-extern int __current_sigrtmin attribute_hidden;
-/* Last available RT signal.  */
-extern int __current_sigrtmax attribute_hidden;
 
 /* Concurrency handling.  */
 extern int __concurrency_level attribute_hidden;
@@ -241,7 +244,7 @@ extern int __pthread_debug attribute_hidden;
 
 extern void __pthread_unwind (__pthread_unwind_buf_t *__buf)
      __cleanup_fct_attribute __attribute ((__noreturn__))
-#if !defined SHARED && !defined IS_IN_libpthread
+#if !defined SHARED && !IS_IN (libpthread)
      weak_function
 #endif
      ;
@@ -255,7 +258,7 @@ extern void __pthread_register_cancel (__pthread_unwind_buf_t *__buf)
      __cleanup_fct_attribute;
 extern void __pthread_unregister_cancel (__pthread_unwind_buf_t *__buf)
      __cleanup_fct_attribute;
-#if defined NOT_IN_libc && defined IS_IN_libpthread
+#if IS_IN (libpthread)
 hidden_proto (__pthread_unwind)
 hidden_proto (__pthread_unwind_next)
 hidden_proto (__pthread_register_cancel)
@@ -289,7 +292,7 @@ __do_cancel (void)
 #define CANCEL_RESET(oldtype) \
   __pthread_disable_asynccancel (oldtype)
 
-#if !defined NOT_IN_libc
+#if IS_IN (libc)
 /* Same as CANCEL_ASYNC, but for use in libc.so.  */
 # define LIBC_CANCEL_ASYNC() \
   __libc_enable_asynccancel ()
@@ -299,13 +302,13 @@ __do_cancel (void)
 # define LIBC_CANCEL_HANDLED() \
   __asm (".globl " __SYMBOL_PREFIX "__libc_enable_asynccancel"); \
   __asm (".globl " __SYMBOL_PREFIX "__libc_disable_asynccancel")
-#elif defined NOT_IN_libc && defined IS_IN_libpthread
+#elif IS_IN (libpthread)
 # define LIBC_CANCEL_ASYNC() CANCEL_ASYNC ()
 # define LIBC_CANCEL_RESET(val) CANCEL_RESET (val)
 # define LIBC_CANCEL_HANDLED() \
   __asm (".globl " __SYMBOL_PREFIX "__pthread_enable_asynccancel"); \
   __asm (".globl " __SYMBOL_PREFIX "__pthread_disable_asynccancel")
-#elif defined NOT_IN_libc && defined IS_IN_librt
+#elif IS_IN (librt)
 # define LIBC_CANCEL_ASYNC() \
   __librt_enable_asynccancel ()
 # define LIBC_CANCEL_RESET(val) \
@@ -318,22 +321,6 @@ __do_cancel (void)
 # define LIBC_CANCEL_RESET(val)	((void)(val)) /* Nothing, but evaluate it.  */
 # define LIBC_CANCEL_HANDLED()	/* Nothing.  */
 #endif
-
-/* The signal used for asynchronous cancelation.  */
-#define SIGCANCEL	__SIGRTMIN
-
-
-/* Signal needed for the kernel-supported POSIX timer implementation.
-   We can reuse the cancellation signal since we can distinguish
-   cancellation from timer expirations.  */
-#define SIGTIMER	SIGCANCEL
-
-
-/* Signal used to implement the setuid et.al. functions.  */
-#define SIGSETXID	(__SIGRTMIN + 1)
-
-/* Used to communicate with signal handler.  */
-extern struct xid_command *__xidcmd attribute_hidden;
 
 
 /* Internal prototypes.  */
@@ -360,7 +347,7 @@ extern int __make_stacks_executable (void **stack_endp)
 
 /* longjmp handling.  */
 extern void __pthread_cleanup_upto (__jmp_buf target, char *targetframe);
-#if defined NOT_IN_libc && defined IS_IN_libpthread
+#if IS_IN (libpthread)
 hidden_proto (__pthread_cleanup_upto)
 #endif
 
@@ -505,7 +492,7 @@ extern int __pthread_enable_asynccancel (void) attribute_hidden;
 extern void __pthread_disable_asynccancel (int oldtype)
      internal_function attribute_hidden;
 
-#if defined NOT_IN_libc && defined IS_IN_libpthread
+#if IS_IN (libpthread)
 hidden_proto (__pthread_mutex_init)
 hidden_proto (__pthread_mutex_destroy)
 hidden_proto (__pthread_mutex_lock)
@@ -544,7 +531,7 @@ extern int __librt_enable_asynccancel (void) attribute_hidden;
 extern void __librt_disable_asynccancel (int oldtype)
      internal_function attribute_hidden;
 
-#ifdef IS_IN_libpthread
+#if IS_IN (libpthread)
 /* Special versions which use non-exported functions.  */
 extern void __pthread_cleanup_push (struct _pthread_cleanup_buffer *buffer,
 				    void (*routine) (void *), void *arg)
@@ -578,6 +565,8 @@ extern void _pthread_cleanup_pop_restore (struct _pthread_cleanup_buffer *buffer
 
 extern void __nptl_deallocate_tsd (void) attribute_hidden;
 
+extern void __nptl_setxid_error (struct xid_command *cmdp, int error)
+  attribute_hidden;
 extern int __nptl_setxid (struct xid_command *cmdp) attribute_hidden;
 #ifndef SHARED
 extern void __nptl_set_robust (struct pthread *self);

@@ -100,6 +100,8 @@ extern "C" {
 #if (!defined _IO_USE_OLD_IO_FILE \
      && (!defined _G_IO_NO_BACKWARD_COMPAT || _G_IO_NO_BACKWARD_COMPAT == 0))
 # define _IO_JUMPS_OFFSET 1
+#else
+# define _IO_JUMPS_OFFSET 0
 #endif
 
 #define _IO_JUMPS(THIS) (THIS)->vtable
@@ -900,7 +902,7 @@ _IO_acquire_lock_clear_flags2_fct (_IO_FILE **p)
     _IO_funlockfile (fp);
 }
 
-#if !defined _IO_MTSAFE_IO && !defined NOT_IN_libc
+#if !defined _IO_MTSAFE_IO && IS_IN (libc)
 # define _IO_acquire_lock(_fp)						      \
   do {									      \
     _IO_FILE *_IO_acquire_lock_file = NULL

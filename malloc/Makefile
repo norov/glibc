@@ -27,7 +27,7 @@ headers := $(dist-headers) obstack.h mcheck.h
 tests := mallocbug tst-malloc tst-valloc tst-calloc tst-obstack \
 	 tst-mallocstate tst-mcheck tst-mallocfork tst-trim1 \
 	 tst-malloc-usable tst-realloc tst-posix_memalign \
-	 tst-pvalloc tst-memalign
+	 tst-pvalloc tst-memalign tst-mallopt
 test-srcs = tst-mtrace
 
 routines = malloc morecore mcheck mtrace obstack
@@ -47,8 +47,6 @@ extra-objs = mcheck-init.o libmcheck.a
 
 # Include the cleanup handler.
 aux := set-freeres thread-freeres
-
-CPPFLAGS-memusagestat = -DNOT_IN_libc
 
 # The Perl script to analyze the output of the mtrace functions.
 ifneq ($(PERL),no)
@@ -89,6 +87,11 @@ endif
 do-memusagestat: $(objpfx)memusagestat
 
 memusagestat-modules = memusagestat
+
+cpp-srcs-left := $(memusagestat-modules)
+lib := memusagestat
+include $(patsubst %,$(..)cppflags-iterator.mk,$(cpp-srcs-left))
+
 $(objpfx)memusagestat: $(memusagestat-modules:%=$(objpfx)%.o)
 	$(LINK.o) -o $@ $^ $(libgd-LDFLAGS) -lgd -lpng -lz -lm
 
@@ -116,7 +119,8 @@ ifeq ($(run-built-tests),yes)
 ifeq (yes,$(build-shared))
 ifneq ($(PERL),no)
 $(objpfx)tst-mtrace.out: tst-mtrace.sh $(objpfx)tst-mtrace
-	$(SHELL) $< $(common-objpfx) '$(test-program-prefix)'; \
+	$(SHELL) $< $(common-objpfx) '$(test-program-prefix-before-env)' \
+		 '$(run-program-env)' '$(test-program-prefix-after-env)' ; \
 	$(evaluate-test)
 endif
 endif
@@ -148,7 +152,7 @@ $(objpfx)memusage: memusage.sh
 
 
 # The implementation uses `dlsym'
-$(objpfx)libmemusage.so: $(common-objpfx)dlfcn/libdl.so
+$(objpfx)libmemusage.so: $(libdl)
 
 # Extra dependencies
 $(foreach o,$(all-object-suffixes),$(objpfx)malloc$(o)): arena.c hooks.c

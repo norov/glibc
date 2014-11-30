@@ -624,11 +624,14 @@ cosh 50
 # GCC bug 59666: results on directed rounding may be incorrect.
 cosh max no-test-inline xfail-rounding:ldbl-128ibm
 cosh -max no-test-inline xfail-rounding:ldbl-128ibm
-# Bug 16354: spurious underflow may occur.
-cosh min spurious-underflow
-cosh -min spurious-underflow
-cosh min_subnorm spurious-underflow
-cosh -min_subnorm spurious-underflow
+cosh min
+cosh -min
+cosh min_subnorm
+cosh -min_subnorm
+cosh 0x1p-56
+cosh -0x1p-56
+cosh 0x1p-72
+cosh -0x1p-72
 # Test values either side of overflow for each floating-point format.
 cosh 0x5.96a7ep+4
 cosh 0x5.96a7e8p+4
@@ -652,14 +655,14 @@ cosh 0x2.c5d37700c6bb03a6c24b6c9b494ep+12 no-test-inline xfail-rounding:ldbl-128
 cosh -0x2.c5d37700c6bb03a6c24b6c9b494cp+12 no-test-inline xfail-rounding:ldbl-128ibm
 cosh -0x2.c5d37700c6bb03a6c24b6c9b494ep+12 no-test-inline xfail-rounding:ldbl-128ibm
 
-cpow 1 0 0 0
-cpow 2 0 10 0
+cpow 1 0 0 0 ignore-zero-inf-sign
+cpow 2 0 10 0 ignore-zero-inf-sign
 # Bug 14473: cpow results inaccurate.
 cpow e 0 0 2pi xfail
-cpow 2 3 4 0
+cpow 2 3 4 0 xfail-rounding
 
-cpow 0.75 1.25 0.75 1.25
-cpow 0.75 1.25 1.0 1.0
+cpow 0.75 1.25 0.75 1.25 xfail-rounding
+cpow 0.75 1.25 1.0 1.0 xfail-rounding
 cpow 0.75 1.25 1.0 0.0
 cpow 0.75 1.25 0.0 1.0
 
@@ -796,6 +799,20 @@ erf 4.125
 erf 27.0
 erf -27.0
 erf -0x1.fffffffffffff8p-2
+erf 0x1.c5bf94p-127
+erf 0x3.8b7fa8p-128
+erf -0x3.8b7f12369ded8p-1024
+erf 0x3.8b7f12369ded5518p-16384
+erf 26.0
+erf 28.0
+erf 100
+erf 106
+erf 106.5
+erf 106.625
+erf 107
+erf 108
+erf 1000
+erf max
 
 erfc 0.0
 erfc -0
@@ -885,6 +902,24 @@ exp10 -max
 exp10 0.75
 # GCC bug 59666: results on directed rounding may be incorrect.
 exp10 0x1.348e45573a1dd72cp+8 xfail-rounding:ldbl-128ibm
+exp10 0x1p-10
+exp10 -0x1p-10
+exp10 0x1p-20
+exp10 -0x1p-20
+exp10 0x1p-30
+exp10 -0x1p-30
+exp10 0x1p-40
+exp10 -0x1p-40
+exp10 0x1p-50
+exp10 -0x1p-50
+exp10 0x1p-60
+exp10 -0x1p-60
+exp10 0x1p-100
+exp10 -0x1p-100
+exp10 min
+exp10 -min
+exp10 min_subnorm
+exp10 -min_subnorm
 
 exp2 0
 exp2 -0
@@ -953,6 +988,8 @@ expm1 0x1p-64
 expm1 -0x1p-64
 expm1 0x1p-100
 expm1 -0x1p-100
+# Bug 16353: underflow exception may be missing
+expm1 0x4.0000000000000028p-16384 missing-underflow
 
 fma 1.0 2.0 3.0
 fma 1.25 0.75 0.0625
@@ -1417,6 +1454,14 @@ log1p min missing-underflow
 log1p min_subnorm missing-underflow
 log1p -min missing-underflow
 log1p -min_subnorm missing-underflow
+log1p 0x1p10
+log1p 0x1p20
+log1p 0x1p30
+log1p 0x1p50
+log1p 0x1p60
+log1p 0x1p100
+log1p 0x1p1000
+log1p max
 
 log2 1
 log2 e
@@ -1600,6 +1645,71 @@ pow -max 0x1.ffffffffffffffffffffffffff8p+106
 pow -max 0x1.ffffffffffffffffffffffffffffp+112
 pow -max 0x1.ffffffffffffffffffffffffffffp+113
 pow -max max
+
+pow -0x1p65 2
+pow -0x1p65 3
+pow -0x1p65 4
+pow -0x1p65 5
+pow -0x1p43 3
+pow -0x1p43 4
+pow -0x1p43 5
+pow -0x1p33 4
+pow -0x1p33 5
+pow -0x1p26 5
+pow -0x1p-65 -2
+pow -0x1p-65 -3
+pow -0x1p-65 -4
+pow -0x1p-65 -5
+pow -0x1p-43 -3
+pow -0x1p-43 -4
+pow -0x1p-43 -5
+pow -0x1p-33 -4
+pow -0x1p-33 -5
+pow -0x1p-26 -5
+
+pow -0x1p513 2
+pow -0x1p513 3
+pow -0x1p513 4
+pow -0x1p513 5
+pow -0x1p342 3
+pow -0x1p342 4
+pow -0x1p342 5
+pow -0x1p257 4
+pow -0x1p257 5
+pow -0x1p205 5
+pow -0x1p-513 -2
+pow -0x1p-513 -3
+pow -0x1p-513 -4
+pow -0x1p-513 -5
+pow -0x1p-342 -3
+pow -0x1p-342 -4
+pow -0x1p-342 -5
+pow -0x1p-257 -4
+pow -0x1p-257 -5
+pow -0x1p-205 -5
+
+pow -0x1p8192 2
+pow -0x1p8192 3
+pow -0x1p8192 4
+pow -0x1p8192 5
+pow -0x1p5462 3
+pow -0x1p5462 4
+pow -0x1p5462 5
+pow -0x1p4097 4
+pow -0x1p4097 5
+pow -0x1p3277 5
+pow -0x1p64 257
+pow -0x1p-8192 -2
+pow -0x1p-8192 -3
+pow -0x1p-8192 -4
+pow -0x1p-8192 -5
+pow -0x1p-5462 -3
+pow -0x1p-5462 -4
+pow -0x1p-5462 -5
+pow -0x1p-4097 -4
+pow -0x1p-4097 -5
+pow -0x1p-3277 -5
+pow -0x1p-64 -257
 
 pow -0.5 126
 pow -0.5 127
@@ -2381,6 +2491,8 @@ y0 0x1p-80
 y0 0x1p-90
 y0 0x1p-100
 y0 0x1p-110
+y0 min
+y0 min_subnorm
 
 y1 0.125
 y1 0.75
@@ -2405,6 +2517,8 @@ y1 0x1p-80
 y1 0x1p-90
 y1 0x1p-100
 y1 0x1p-110
+y1 min
+y1 min_subnorm
 
 # yn (0, x) == y0 (x).
 yn 0 0.125
@@ -2449,3 +2563,22 @@ yn 2 0x1.ffff62p+99
 yn 2 0x1p127
 yn 2 0x1p1023
 yn 2 0x1p16383
+
+yn 0 min
+yn 0 min_subnorm
+yn 1 min
+yn 1 min_subnorm
+yn -1 min
+yn -1 min_subnorm
+yn 2 min
+yn 2 min_subnorm
+yn -2 min
+yn -2 min_subnorm
+yn 17 min
+yn 17 min_subnorm
+yn -17 min
+yn -17 min_subnorm
+yn 42 min
+yn 42 min_subnorm
+yn -42 min
+yn -42 min_subnorm

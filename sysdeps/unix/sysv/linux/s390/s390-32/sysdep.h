@@ -105,7 +105,7 @@
     br    %r14;								      \
 2:  .long rtld_errno-1b
 # elif defined _LIBC_REENTRANT
-#  ifndef NOT_IN_libc
+#  if IS_IN (libc)
 #   define SYSCALL_ERROR_ERRNO __libc_errno
 #  else
 #   define SYSCALL_ERROR_ERRNO errno
@@ -366,7 +366,7 @@
     _ret; })
 
 /* Pointer mangling support.  */
-#if defined NOT_IN_libc && defined IS_IN_rtld
+#if IS_IN (rtld)
 /* We cannot use the thread descriptor because in ld.so we use setjmp
    earlier than the descriptor is initialized.  */
 #else

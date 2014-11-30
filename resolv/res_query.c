@@ -382,7 +382,9 @@ __libc_res_nsearch(res_state statp,
 					      answer, anslen, answerp,
 					      answerp2, nanswerp2, resplen2,
 					      answerp2_malloced);
-		if (ret > 0 || trailing_dot)
+		if (ret > 0 || trailing_dot
+		    /* If the second response is valid then we use that.  */
+		    || (ret == 0 && resplen2 != NULL && *resplen2 > 0))
 			return (ret);
 		saved_herrno = h_errno;
 		tried_as_is++;
@@ -411,18 +413,30 @@ __libc_res_nsearch(res_state statp,
 		for (domain = (const char * const *)statp->dnsrch;
 		     *domain && !done;
 		     domain++) {
+			const char *dname = domain[0];
 			searched = 1;
 
-			if (domain[0][0] == '\0' ||
-			    (domain[0][0] == '.' && domain[0][1] == '\0'))
+			/* __libc_res_nquerydoman concatenates name
+			   with dname with a "." in between.  If we
+			   pass it in dname the "." we got from the
+			   configured default search path, we'll end
+			   up with "name..", which won't resolve.
+			   OTOH, passing it "" will result in "name.",
+			   which has the intended effect for both
+			   possible representations of the root
+			   domain.  */
+			if (dname[0] == '.')
+				dname++;
+			if (dname[0] == '\0')
 				root_on_list++;
 
-			ret = __libc_res_nquerydomain(statp, name, *domain,
+			ret = __libc_res_nquerydomain(statp, name, dname,
 						      class, type,
 						      answer, anslen, answerp,
 						      answerp2, nanswerp2,
 						      resplen2, answerp2_malloced);
-			if (ret > 0)
+			if (ret > 0 || (ret == 0 && resplen2 != NULL
+					&& *resplen2 > 0))
 				return (ret);
 
 			if (answerp && *answerp != answer) {
@@ -491,7 +505,8 @@ __libc_res_nsearch(res_state statp,
 					      answer, anslen, answerp,
 					      answerp2, nanswerp2, resplen2,
 					      answerp2_malloced);
-		if (ret > 0)
+		if (ret > 0 || (ret == 0 && resplen2 != NULL
+				&& *resplen2 > 0))
 			return (ret);
 	}
 
@@ -531,8 +546,7 @@ res_nsearch(res_state statp,
 libresolv_hidden_def (res_nsearch)
 
 /*
- * Perform a call on res_query on the concatenation of name and domain,
- * removing a trailing dot from name if domain is NULL.
+ * Perform a call on res_query on the concatenation of name and domain.
  */
 static int
 __libc_res_nquerydomain(res_state statp,
@@ -557,10 +571,6 @@ __libc_res_nquerydomain(res_state statp,
 		       name, domain?domain:"<Nil>", class, type);
 #endif
 	if (domain == NULL) {
-		/*
-		 * Check for trailing '.';
-		 * copy without '.' if present.
-		 */
 		n = strlen(name);
 
 		/* Decrement N prior to checking it against MAXDNAME
@@ -571,11 +581,7 @@ __libc_res_nquerydomain(res_state statp,
 			RES_SET_H_ERRNO(statp, NO_RECOVERY);
 			return (-1);
 		}
-		if (name[n] == '.') {
-			strncpy(nbuf, name, n);
-			nbuf[n] = '\0';
-		} else
-			longname = name;
+		longname = name;
 	} else {
 		n = strlen(name);
 		d = strlen(domain);

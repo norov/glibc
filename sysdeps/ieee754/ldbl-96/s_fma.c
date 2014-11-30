@@ -21,6 +21,7 @@
 #include <math.h>
 #include <fenv.h>
 #include <ieee754.h>
+#include <math_private.h>
 
 /* This implementation uses rounding to odd to avoid problems with
    double rounding.  See a paper by Boldo and Melquiond:
@@ -64,16 +65,17 @@ __fma (double x, double y, double z)
   t1 = m1 - t1;
   t2 = z - t2;
   long double a2 = t1 + t2;
+  /* Ensure the arithmetic is not scheduled after feclearexcept call.  */
+  math_force_eval (m2);
+  math_force_eval (a2);
   feclearexcept (FE_INEXACT);
 
-  /* If the result is an exact zero, ensure it has the correct
-     sign.  */
+  /* If the result is an exact zero, ensure it has the correct sign.  */
   if (a1 == 0 && m2 == 0)
     {
       feupdateenv (&env);
-      /* Ensure that round-to-nearest value of z + m1 is not
-	 reused.  */
-      asm volatile ("" : "=m" (z) : "m" (z));
+      /* Ensure that round-to-nearest value of z + m1 is not reused.  */
+      z = math_opt_barrier (z);
       return z + m1;
     }
 

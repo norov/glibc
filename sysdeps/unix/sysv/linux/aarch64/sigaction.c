@@ -23,8 +23,6 @@
 #include <sysdep.h>
 #include <sys/syscall.h>
 
-#include <kernel-features.h>
-
 #define SA_RESTORER	0x04000000
 
 /* The difference here is that the sigaction structure used in the
@@ -69,12 +67,4 @@ __libc_sigaction (int sig, const struct sigaction *act, struct sigaction *oact)
 }
 libc_hidden_def (__libc_sigaction)
 
-#ifdef WRAPPER_INCLUDE
-# include WRAPPER_INCLUDE
-#endif
-
-#ifndef LIBC_SIGACTION
-weak_alias (__libc_sigaction, __sigaction)
-libc_hidden_weak (__sigaction)
-weak_alias (__libc_sigaction, sigaction)
-#endif
+#include <nptl/sigaction.c>

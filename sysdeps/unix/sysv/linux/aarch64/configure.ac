@@ -3,15 +3,4 @@ GLIBC_PROVIDES dnl See aclocal.m4 in the top level source directory.
 
 arch_minimum_kernel=3.7.0
 
-test -n "$slibdir" ||
-case "$prefix" in
-  /usr | /usr/)
-    slibdir="/lib64"
-    libc_cv_rtlddir="/lib"
-    if test "$libdir" = '${exec_prefix}/lib'; then
-      libdir='${exec_prefix}/lib64';
-      # Locale data can be shared between 32bit and 64bit libraries
-      libc_cv_localedir='${exec_prefix}/lib/locale'
-    fi
-    ;;
-esac
+LIBC_SLIBDIR_RTLDDIR([lib64], [lib])

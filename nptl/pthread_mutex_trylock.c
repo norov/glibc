@@ -72,7 +72,7 @@ __pthread_mutex_trylock (mutex)
     elision:
       if (lll_trylock_elision (mutex->__data.__lock,
 			       mutex->__data.__elision) != 0)
-        break;
+	break;
       /* Don't record the ownership.  */
       return 0;
 
@@ -159,7 +159,8 @@ __pthread_mutex_trylock (mutex)
 		}
 	    }
 
-	  oldval = lll_robust_trylock (mutex->__data.__lock, id);
+	  oldval = atomic_compare_and_exchange_val_acq (&mutex->__data.__lock,
+							id, 0);
 	  if (oldval != 0 && (oldval & FUTEX_OWNER_DIED) == 0)
 	    {
 	      THREAD_SETMEM (THREAD_SELF, robust_head.list_op_pending, NULL);
@@ -190,6 +191,10 @@ __pthread_mutex_trylock (mutex)
 
       return 0;
 
+    /* The PI support requires the Linux futex system call.  If that's not
+       available, pthread_mutex_init should never have allowed the type to
+       be set.  So it will get the default case for an invalid type.  */
+#ifdef __NR_futex
     case PTHREAD_MUTEX_PI_RECURSIVE_NP:
     case PTHREAD_MUTEX_PI_ERRORCHECK_NP:
     case PTHREAD_MUTEX_PI_NORMAL_NP:
@@ -318,6 +323,7 @@ __pthread_mutex_trylock (mutex)
 
 	return 0;
       }
+#endif  /* __NR_futex.  */
 
     case PTHREAD_MUTEX_PP_RECURSIVE_NP:
     case PTHREAD_MUTEX_PP_ERRORCHECK_NP:

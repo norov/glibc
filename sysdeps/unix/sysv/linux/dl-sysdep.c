@@ -22,9 +22,9 @@
 #include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/param.h>
 #include <sys/utsname.h>
 #include <ldsodefs.h>
-#include <kernel-features.h>
 
 #ifdef SHARED
 # define DL_SYSDEP_INIT frob_brk ()

@@ -61,8 +61,8 @@
 #endif
 
 #if defined USE_DL_SYSINFO \
-	&& (!defined NOT_IN_libc \
-	    || defined IS_IN_libpthread || defined IS_IN_librt)
+	&& (IS_IN (libc) \
+	    || IS_IN (libpthread) || IS_IN (librt))
 # define IA64_USE_NEW_STUB
 #else
 # undef IA64_USE_NEW_STUB
@@ -364,7 +364,7 @@
 #endif /* not __ASSEMBLER__ */
 
 /* Pointer mangling support.  */
-#if defined NOT_IN_libc && defined IS_IN_rtld
+#if IS_IN (rtld)
 /* We cannot use the thread descriptor because in ld.so we use setjmp
    earlier than the descriptor is initialized.  */
 #else

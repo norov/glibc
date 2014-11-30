@@ -29,6 +29,8 @@ ifeq ($(subdir),stdio-common)
 
 errlist-c = $(firstword $(wildcard $(addsuffix /errlist.c,$(sysdirs) .)))
 
+libof-errlist-compat = extramodules
+
 ifeq ($(build-shared),yes)
 $(objpfx)errlist-compat.c: $(errlist-c) $(..)sysdeps/gnu/errlist-compat.awk \
 			   $(common-objpfx)Versions.v.i $(before-compile)
@@ -38,7 +40,7 @@ $(objpfx)errlist-compat.c: $(errlist-c) $(..)sysdeps/gnu/errlist-compat.awk \
 endif
 	$(make-target-directory)
 	$(AWK) -v maxerr=`\
-	  $(CC) -S $(CPPFLAGS) $(CFLAGS) -DNOT_IN_libc -DEMIT_ERR_MAX $< -o - \
+	  $(CC) -S $(CPPFLAGS) $(CFLAGS) -DEMIT_ERR_MAX $< -o - \
 	  | sed -n 's/^.*@@@[^0-9]*\([0-9]*\)[^0-9]*@@@.*$$/\1/p'` \
 	       -f $(..)sysdeps/gnu/errlist-compat.awk \
 	       $(wildcard $(sysdirs:=/Versions)) > $@T

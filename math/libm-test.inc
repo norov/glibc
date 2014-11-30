@@ -1792,9 +1792,7 @@ static const struct test_f_f_data acosh_test_data[] =
 static void
 acosh_test (void)
 {
-  START (acosh, 0);
-  RUN_TEST_LOOP_f_f (acosh, acosh_test_data, );
-  END;
+  ALL_RM_TEST (acosh, 0, acosh_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 static const struct test_f_f_data asin_test_data[] =
@@ -2617,9 +2615,7 @@ static const struct test_c_c_data cacos_test_data[] =
 static void
 cacos_test (void)
 {
-  START (cacos, 0);
-  RUN_TEST_LOOP_c_c (cacos, cacos_test_data, );
-  END_COMPLEX;
+  ALL_RM_TEST (cacos, 0, cacos_test_data, RUN_TEST_LOOP_c_c, END_COMPLEX);
 }
 
 static const struct test_c_c_data cacosh_test_data[] =
@@ -6292,9 +6288,7 @@ static const struct test_cc_c_data cpow_test_data[] =
 static void
 cpow_test (void)
 {
-  START (cpow, 0);
-  RUN_TEST_LOOP_cc_c (cpow, cpow_test_data, );
-  END_COMPLEX;
+  ALL_RM_TEST (cpow, 0, cpow_test_data, RUN_TEST_LOOP_cc_c, END_COMPLEX);
 }
 
 
@@ -7802,9 +7796,7 @@ static const struct test_f_f_data log10_test_data[] =
 static void
 log10_test (void)
 {
-  START (log10, 0);
-  RUN_TEST_LOOP_f_f (log10, log10_test_data, );
-  END;
+  ALL_RM_TEST (log10, 0, log10_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -7846,9 +7838,7 @@ static const struct test_f_f_data log2_test_data[] =
 static void
 log2_test (void)
 {
-  START (log2, 0);
-  RUN_TEST_LOOP_f_f (log2, log2_test_data, );
-  END;
+  ALL_RM_TEST (log2, 0, log2_test_data, RUN_TEST_LOOP_f_f, END);
 }
 
 
@@ -8196,6 +8186,10 @@ static const struct test_f_f_data nearbyint_test_data[] =
     TEST_f_f (nearbyint, 4503599627370496.75L, 4503599627370496.0L, NO_INEXACT_EXCEPTION, 4503599627370497.0L, NO_INEXACT_EXCEPTION, 4503599627370496.0L, NO_INEXACT_EXCEPTION, 4503599627370497.0L, NO_INEXACT_EXCEPTION),
     TEST_f_f (nearbyint, 4503599627370497.5L, 4503599627370497.0L, NO_INEXACT_EXCEPTION, 4503599627370498.0L, NO_INEXACT_EXCEPTION, 4503599627370497.0L, NO_INEXACT_EXCEPTION, 4503599627370498.0L, NO_INEXACT_EXCEPTION),
 # if LDBL_MANT_DIG > 100
+    TEST_f_f (nearbyint, 1024.5000000000001L, 1024.0L, NO_INEXACT_EXCEPTION, 1025.0L, NO_INEXACT_EXCEPTION, 1024.0L, NO_INEXACT_EXCEPTION, 1025.0L, NO_INEXACT_EXCEPTION),
+    TEST_f_f (nearbyint, 1025.5000000000001L, 1025.0L, NO_INEXACT_EXCEPTION, 1026.0L, NO_INEXACT_EXCEPTION, 1025.0L, NO_INEXACT_EXCEPTION, 1026.0L, NO_INEXACT_EXCEPTION),
+    TEST_f_f (nearbyint, -1024.5000000000001L, -1025.0L, NO_INEXACT_EXCEPTION, -1025.0L, NO_INEXACT_EXCEPTION, -1024.0L, NO_INEXACT_EXCEPTION, -1024.0L, NO_INEXACT_EXCEPTION),
+    TEST_f_f (nearbyint, -1025.5000000000001L, -1026.0L, NO_INEXACT_EXCEPTION, -1026.0L, NO_INEXACT_EXCEPTION, -1025.0L, NO_INEXACT_EXCEPTION, -1025.0L, NO_INEXACT_EXCEPTION),
     TEST_f_f (nearbyint, 4503599627370494.5000000000001L, 4503599627370494.0L, NO_INEXACT_EXCEPTION, 4503599627370495.0L, NO_INEXACT_EXCEPTION, 4503599627370494.0L, NO_INEXACT_EXCEPTION, 4503599627370495.0L, NO_INEXACT_EXCEPTION),
     TEST_f_f (nearbyint, 4503599627370495.5000000000001L, 4503599627370495.0L, NO_INEXACT_EXCEPTION, 4503599627370496.0L, NO_INEXACT_EXCEPTION, 4503599627370495.0L, NO_INEXACT_EXCEPTION, 4503599627370496.0L, NO_INEXACT_EXCEPTION),
     TEST_f_f (nearbyint, 4503599627370496.5000000000001L, 4503599627370496.0L, NO_INEXACT_EXCEPTION, 4503599627370497.0L, NO_INEXACT_EXCEPTION, 4503599627370496.0L, NO_INEXACT_EXCEPTION, 4503599627370497.0L, NO_INEXACT_EXCEPTION),
@@ -8701,69 +8695,7 @@ static const struct test_ff_f_data pow_test_data[] =
 static void
 pow_test (void)
 {
-
-  START (pow, 0);
-  RUN_TEST_LOOP_ff_f (pow, pow_test_data, );
-  END;
-}
-
-
-static const struct test_ff_f_data pow_tonearest_test_data[] =
-  {
-    AUTO_TESTS_ff_f (pow),
-  };
-
-static void
-pow_test_tonearest (void)
-{
-  START (pow_tonearest, 0);
-  RUN_TEST_LOOP_ff_f (pow, pow_tonearest_test_data, FE_TONEAREST);
-  END;
-}
-
-
-static const struct test_ff_f_data pow_towardzero_test_data[] =
-  {
-    TEST_ff_f (pow, 1.0625L, 1.125L, 1.070582293028761362162622578677070098674L),
-    TEST_ff_f (pow, 1.5L, 1.03125L, 1.519127098714743184071644334163037684948L),
-  };
-
-static void
-pow_test_towardzero (void)
-{
-  START (pow_towardzero, 0);
-  RUN_TEST_LOOP_ff_f (pow, pow_towardzero_test_data, FE_TOWARDZERO);
-  END;
-}
-
-
-static const struct test_ff_f_data pow_downward_test_data[] =
-  {
-    TEST_ff_f (pow, 1.0625L, 1.125L, 1.070582293028761362162622578677070098674L),
-    TEST_ff_f (pow, 1.5L, 1.03125L, 1.519127098714743184071644334163037684948L),
-  };
-
-static void
-pow_test_downward (void)
-{
-  START (pow_downward, 0);
-  RUN_TEST_LOOP_ff_f (pow, pow_downward_test_data, FE_DOWNWARD);
-  END;
-}
-
-
-static const struct test_ff_f_data pow_upward_test_data[] =
-  {
-    TEST_ff_f (pow, 1.0625L, 1.125L, 1.070582293028761362162622578677070098674L),
-    TEST_ff_f (pow, 1.5L, 1.03125L, 1.519127098714743184071644334163037684948L),
-  };
-
-static void
-pow_test_upward (void)
-{
-  START (pow_upward, 0);
-  RUN_TEST_LOOP_ff_f (pow, pow_upward_test_data, FE_UPWARD);
-  END;
+  ALL_RM_TEST (pow, 0, pow_test_data, RUN_TEST_LOOP_ff_f, END);
 }
 
 
@@ -8898,6 +8830,10 @@ static const struct test_f_f_data rint_test_data[] =
     TEST_f_f (rint, 4503599627370496.75L, 4503599627370496.0L, INEXACT_EXCEPTION, 4503599627370497.0L, INEXACT_EXCEPTION, 4503599627370496.0L, INEXACT_EXCEPTION, 4503599627370497.0L, INEXACT_EXCEPTION),
     TEST_f_f (rint, 4503599627370497.5L, 4503599627370497.0L, INEXACT_EXCEPTION, 4503599627370498.0L, INEXACT_EXCEPTION, 4503599627370497.0L, INEXACT_EXCEPTION, 4503599627370498.0L, INEXACT_EXCEPTION),
 # if LDBL_MANT_DIG > 100
+    TEST_f_f (rint, 1024.5000000000001L, 1024.0L, INEXACT_EXCEPTION, 1025.0L, INEXACT_EXCEPTION, 1024.0L, INEXACT_EXCEPTION, 1025.0L, INEXACT_EXCEPTION),
+    TEST_f_f (rint, 1025.5000000000001L, 1025.0L, INEXACT_EXCEPTION, 1026.0L, INEXACT_EXCEPTION, 1025.0L, INEXACT_EXCEPTION, 1026.0L, INEXACT_EXCEPTION),
+    TEST_f_f (rint, -1024.5000000000001L, -1025.0L, INEXACT_EXCEPTION, -1025.0L, INEXACT_EXCEPTION, -1024.0L, INEXACT_EXCEPTION, -1024.0L, INEXACT_EXCEPTION),
+    TEST_f_f (rint, -1025.5000000000001L, -1026.0L, INEXACT_EXCEPTION, -1026.0L, INEXACT_EXCEPTION, -1025.0L, INEXACT_EXCEPTION, -1025.0L, INEXACT_EXCEPTION),
     TEST_f_f (rint, 4503599627370494.5000000000001L, 4503599627370494.0L, INEXACT_EXCEPTION, 4503599627370495.0L, INEXACT_EXCEPTION, 4503599627370494.0L, INEXACT_EXCEPTION, 4503599627370495.0L, INEXACT_EXCEPTION),
     TEST_f_f (rint, 4503599627370495.5000000000001L, 4503599627370495.0L, INEXACT_EXCEPTION, 4503599627370496.0L, INEXACT_EXCEPTION, 4503599627370495.0L, INEXACT_EXCEPTION, 4503599627370496.0L, INEXACT_EXCEPTION),
     TEST_f_f (rint, 4503599627370496.5000000000001L, 4503599627370496.0L, INEXACT_EXCEPTION, 4503599627370497.0L, INEXACT_EXCEPTION, 4503599627370496.0L, INEXACT_EXCEPTION, 4503599627370497.0L, INEXACT_EXCEPTION),
@@ -9222,72 +9158,72 @@ ldexp_test (void)
 
 static const struct test_fl_f_data scalbln_test_data[] =
   {
-    TEST_fl_f (scalbln, 0, 0, 0, NO_INEXACT_EXCEPTION),
-    TEST_fl_f (scalbln, minus_zero, 0, minus_zero, NO_INEXACT_EXCEPTION),
+    TEST_fl_f (scalbln, 0, 0, 0, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
+    TEST_fl_f (scalbln, minus_zero, 0, minus_zero, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
 
-    TEST_fl_f (scalbln, plus_infty, 1, plus_infty, NO_INEXACT_EXCEPTION),
-    TEST_fl_f (scalbln, minus_infty, 1, minus_infty, NO_INEXACT_EXCEPTION),
-    TEST_fl_f (scalbln, qnan_value, 1, qnan_value, NO_INEXACT_EXCEPTION),
+    TEST_fl_f (scalbln, plus_infty, 1, plus_infty, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
+    TEST_fl_f (scalbln, minus_infty, 1, minus_infty, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
+    TEST_fl_f (scalbln, qnan_value, 1, qnan_value, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
 
-    TEST_fl_f (scalbln, 0.8L, 4, 12.8L, NO_INEXACT_EXCEPTION),
-    TEST_fl_f (scalbln, -0.854375L, 5, -27.34L, NO_INEXACT_EXCEPTION),
+    TEST_fl_f (scalbln, 0.8L, 4, 12.8L, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
+    TEST_fl_f (scalbln, -0.854375L, 5, -27.34L, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
 
-    TEST_fl_f (scalbln, 1, 0L, 1, NO_INEXACT_EXCEPTION),
+    TEST_fl_f (scalbln, 1, 0L, 1, NO_INEXACT_EXCEPTION|ERRNO_UNCHANGED),
 
-    TEST_fl_f (scalbln, 1, INT_MAX, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, 1, INT_MIN, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, max_value, INT_MAX, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, max_value, INT_MIN, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, min_value, INT_MAX, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, min_value, INT_MIN, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, min_value / 4, INT_MAX, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, min_value / 4, INT_MIN, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
+    TEST_fl_f (scalbln, 1, INT_MAX, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_PLUS_OFLOW),
+    TEST_fl_f (scalbln, 1, INT_MIN, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_PLUS_UFLOW),
+    TEST_fl_f (scalbln, max_value, INT_MAX, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_PLUS_OFLOW),
+    TEST_fl_f (scalbln, max_value, INT_MIN, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_PLUS_UFLOW),
+    TEST_fl_f (scalbln, min_value, INT_MAX, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_PLUS_OFLOW),
+    TEST_fl_f (scalbln, min_value, INT_MIN, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_PLUS_UFLOW),
+    TEST_fl_f (scalbln, min_value / 4, INT_MAX, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_PLUS_OFLOW),
+    TEST_fl_f (scalbln, min_value / 4, INT_MIN, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_PLUS_UFLOW),
 
-    TEST_fl_f (scalbln, -1, INT_MAX, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -1, INT_MIN, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -max_value, INT_MAX, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -max_value, INT_MIN, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -min_value, INT_MAX, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -min_value, INT_MIN, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -min_value / 4, INT_MAX, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -min_value / 4, INT_MIN, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
+    TEST_fl_f (scalbln, -1, INT_MAX, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_MINUS_OFLOW),
+    TEST_fl_f (scalbln, -1, INT_MIN, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_MINUS_UFLOW),
+    TEST_fl_f (scalbln, -max_value, INT_MAX, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_MINUS_OFLOW),
+    TEST_fl_f (scalbln, -max_value, INT_MIN, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_MINUS_UFLOW),
+    TEST_fl_f (scalbln, -min_value, INT_MAX, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_MINUS_OFLOW),
+    TEST_fl_f (scalbln, -min_value, INT_MIN, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_MINUS_UFLOW),
+    TEST_fl_f (scalbln, -min_value / 4, INT_MAX, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_MINUS_OFLOW),
+    TEST_fl_f (scalbln, -min_value / 4, INT_MIN, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_MINUS_UFLOW),
 
-    TEST_fl_f (scalbln, 1, LONG_MAX, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, 1, LONG_MIN, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, max_value, LONG_MAX, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, max_value, LONG_MIN, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, min_value, LONG_MAX, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, min_value, LONG_MIN, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, min_value / 4, LONG_MAX, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, min_value / 4, LONG_MIN, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
+    TEST_fl_f (scalbln, 1, LONG_MAX, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_PLUS_OFLOW),
+    TEST_fl_f (scalbln, 1, LONG_MIN, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_PLUS_UFLOW),
+    TEST_fl_f (scalbln, max_value, LONG_MAX, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_PLUS_OFLOW),
+    TEST_fl_f (scalbln, max_value, LONG_MIN, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_PLUS_UFLOW),
+    TEST_fl_f (scalbln, min_value, LONG_MAX, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_PLUS_OFLOW),
+    TEST_fl_f (scalbln, min_value, LONG_MIN, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_PLUS_UFLOW),
+    TEST_fl_f (scalbln, min_value / 4, LONG_MAX, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_PLUS_OFLOW),
+    TEST_fl_f (scalbln, min_value / 4, LONG_MIN, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_PLUS_UFLOW),
 
-    TEST_fl_f (scalbln, -1, LONG_MAX, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -1, LONG_MIN, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -max_value, LONG_MAX, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -max_value, LONG_MIN, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -min_value, LONG_MAX, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -min_value, LONG_MIN, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -min_value / 4, LONG_MAX, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -min_value / 4, LONG_MIN, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
+    TEST_fl_f (scalbln, -1, LONG_MAX, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_MINUS_OFLOW),
+    TEST_fl_f (scalbln, -1, LONG_MIN, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_MINUS_UFLOW),
+    TEST_fl_f (scalbln, -max_value, LONG_MAX, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_MINUS_OFLOW),
+    TEST_fl_f (scalbln, -max_value, LONG_MIN, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_MINUS_UFLOW),
+    TEST_fl_f (scalbln, -min_value, LONG_MAX, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_MINUS_OFLOW),
+    TEST_fl_f (scalbln, -min_value, LONG_MIN, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_MINUS_UFLOW),
+    TEST_fl_f (scalbln, -min_value / 4, LONG_MAX, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_MINUS_OFLOW),
+    TEST_fl_f (scalbln, -min_value / 4, LONG_MIN, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_MINUS_UFLOW),
 
 #if LONG_MAX >= 0x100000000
-    TEST_fl_f (scalbln, 1, 0x88000000L, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, 1, -0x88000000L, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, max_value, 0x88000000L, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, max_value, -0x88000000L, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, min_value, 0x88000000L, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, min_value, -0x88000000L, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, min_value / 4, 0x88000000L, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, min_value / 4, -0x88000000L, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
+    TEST_fl_f (scalbln, 1, 0x88000000L, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_PLUS_OFLOW),
+    TEST_fl_f (scalbln, 1, -0x88000000L, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_PLUS_UFLOW),
+    TEST_fl_f (scalbln, max_value, 0x88000000L, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_PLUS_OFLOW),
+    TEST_fl_f (scalbln, max_value, -0x88000000L, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_PLUS_UFLOW),
+    TEST_fl_f (scalbln, min_value, 0x88000000L, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_PLUS_OFLOW),
+    TEST_fl_f (scalbln, min_value, -0x88000000L, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_PLUS_UFLOW),
+    TEST_fl_f (scalbln, min_value / 4, 0x88000000L, plus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_PLUS_OFLOW),
+    TEST_fl_f (scalbln, min_value / 4, -0x88000000L, plus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_PLUS_UFLOW),
 
-    TEST_fl_f (scalbln, -1, 0x88000000L, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -1, -0x88000000L, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -max_value, 0x88000000L, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -max_value, -0x88000000L, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -min_value, 0x88000000L, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -min_value, -0x88000000L, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -min_value / 4, 0x88000000L, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION),
-    TEST_fl_f (scalbln, -min_value / 4, -0x88000000L, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION),
+    TEST_fl_f (scalbln, -1, 0x88000000L, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_MINUS_OFLOW),
+    TEST_fl_f (scalbln, -1, -0x88000000L, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_MINUS_UFLOW),
+    TEST_fl_f (scalbln, -max_value, 0x88000000L, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_MINUS_OFLOW),
+    TEST_fl_f (scalbln, -max_value, -0x88000000L, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_MINUS_UFLOW),
+    TEST_fl_f (scalbln, -min_value, 0x88000000L, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_MINUS_OFLOW),
+    TEST_fl_f (scalbln, -min_value, -0x88000000L, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_MINUS_UFLOW),
+    TEST_fl_f (scalbln, -min_value / 4, 0x88000000L, minus_oflow, INEXACT_EXCEPTION|OVERFLOW_EXCEPTION|ERRNO_MINUS_OFLOW),
+    TEST_fl_f (scalbln, -min_value / 4, -0x88000000L, minus_uflow, INEXACT_EXCEPTION|UNDERFLOW_EXCEPTION|ERRNO_MINUS_UFLOW),
 #endif
   };
 
@@ -9673,9 +9609,7 @@ static const struct test_if_f_data yn_test_data[] =
 static void
 yn_test (void)
 {
-  START (yn, 0);
-  RUN_TEST_LOOP_if_f (yn, yn_test_data, );
-  END;
+  ALL_RM_TEST (yn, 0, yn_test_data, RUN_TEST_LOOP_if_f, END);
 }
 
 
@@ -9946,10 +9880,6 @@ main (int argc, char **argv)
   fabs_test ();
   hypot_test ();
   pow_test ();
-  pow_test_tonearest ();
-  pow_test_towardzero ();
-  pow_test_downward ();
-  pow_test_upward ();
   sqrt_test ();
 
   /* Error and gamma functions:  */

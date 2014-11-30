@@ -175,7 +175,7 @@ _dl_start_user:\n\
 	lgr   %r5,%r3\n\
 	sllg  %r5,%r5,3\n\
 	la    %r5,176(%r5,%r15)\n\
-	brasl %r14,_dl_init_internal@PLT\n\
+	brasl %r14,_dl_init@PLT\n\
 	# Pass our finalizer function to the user in %r14, as per ELF ABI.\n\
 	lghi  %r14,_dl_fini@GOT\n\
 	lg    %r14,0(%r14,%r12)\n\
@@ -205,6 +205,7 @@ _dl_start_user:\n\
 
 /* The 64 bit S/390 never uses Elf64_Rel relocations.  */
 #define ELF_MACHINE_NO_REL 1
+#define ELF_MACHINE_NO_RELA 0
 
 /* We define an initialization functions.  This is called very early in
    _dl_sysdep_start.  */
@@ -277,7 +278,8 @@ elf_machine_rela (struct link_map *map, const Elf64_Rela *reloc,
     return;
   else
     {
-#ifndef RESOLVE_CONFLICT_FIND_MAP
+#if !defined RTLD_BOOTSTRAP && !defined RESOLVE_CONFLICT_FIND_MAP
+      /* Only needed for R_390_COPY below.  */
       const Elf64_Sym *const refsym = sym;
 #endif
       struct link_map *sym_map = RESOLVE_MAP (&sym, version, r_type);

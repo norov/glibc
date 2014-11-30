@@ -73,13 +73,7 @@ tests += bug-iconv3
 endif
 
 test-srcs := tst-table-from tst-table-to
-
-bug-iconv6-ENV = LOCPATH=$(common-objpfx)localedata
-tst-iconv7-ENV = LOCPATH=$(common-objpfx)localedata
 endif
-
-# No code here is in libc.so.
-CPPFLAGS += -DNOT_IN_libc
 
 libJIS-routines := jis0201 jis0208 jis0212
 libKSC-routines := ksc5601
@@ -214,6 +208,7 @@ $(objpfx)iconv-rules: Makefile
 	$(AWK) 'NR == 1 { \
 		  for (i = 1; i <= NF; i++) { \
 		    printf "%s-routines := %s\n", $$i, tolower($$i); \
+		    printf "libof-%s := iconvdata\n", tolower($$i); \
 		    printf "%s-map := gconv.map\n", $$i; \
 		  } \
 		}; \
@@ -254,8 +249,8 @@ ifeq (no,$(cross-compiling))
 # Update the $(prefix)/lib/gconv/gconv-modules.cache file. This is necessary
 # if this libc has more gconv modules than the previously installed one.
 	if test -f "$(inst_gconvdir)/gconv-modules.cache"; then \
-	   LC_ALL=C LANGUAGE=C \
-	   $(common-objpfx)elf/ld.so --library-path $(rpath-link) \
+	   LC_ALL=C \
+	   $(rtld-prefix) \
 	   $(common-objpfx)iconv/iconvconfig \
 	     $(addprefix --prefix=,$(install_root)); \
 	fi
@@ -275,6 +270,13 @@ endif
 endif
 
 include ../Rules
+
+# Set libof-* for each routine.
+cpp-srcs-left := $(modules) $(generated-modules) $(libJIS-routines) \
+		 $(libKSC-routines) $(libGB-routines) $(libCNS-routines) \
+		 $(libISOIR165-routines) $(libJISX0213-routines)
+lib := iconvdata
+include $(patsubst %,$(..)cppflags-iterator.mk,$(cpp-srcs-left))
 
 tst-loading-ENV = MALLOC_TRACE=$(objpfx)tst-loading.mtrace
 $(objpfx)mtrace-tst-loading.out: $(objpfx)tst-loading.out
@@ -300,7 +302,9 @@ $(objpfx)tst-iconv7.out: $(objpfx)gconv-modules \
 $(objpfx)iconv-test.out: run-iconv-test.sh $(objpfx)gconv-modules \
 			 $(addprefix $(objpfx),$(modules.so)) \
 			 $(common-objdir)/iconv/iconv_prog TESTS
-	$(SHELL) $< $(common-objdir) '$(test-wrapper)' > $@; \
+	iconv_modules="$(modules)" \
+	$(SHELL) $< $(common-objdir) '$(test-wrapper-env)' \
+		 '$(run-program-env)' > $@; \
 	$(evaluate-test)
 
 $(objpfx)tst-tables.out: tst-tables.sh $(objpfx)gconv-modules \

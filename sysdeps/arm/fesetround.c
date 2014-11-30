@@ -16,38 +16,22 @@
    License along with the GNU C Library.  If not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <fenv.h>
-#include <fpu_control.h>
+#include <fenv_private.h>
 #include <arm-features.h>
 
 
 int
 fesetround (int round)
 {
-  if (ARM_HAVE_VFP)
-    {
-      fpu_control_t temp;
+  /* FE_TONEAREST is the only supported rounding mode
+     if a VFP unit isn't present.  */
+  if (!ARM_HAVE_VFP)
+    return (round == FE_TONEAREST) ? 0 : 1;
 
-      switch (round)
-	{
-	case FE_TONEAREST:
-	case FE_UPWARD:
-	case FE_DOWNWARD:
-	case FE_TOWARDZERO:
-	  _FPU_GETCW (temp);
-	  temp = (temp & ~FE_TOWARDZERO) | round;
-	  _FPU_SETCW (temp);
-	  return 0;
-	default:
-	  return 1;
-	}
-    }
-  else if (round == FE_TONEAREST)
-    /* This is the only supported rounding mode for soft-fp.  */
-    return 0;
+  if (round & ~_FPU_MASK_RM)
+    return 1;
 
-  /* Unsupported, so fail.  */
-  return 1;
+  libc_fesetround_vfp (round);
+  return 0;
 }
-
 libm_hidden_def (fesetround)

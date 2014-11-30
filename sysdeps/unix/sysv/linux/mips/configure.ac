@@ -58,38 +58,20 @@ fi
 LIBC_CONFIG_VAR([default-abi],
   [${libc_mips_abi}_${libc_mips_float}${libc_mips_nan}])
 
-case "$prefix" in
-/usr | /usr/)
-  # Make the build system aware of where we install octeon3 libs.
-  case $machine in
-  mips/mips64/n*/mips64octeon3 )
-    platform=-fp;;
-  esac
-  # 64-bit libraries on bi-arch platforms go in /lib64 instead of /lib.
-  # Allow earlier configure scripts to handle slibdir, libdir,
-  # and libc_cv_localedir.
-  test -n "$slibdir" || \
-  case $machine in
-  mips/mips64/n64/* )
-    slibdir="/lib64$platform"
-    if test "$libdir" = '${exec_prefix}/lib'; then
-      libdir='${exec_prefix}/lib64'$platform;
-      # Locale data can be shared between 32bit and 64bit libraries
-      libc_cv_localedir='${exec_prefix}/lib/locale'
-    fi
-    ;;
-  mips/mips64/n32/* )
-    slibdir="/lib32$platform"
-    if test "$libdir" = '${exec_prefix}/lib'; then
-      libdir='${exec_prefix}/lib32'$platform;
-      # Locale data can be shared between 32bit and 64bit libraries
-      libc_cv_localedir='${exec_prefix}/lib/locale'
-    fi
-    ;;
-  *)
-    slibdir="/lib"
-    ;;
-  esac
+# Make the build system aware of where we install octeon3 libs.
+case $machine in
+  mips/mips64/n32/mips64octeon3 )
+  LIBC_SLIBDIR_RTLDDIR([lib32-fp], [lib32-fp])
+  ;;
+  mips/mips64/n64/mips64octeon3 )
+  LIBC_SLIBDIR_RTLDDIR([lib64-fp], [lib64-fp])
+  ;;
+mips/mips64/n64/*)
+  LIBC_SLIBDIR_RTLDDIR([lib64], [lib64])
+  ;;
+mips/mips64/n32/*)
+  LIBC_SLIBDIR_RTLDDIR([lib32], [lib32])
+  ;;
 esac
 
 libc_cv_gcc_unwind_find_fde=yes

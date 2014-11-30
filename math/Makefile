@@ -48,7 +48,7 @@ libm-calls = e_acos e_acosh e_asin e_atan2 e_atanh e_cosh e_exp e_fmod	\
 	     k_cos k_rem_pio2 k_sin k_tan s_asinh s_atan s_cbrt		\
 	     s_ceil s_cos s_erf s_expm1 s_fabs				\
 	     s_floor s_log1p s_logb					\
-	     s_nextafter s_nexttoward s_rint s_scalbln			\
+	     s_nextafter s_nexttoward s_rint s_scalbln w_scalbln	\
 	     s_significand s_sin s_tan s_tanh w_acos w_acosh w_asin	\
 	     w_atan2 w_atanh w_cosh w_drem w_exp w_exp2 w_exp10 w_fmod	\
 	     w_tgamma w_hypot w_j0 w_j1 w_jn w_lgamma w_lgamma_r	\
@@ -90,7 +90,7 @@ tests = test-matherr test-fenv atest-exp atest-sincos atest-exp2 basic-test \
 	test-misc test-fpucw test-fpucw-ieee tst-definitions test-tgmath \
 	test-tgmath-ret bug-nextafter bug-nexttoward bug-tgmath1 \
 	test-tgmath-int test-tgmath2 test-powl tst-CMPLX tst-CMPLX2 test-snan \
-	test-fenv-tls test-fenv-preserve $(tests-static)
+	test-fenv-tls test-fenv-preserve test-fenv-return $(tests-static)
 tests-static = test-fpucw-static test-fpucw-ieee-static
 # We do the `long double' tests only if this data type is available and
 # distinct from `double'.
@@ -159,7 +159,7 @@ ifneq (no,$(PERL))
 .PHONY: regen-ulps
 
 run-regen-ulps = $(test-wrapper-env) \
-	    GCONV_PATH=$(common-objpfx)iconvdata LC_ALL=C \
+	    $(run-program-env) \
 	    $($*-ENV) $(rtld-prefix) $${run}
 
 regen-ulps: $(addprefix $(objpfx),$(libm-tests))
@@ -219,12 +219,8 @@ $(objpfx)libieee.a: $(objpfx)ieee-math.o
 	$(patsubst %/,cd % &&,$(objpfx)) \
 	$(LN_S) $(<F) $(@F)
 
-ifeq ($(build-shared),yes)
-$(addprefix $(objpfx),$(filter-out $(tests-static),$(tests))): $(objpfx)libm.so$(libm.so-version)
+$(addprefix $(objpfx),$(filter-out $(tests-static),$(tests))): $(libm)
 $(addprefix $(objpfx),$(tests-static)): $(objpfx)libm.a
-else
-$(addprefix $(objpfx),$(tests)): $(objpfx)libm.a
-endif
 
 gmp-objs = $(patsubst %,$(common-objpfx)stdlib/%.o,\
 		      add_n sub_n cmp addmul_1 mul_1 mul_n divmod_1 \
@@ -233,4 +229,4 @@ gmp-objs = $(patsubst %,$(common-objpfx)stdlib/%.o,\
 $(objpfx)atest-exp: $(gmp-objs)
 $(objpfx)atest-sincos: $(gmp-objs)
 $(objpfx)atest-exp2: $(gmp-objs)
-$(objpfx)test-fenv-tls: $(common-objpfx)nptl/libpthread.so
+$(objpfx)test-fenv-tls: $(shared-thread-library)

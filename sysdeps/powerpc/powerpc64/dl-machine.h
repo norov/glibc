@@ -126,7 +126,7 @@ elf_machine_dynamic (void)
 #else
 # define DL_STARTING_UP_DEF \
 ".LC__dl_starting_up:\n"  \
-"	.tc _dl_starting_up_internal[TC],_dl_starting_up_internal\n"
+"	.tc __GI__dl_starting_up[TC],__GI__dl_starting_up\n"
 #endif
 
 
@@ -169,7 +169,7 @@ DL_STARTING_UP_DEF							\
 ".LC__dl_argc:\n"							\
 "	.tc _dl_argc[TC],_dl_argc\n"					\
 ".LC__dl_argv:\n"							\
-"	.tc _dl_argv_internal[TC],_dl_argv_internal\n"			\
+"	.tc __GI__dl_argv[TC],__GI__dl_argv\n"				\
 ".LC__dl_fini:\n"							\
 "	.tc _dl_fini[TC],_dl_fini\n"					\
 "	.popsection\n"							\
@@ -294,6 +294,7 @@ BODY_PREFIX "_dl_start_user:\n"						\
 
 /* The PowerPC never uses REL relocations.  */
 #define ELF_MACHINE_NO_REL 1
+#define ELF_MACHINE_NO_RELA 0
 
 /* Stuff for the PLT.  */
 #if _CALL_ELF != 2

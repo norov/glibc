@@ -34,7 +34,7 @@
 #define SYS_ify(syscall_name)	__NR_##syscall_name
 
 #if defined USE_DL_SYSINFO \
-    && (!defined NOT_IN_libc || defined IS_IN_libpthread)
+    && (IS_IN (libc) || IS_IN (libpthread))
 # define I386_USE_SYSENTER	1
 #else
 # undef I386_USE_SYSENTER
@@ -115,7 +115,7 @@
 
 # elif defined _LIBC_REENTRANT
 
-#  ifndef NOT_IN_libc
+#  if IS_IN (libc)
 #   define SYSCALL_ERROR_ERRNO __libc_errno
 #  else
 #   define SYSCALL_ERROR_ERRNO errno
@@ -519,7 +519,7 @@ asm (".L__X'%ebx = 1\n\t"
 
 
 /* Pointer mangling support.  */
-#if defined NOT_IN_libc && defined IS_IN_rtld
+#if IS_IN (rtld)
 /* We cannot use the thread descriptor because in ld.so we use setjmp
    earlier than the descriptor is initialized.  Using a global variable
    is too complicated here since we have no PC-relative addressing mode.  */

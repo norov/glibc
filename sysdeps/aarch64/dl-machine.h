@@ -52,19 +52,22 @@ elf_machine_load_address (void)
      The choice of symbol is arbitrary. The static address we obtain
      by constructing a non GOT reference to the symbol, the dynamic
      address of the symbol we compute using adrp/add to compute the
-     symbol's address relative to the PC. */
+     symbol's address relative to the PC.
+     This depends on 32bit relocations being resolved at link time
+     and that the static address fits in the 32bits.  */
 
   ElfW(Addr) static_addr;
   ElfW(Addr) dynamic_addr;
 
-  asm ("					\n\
-	adrp	%1, _dl_start;			\n\
-        add	%1, %1, #:lo12:_dl_start        \n\
-        ldr	%w0, 1f				\n\
-	b	2f				\n\
-1:	.word	_dl_start			\n\
-2:						\n\
-       " : "=r" (static_addr),  "=r" (dynamic_addr));
+  asm ("					\n"
+"	adrp	%1, _dl_start;			\n"
+"	add	%1, %1, #:lo12:_dl_start	\n"
+"	ldr	%w0, 1f				\n"
+"	b	2f				\n"
+"1:						\n"
+"	.word	_dl_start			\n"
+"2:						\n"
+    : "=r" (static_addr),  "=r" (dynamic_addr));
   return dynamic_addr - static_addr;
 }
 
@@ -113,8 +116,8 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
     }
 
   if (l->l_info[ADDRIDX (DT_TLSDESC_GOT)] && lazy)
-    *(Elf64_Addr*)(D_PTR (l, l_info[ADDRIDX (DT_TLSDESC_GOT)]) + l->l_addr)
-      = (Elf64_Addr) &_dl_tlsdesc_resolve_rela;
+    *(ElfW(Addr)*)(D_PTR (l, l_info[ADDRIDX (DT_TLSDESC_GOT)]) + l->l_addr)
+      = (ElfW(Addr)) &_dl_tlsdesc_resolve_rela;
 
   return lazy;
 }
@@ -178,7 +181,7 @@ _dl_start_user:							\n\
 	adrp	x16, _rtld_local				\n\
         add	x16, x16, #:lo12:_rtld_local			\n\
         ldr	x0, [x16]					\n\
-	bl	_dl_init_internal				\n\
+	bl	_dl_init					\n\
 	// load the finalizer function				\n\
 	adrp	x0, _dl_fini					\n\
 	add	x0, x0, #:lo12:_dl_fini				\n\
@@ -188,9 +191,9 @@ _dl_start_user:							\n\
 
 #define elf_machine_type_class(type)					\
   ((((type) == R_AARCH64_JUMP_SLOT ||					\
-     (type) == R_AARCH64_TLS_DTPMOD64 ||				\
-     (type) == R_AARCH64_TLS_DTPREL64 ||				\
-     (type) == R_AARCH64_TLS_TPREL64 ||					\
+     (type) == R_AARCH64_TLS_DTPMOD ||					\
+     (type) == R_AARCH64_TLS_DTPREL ||					\
+     (type) == R_AARCH64_TLS_TPREL ||					\
      (type) == R_AARCH64_TLSDESC) * ELF_RTYPE_CLASS_PLT)		\
    | (((type) == R_AARCH64_COPY) * ELF_RTYPE_CLASS_COPY))
 
@@ -198,6 +201,7 @@ _dl_start_user:							\n\
 
 /* AArch64 uses RELA not REL */
 #define ELF_MACHINE_NO_REL 1
+#define ELF_MACHINE_NO_RELA 0
 
 static inline ElfW(Addr)
 elf_machine_fixup_plt (struct link_map *map, lookup_t t,
@@ -313,7 +317,7 @@ elf_machine_rela (struct link_map *map, const ElfW(Rela) *reloc,
 	    break;
 	  }
 
-	case R_AARCH64_TLS_DTPMOD64:
+	case R_AARCH64_TLS_DTPMOD:
 #ifdef RTLD_BOOTSTRAP
 	  *reloc_addr = 1;
 #else
@@ -324,12 +328,12 @@ elf_machine_rela (struct link_map *map, const ElfW(Rela) *reloc,
 #endif
 	  break;
 
-	case R_AARCH64_TLS_DTPREL64:
+	case R_AARCH64_TLS_DTPREL:
 	  if (sym)
 	    *reloc_addr = sym->st_value + reloc->r_addend;
 	  break;
 
-	case R_AARCH64_TLS_TPREL64:
+	case R_AARCH64_TLS_TPREL:
 	  if (sym)
 	    {
 	      CHECK_STATIC_TLS (map, sym_map);

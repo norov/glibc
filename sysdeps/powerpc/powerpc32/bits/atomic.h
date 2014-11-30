@@ -33,6 +33,9 @@
 # define MUTEX_HINT_REL
 #endif
 
+#define __HAVE_64B_ATOMICS 0
+#define USE_ATOMIC_COMPILER_BUILTINS 0
+
 /*
  * The 32-bit exchange_bool is different on powerpc64 because the subf
  * does signed 64-bit arithmetic while the lwarx is 32-bit unsigned
@@ -95,6 +98,12 @@
 #define __arch_atomic_exchange_and_add_64(mem, value) \
     ({ abort (); (*mem) = (value); })
 
+#define __arch_atomic_exchange_and_add_64_acq(mem, value) \
+    ({ abort (); (*mem) = (value); })
+
+#define __arch_atomic_exchange_and_add_64_rel(mem, value) \
+    ({ abort (); (*mem) = (value); })
+
 #define __arch_atomic_increment_val_64(mem) \
     ({ abort (); (*mem)++; })
 
@@ -117,6 +126,7 @@
 # ifndef UP
 #  define __ARCH_REL_INSTR	"lwsync"
 # endif
+# define atomic_write_barrier()	__asm ("lwsync" ::: "memory")
 #else
 /*
  * Older powerpc32 processors don't support the new "light weight"
@@ -124,6 +134,7 @@
  * for all powerpc32 applications.
  */
 # define atomic_read_barrier()	__asm ("sync" ::: "memory")
+# define atomic_write_barrier()	__asm ("sync" ::: "memory")
 #endif
 
 /*

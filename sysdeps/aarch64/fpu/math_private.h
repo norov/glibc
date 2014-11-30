@@ -25,7 +25,10 @@
 static __always_inline void
 libc_feholdexcept_aarch64 (fenv_t *envp)
 {
-  fpu_control_t fpcr, new_fpcr, fpsr, new_fpsr;
+  fpu_control_t fpcr;
+  fpu_control_t new_fpcr;
+  fpu_fpsr_t fpsr;
+  fpu_fpsr_t new_fpsr;
 
   _FPU_GETCW (fpcr);
   _FPU_GETFPSR (fpsr);
@@ -55,7 +58,7 @@ libc_fesetround_aarch64 (int round)
   _FPU_GETCW (fpcr);
 
   /* Check whether rounding modes are different.  */
-  round = (fpcr ^ round) & FE_TOWARDZERO;
+  round = (fpcr ^ round) & _FPU_FPCR_RM_MASK;
 
   /* Set new rounding mode if different.  */
   if (__glibc_unlikely (round != 0))
@@ -69,7 +72,10 @@ libc_fesetround_aarch64 (int round)
 static __always_inline void
 libc_feholdexcept_setround_aarch64 (fenv_t *envp, int round)
 {
-  fpu_control_t fpcr, new_fpcr, fpsr, new_fpsr;
+  fpu_control_t fpcr;
+  fpu_control_t new_fpcr;
+  fpu_fpsr_t fpsr;
+  fpu_fpsr_t new_fpsr;
 
   _FPU_GETCW (fpcr);
   _FPU_GETFPSR (fpsr);
@@ -78,7 +84,7 @@ libc_feholdexcept_setround_aarch64 (fenv_t *envp, int round)
 
   /* Clear exception flags, set all exceptions to non-stop,
      and set new rounding mode.  */
-  new_fpcr = fpcr & ~((FE_ALL_EXCEPT << FE_EXCEPT_SHIFT) | FE_TOWARDZERO);
+  new_fpcr = fpcr & ~((FE_ALL_EXCEPT << FE_EXCEPT_SHIFT) | _FPU_FPCR_RM_MASK);
   new_fpcr |= round;
   new_fpsr = fpsr & ~FE_ALL_EXCEPT;
 
@@ -96,7 +102,7 @@ libc_feholdexcept_setround_aarch64 (fenv_t *envp, int round)
 static __always_inline int
 libc_fetestexcept_aarch64 (int ex)
 {
-  fpu_control_t fpsr;
+  fpu_fpsr_t fpsr;
 
   _FPU_GETFPSR (fpsr);
   return fpsr & ex & FE_ALL_EXCEPT;
@@ -109,7 +115,8 @@ libc_fetestexcept_aarch64 (int ex)
 static __always_inline void
 libc_fesetenv_aarch64 (const fenv_t *envp)
 {
-  fpu_control_t fpcr, new_fpcr;
+  fpu_control_t fpcr;
+  fpu_control_t new_fpcr;
 
   _FPU_GETCW (fpcr);
   new_fpcr = envp->__fpcr;
@@ -130,7 +137,10 @@ libc_fesetenv_aarch64 (const fenv_t *envp)
 static __always_inline int
 libc_feupdateenv_test_aarch64 (const fenv_t *envp, int ex)
 {
-  fpu_control_t fpcr, new_fpcr, fpsr, new_fpsr;
+  fpu_control_t fpcr;
+  fpu_control_t new_fpcr;
+  fpu_fpsr_t fpsr;
+  fpu_fpsr_t new_fpsr;
   int excepts;
 
   _FPU_GETCW (fpcr);
@@ -171,7 +181,8 @@ libc_feupdateenv_aarch64 (const fenv_t *envp)
 static __always_inline void
 libc_feholdsetround_aarch64 (fenv_t *envp, int round)
 {
-  fpu_control_t fpcr, fpsr;
+  fpu_control_t fpcr;
+  fpu_fpsr_t fpsr;
 
   _FPU_GETCW (fpcr);
   _FPU_GETFPSR (fpsr);
@@ -179,7 +190,7 @@ libc_feholdsetround_aarch64 (fenv_t *envp, int round)
   envp->__fpsr = fpsr;
 
   /* Check whether rounding modes are different.  */
-  round = (fpcr ^ round) & FE_TOWARDZERO;
+  round = (fpcr ^ round) & _FPU_FPCR_RM_MASK;
 
   /* Set new rounding mode if different.  */
   if (__glibc_unlikely (round != 0))
@@ -193,12 +204,13 @@ libc_feholdsetround_aarch64 (fenv_t *envp, int round)
 static __always_inline void
 libc_feresetround_aarch64 (fenv_t *envp)
 {
-  fpu_control_t fpcr, round;
+  fpu_control_t fpcr;
+  int round;
 
   _FPU_GETCW (fpcr);
 
   /* Check whether rounding modes are different.  */
-  round = (envp->__fpcr ^ fpcr) & FE_TOWARDZERO;
+  round = (envp->__fpcr ^ fpcr) & _FPU_FPCR_RM_MASK;
 
   /* Restore the rounding mode if it was changed.  */
   if (__glibc_unlikely (round != 0))
@@ -215,14 +227,13 @@ libc_feresetround_aarch64 (fenv_t *envp)
 static __always_inline void
 libc_feholdsetround_aarch64_ctx (struct rm_ctx *ctx, int r)
 {
-  fpu_control_t fpcr, fpsr, round;
+  fpu_control_t fpcr;
+  int round;
 
   _FPU_GETCW (fpcr);
-  _FPU_GETFPSR (fpsr);
-  ctx->env.__fpsr = fpsr;
 
   /* Check whether rounding modes are different.  */
-  round = (fpcr ^ r) & FE_TOWARDZERO;
+  round = (fpcr ^ r) & _FPU_FPCR_RM_MASK;
   ctx->updated_status = round != 0;
 
   /* Set the rounding mode if changed.  */
@@ -248,6 +259,33 @@ libc_feresetround_aarch64_ctx (struct rm_ctx *ctx)
 #define libc_feresetround_ctx		libc_feresetround_aarch64_ctx
 #define libc_feresetroundf_ctx		libc_feresetround_aarch64_ctx
 #define libc_feresetroundl_ctx		libc_feresetround_aarch64_ctx
+
+static __always_inline void
+libc_feholdsetround_noex_aarch64_ctx (struct rm_ctx *ctx, int r)
+{
+  fpu_control_t fpcr;
+  fpu_fpsr_t fpsr;
+  int round;
+
+  _FPU_GETCW (fpcr);
+  _FPU_GETFPSR (fpsr);
+  ctx->env.__fpsr = fpsr;
+
+  /* Check whether rounding modes are different.  */
+  round = (fpcr ^ r) & _FPU_FPCR_RM_MASK;
+  ctx->updated_status = round != 0;
+
+  /* Set the rounding mode if changed.  */
+  if (__glibc_unlikely (round != 0))
+    {
+      ctx->env.__fpcr = fpcr;
+      _FPU_SETCW (fpcr ^ round);
+    }
+}
+
+#define libc_feholdsetround_noex_ctx	libc_feholdsetround_noex_aarch64_ctx
+#define libc_feholdsetround_noexf_ctx	libc_feholdsetround_noex_aarch64_ctx
+#define libc_feholdsetround_noexl_ctx	libc_feholdsetround_noex_aarch64_ctx
 
 static __always_inline void
 libc_feresetround_noex_aarch64_ctx (struct rm_ctx *ctx)

@@ -886,13 +886,13 @@ __sysconf (name)
       return -1;
 #endif
     case _SC_DEVICE_SPECIFIC:
-#if _POSIX_DEVICE_SPCIFIC > 0
+#if _POSIX_DEVICE_SPECIFIC > 0
       return _POSIX_DEVICE_SPECIFIC;
 #else
       return -1;
 #endif
     case _SC_DEVICE_SPECIFIC_R:
-#if _POSIX_DEVICE_SPCIFIC_R > 0
+#if _POSIX_DEVICE_SPECIFIC_R > 0
       return _POSIX_DEVICE_SPECIFIC_R;
 #else
       return -1;
@@ -983,12 +983,10 @@ __sysconf (name)
 #else
       return -1;
 #endif
+    /* _REGEX_VERSION has been removed with IEEE Std 1003.1-2001/Cor 2-2004,
+       item XSH/TC2/D6/137.  */
     case _SC_REGEX_VERSION:
-#if _POSIX_REGEX_VERSION > 0
-      return _POSIX_REGEX_VERSION;
-#else
       return -1;
-#endif
 
     case _SC_SHELL:
 #if _POSIX_SHELL > 0
@@ -998,7 +996,7 @@ __sysconf (name)
 #endif
 
     case _SC_SIGNALS:
-#ifdef _POSUX_SIGNALS
+#ifdef _POSIX_SIGNALS
       return _POSIX_SIGNALS;
 #else
       return -1;

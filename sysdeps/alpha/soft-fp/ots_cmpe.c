@@ -27,16 +27,11 @@ internal_compare (long al, long ah, long bl, long bh)
   FP_DECL_Q(A); FP_DECL_Q(B);
   long r;
 
-  FP_UNPACK_RAW_Q(A, a);
-  FP_UNPACK_RAW_Q(B, b);
-  FP_CMP_Q (r, A, B, 2);
+  AXP_UNPACK_RAW_Q(A, a);
+  AXP_UNPACK_RAW_Q(B, b);
+  FP_CMP_Q (r, A, B, 2, 2);
 
-  /* Relative comparisons signal invalid operation if either operand is NaN. */
-  if (r == 2)
-    {
-      FP_SET_EXCEPTION(FP_EX_INVALID);
-      FP_HANDLE_EXCEPTIONS;
-    }
+  FP_HANDLE_EXCEPTIONS;
 
   return r;
 }

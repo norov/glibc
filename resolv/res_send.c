@@ -1351,6 +1351,7 @@ send_dg(res_state statp,
 				(*thisresplenp > *thisanssizp)
 				? *thisanssizp : *thisresplenp);
 
+		next_ns:
 			if (recvresp1 || (buf2 != NULL && recvresp2)) {
 			  *resplen2 = 0;
 			  return resplen;
@@ -1368,7 +1369,6 @@ send_dg(res_state statp,
 			    goto wait;
 			  }
 
-		next_ns:
 			__res_iclose(statp, false);
 			/* don't retry if called from dig */
 			if (!statp->pfcode)
@@ -1410,6 +1410,7 @@ send_dg(res_state statp,
 					retval = reopen (statp, terrno, ns);
 					if (retval <= 0)
 						return retval;
+					pfd[0].fd = EXT(statp).nssocks[ns];
 				}
 			}
 			goto wait;

@@ -221,7 +221,7 @@ _dl_start_user:\n\
 	# Clear %ebp, so that even constructors have terminated backchain.\n\
 	xorl %ebp, %ebp\n\
 	# Call the function to run the initializers.\n\
-	call _dl_init_internal@PLT\n\
+	call _dl_init@PLT\n\
 	# Pass our finalizer function to the user in %edx, as per ELF ABI.\n\
 	leal _dl_fini@GOTOFF(%ebx), %edx\n\
 	# Restore %esp _start expects.\n\
@@ -292,6 +292,7 @@ elf_machine_plt_value (struct link_map *map, const Elf32_Rel *reloc,
 /* The i386 never uses Elf32_Rela relocations for the dynamic linker.
    Prelinked libraries may use Elf32_Rela though.  */
 #define ELF_MACHINE_NO_RELA defined RTLD_BOOTSTRAP
+#define ELF_MACHINE_NO_REL 0
 
 #ifdef RESOLVE_MAP
 

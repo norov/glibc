@@ -23,34 +23,54 @@
 
 
 int
-__feupdateenv (const fenv_t *envp)
+feupdateenv (const fenv_t *envp)
 {
-  if (ARM_HAVE_VFP)
+  fpu_control_t fpscr, new_fpscr, updated_fpscr;
+  int excepts;
+
+  /* Fail if a VFP unit isn't present.  */
+  if (!ARM_HAVE_VFP)
+    return 1;
+
+  _FPU_GETCW (fpscr);
+  excepts = fpscr & FE_ALL_EXCEPT;
+
+  if ((envp != FE_DFL_ENV) && (envp != FE_NOMASK_ENV))
     {
-      unsigned int temp;
+      /* Merge current exception flags with the saved fenv.  */
+      new_fpscr = envp->__cw | excepts;
 
-      /* Get the current exception state.  */
-      _FPU_GETCW (temp);
+      /* Write new FPSCR if different (ignoring NZCV flags).  */
+      if (((fpscr ^ new_fpscr) & ~_FPU_MASK_NZCV) != 0)
+	_FPU_SETCW (new_fpscr);
 
-      /* Install new environment.  */
-      fesetenv (envp);
+      /* Raise the exceptions if enabled in the new FP state.  */
+      if (excepts & (new_fpscr >> FE_EXCEPT_SHIFT))
+	return feraiseexcept (excepts);
 
-      /* Raise the saved exceptions.  */
-      feraiseexcept (temp & FE_ALL_EXCEPT);
-
-      /* Success.  */
       return 0;
     }
 
-  /* Unsupported, so fail.  */
-  return 1;
+  /* Preserve the reserved FPSCR flags.  */
+  new_fpscr = fpscr & (_FPU_RESERVED | FE_ALL_EXCEPT);
+  new_fpscr |= (envp == FE_DFL_ENV) ? _FPU_DEFAULT : _FPU_IEEE;
+
+  if (((new_fpscr ^ fpscr) & ~_FPU_MASK_NZCV) != 0)
+    {
+      _FPU_SETCW (new_fpscr);
+
+      /* Not all VFP architectures support trapping exceptions, so
+	 test whether the relevant bits were set and fail if not.  */
+      _FPU_GETCW (updated_fpscr);
+
+      if (new_fpscr & ~updated_fpscr)
+	return 1;
+    }
+
+  /* Raise the exceptions if enabled in the new FP state.  */
+  if (excepts & (new_fpscr >> FE_EXCEPT_SHIFT))
+    return feraiseexcept (excepts);
+
+  return 0;
 }
-
-#include <shlib-compat.h>
-#if SHLIB_COMPAT (libm, GLIBC_2_1, GLIBC_2_2)
-strong_alias (__feupdateenv, __old_feupdateenv)
-compat_symbol (libm, __old_feupdateenv, feupdateenv, GLIBC_2_1);
-#endif
-
-libm_hidden_ver (__feupdateenv, feupdateenv)
-versioned_symbol (libm, __feupdateenv, feupdateenv, GLIBC_2_2);
+libm_hidden_def (feupdateenv)

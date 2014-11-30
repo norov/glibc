@@ -16,32 +16,43 @@
    License along with the GNU C Library.  If not, see
    <http://www.gnu.org/licenses/>.  */
 
-/* Provide a mask based on the pointer alignment that
-   sets up non-zero bytes before the beginning of the string.
-   The MASK expression works because shift counts are taken mod 64.
-   Also, specify how to count "first" and "last" bits
-   when the bits have been read as a word.  */
-
+#include <endian.h>
 #include <stdint.h>
 
-#ifndef __BIG_ENDIAN__
+/* Provide a set of macros to help keep endianness #ifdefs out of
+   the string functions.
+
+   MASK: Provide a mask based on the pointer alignment that
+   sets up non-zero bytes before the beginning of the string.
+   The MASK expression works because shift counts are taken mod 64.
+
+   NULMASK: Clear bytes beyond a given point in the string.
+
+   CFZ: Find the first zero bit in the 8 string bytes in a long.
+
+   REVCZ: Find the last zero bit in the 8 string bytes in a long.
+
+   STRSHIFT: Shift N bits towards the start of the string.  */
+
+#if __BYTE_ORDER == __LITTLE_ENDIAN
 #define MASK(x) (__insn_shl(1ULL, (x << 3)) - 1)
 #define NULMASK(x) ((2ULL << x) - 1)
 #define CFZ(x) __insn_ctz(x)
 #define REVCZ(x) __insn_clz(x)
+#define STRSHIFT(x,n) ((x) >> n)
 #else
 #define MASK(x) (__insn_shl(-2LL, ((-x << 3) - 1)))
 #define NULMASK(x) (-2LL << (63 - x))
 #define CFZ(x) __insn_clz(x)
 #define REVCZ(x) __insn_ctz(x)
+#define STRSHIFT(x,n) ((x) << n)
 #endif
 
-/* Create eight copies of the byte in a uint64_t. */
+/* Create eight copies of the byte in a uint64_t.  Byte Shuffle uses
+   the bytes of srcB as the index into the dest vector to select a
+   byte.  With all indices of zero, the first byte is copied into all
+   the other bytes.  */
 static inline uint64_t copy_byte(uint8_t byte)
 {
-  uint64_t word = byte;
-  word = __insn_bfins(word, word, 8, 15);
-  word = __insn_bfins(word, word, 16, 31);
-  word = __insn_bfins(word, word, 32, 63);
-  return word;
+  return __insn_shufflebytes(byte, 0, 0);
 }

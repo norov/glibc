@@ -95,8 +95,10 @@ struct termios {
 # define NLDLY	00001400
 # define   NL0	00000000
 # define   NL1	00000400
-# define   NL2	00001000
-# define   NL3	00001400
+# if defined __USE_MISC
+#  define   NL2	00001000
+#  define   NL3	00001400
+# endif
 # define TABDLY	00006000
 # define   TAB0	00000000
 # define   TAB1	00002000
@@ -222,6 +224,8 @@ struct termios {
 #define	TCSADRAIN	1
 #define	TCSAFLUSH	2
 
+#ifdef __USE_MISC
+
 struct sgttyb {
 	char	sg_ispeed;
 	char	sg_ospeed;
@@ -257,23 +261,6 @@ struct ltchars {
 #define TIOCPKT_NOSTOP		16
 #define TIOCPKT_DOSTOP		32
 
-struct winsize {
-	unsigned short ws_row;
-	unsigned short ws_col;
-	unsigned short ws_xpixel;
-	unsigned short ws_ypixel;
-};
-
-#define NCC 10
-struct termio {
-	unsigned short c_iflag;		/* input mode flags */
-	unsigned short c_oflag;		/* output mode flags */
-	unsigned short c_cflag;		/* control mode flags */
-	unsigned short c_lflag;		/* local mode flags */
-	unsigned char c_line;		/* line discipline */
-	unsigned char c_cc[NCC];	/* control characters */
-};
-
 /* c_cc characters */
 #define _VINTR	0
 #define _VQUIT	1
@@ -286,36 +273,7 @@ struct termio {
 #define _VEOL2	8
 #define _VSWTC	9
 
-/* modem lines */
-#define TIOCM_LE	0x001
-#define TIOCM_DTR	0x002
-#define TIOCM_RTS	0x004
-#define TIOCM_ST	0x008
-#define TIOCM_SR	0x010
-#define TIOCM_CTS	0x020
-#define TIOCM_CAR	0x040
-#define TIOCM_RNG	0x080
-#define TIOCM_DSR	0x100
-#define TIOCM_CD	TIOCM_CAR
-#define TIOCM_RI	TIOCM_RNG
-
 /* ioctl (fd, TIOCSERGETLSR, &result) where result may be as below */
 #define TIOCSER_TEMT    0x01	/* Transmitter physically empty */
 
-/* line disciplines */
-#define N_TTY		0
-#define N_SLIP		1
-#define N_MOUSE		2
-#define N_PPP		3
-#define N_STRIP		4
-#define N_AX25		5
-#define N_X25		6	/* X.25 async  */
-#define N_6PACK		7
-#define N_MASC		8	/* Mobitex module  */
-#define N_R3964		9	/* Simatic R3964 module  */
-#define N_PROFIBUS_FDL	10	/* Profibus  */
-#define N_IRDA		11	/* Linux IR  */
-#define N_SMSBLOCK	12	/* SMS block mode  */
-#define N_HDLC		13	/* synchronous HDLC  */
-#define N_SYNC_PPP	14	/* synchronous PPP  */
-#define	N_HCI		15	/* Bluetooth HCI UART  */
+#endif /* __USE_MISC  */

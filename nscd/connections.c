@@ -59,6 +59,7 @@
 #include <resolv/resolv.h>
 
 #include <kernel-features.h>
+#include <libc-internal.h>
 
 
 /* Support to run nscd as an unprivileged user */
@@ -318,12 +319,6 @@ enum usekey
     use_he = 1,
     use_he_begin = use_he | use_begin,
     use_he_end = use_he | use_end,
-#if SEPARATE_KEY
-    use_key = 2,
-    use_key_begin = use_key | use_begin,
-    use_key_end = use_key | use_end,
-    use_key_first = use_key_begin | use_first,
-#endif
     use_data = 3,
     use_data_begin = use_data | use_begin,
     use_data_end = use_data | use_end,
@@ -472,16 +467,7 @@ verify_persistent_db (void *mem, struct database_pers_head *readhead, int dbnr)
 	  if (here->key < here->packet + sizeof (struct datahead)
 	      || here->key > here->packet + dh->allocsize
 	      || here->key + here->len > here->packet + dh->allocsize)
-	    {
-#if SEPARATE_KEY
-	      /* If keys can appear outside of data, this should be done
-		 instead.  But gc doesn't mark the data in that case.  */
-	      if (! check_use (data, head->first_free, usemap,
-			       use_key | (here->first ? use_first : 0),
-			       here->key, here->len))
-#endif
-		goto fail;
-	    }
+	    goto fail;
 
 	  work = here->next;
 
@@ -501,10 +487,6 @@ verify_persistent_db (void *mem, struct database_pers_head *readhead, int dbnr)
      he->first == true hashentry.  */
   for (ref_t idx = 0; idx < head->first_free; ++idx)
     {
-#if SEPARATE_KEY
-      if (usemap[idx] == use_key_begin)
-	goto fail;
-#endif
       if (usemap[idx] == use_data_begin)
 	goto fail;
     }
@@ -1483,7 +1465,7 @@ cannot change to old UID: %s; disabling paranoia mode"),
 cannot change to old GID: %s; disabling paranoia mode"),
 		   strerror (errno));
 
-	  setuid (server_uid);
+	  ignore_value (setuid (server_uid));
 	  paranoia = 0;
 	  return;
 	}
@@ -1498,8 +1480,8 @@ cannot change to old working directory: %s; disabling paranoia mode"),
 
       if (server_user != NULL)
 	{
-	  setuid (server_uid);
-	  setgid (server_gid);
+	  ignore_value (setuid (server_uid));
+	  ignore_value (setgid (server_gid));
 	}
       paranoia = 0;
       return;
@@ -1543,8 +1525,8 @@ cannot change to old working directory: %s; disabling paranoia mode"),
 
   if (server_user != NULL)
     {
-      setuid (server_uid);
-      setgid (server_gid);
+      ignore_value (setuid (server_uid));
+      ignore_value (setgid (server_gid));
     }
   if (chdir ("/") != 0)
     dbg_log (_("cannot change current working directory to \"/\": %s"),

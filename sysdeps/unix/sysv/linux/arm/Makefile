@@ -1,14 +1,3 @@
-ifeq ($(subdir),csu)
-# In order for unwinding to fail when it falls out of main, we need a
-# cantunwind marker.  There's one in start.S.  To make sure we reach it, add
-# unwind tables for __libc_start_main.
-CFLAGS-libc-start.c += -fexceptions
-
-sysdep_routines += aeabi_read_tp libc-aeabi_read_tp
-static-only-routines += aeabi_read_tp
-shared-only-routines += libc-aeabi_read_tp
-endif
-
 ifeq ($(subdir),elf)
 sysdep-rtld-routines += aeabi_read_tp libc-do-syscall
 endif
@@ -79,7 +68,5 @@ endif
 abi-includes :=
 abi-soft-options := -U__ARM_PCS_VFP
 abi-soft-condition := !defined __ARM_PCS_VFP
-abi-soft-ld-soname := ld-linux.so.3
 abi-hard-options := -D__ARM_PCS_VFP
 abi-hard-condition := defined __ARM_PCS_VFP
-abi-hard-ld-soname := ld-linux-armhf.so.3

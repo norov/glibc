@@ -204,13 +204,13 @@ extern ssize_t recvmsg (int __fd, struct msghdr *__message, int __flags);
 
 #ifdef __USE_GNU
 /* Receive up to VLEN messages as described by VMESSAGES from socket FD.
-   Returns the number of bytes read or -1 for errors.
+   Returns the number of messages received or -1 for errors.
 
    This function is a cancellation point and therefore not marked with
    __THROW.  */
 extern int recvmmsg (int __fd, struct mmsghdr *__vmessages,
 		     unsigned int __vlen, int __flags,
-		     const struct timespec *__tmo);
+		     struct timespec *__tmo);
 #endif
 
 

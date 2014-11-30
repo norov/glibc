@@ -31,6 +31,7 @@
 #define CHARSET_NAME	"IBM935//"
 #define FROM_LOOP	from_ibm935
 #define TO_LOOP		to_ibm935
+#define ONE_DIRECTION			0
 #define FROM_LOOP_MIN_NEEDED_FROM	1
 #define FROM_LOOP_MAX_NEEDED_FROM	2
 #define FROM_LOOP_MIN_NEEDED_TO		4
@@ -161,7 +162,7 @@ enum
 	while (ch > rp2->end)						      \
 	  ++rp2;							      \
 									      \
-	if (__builtin_expect (rp2 == NULL, 0)				      \
+	if (__builtin_expect (rp2->start == 0xffff, 0)			      \
 	    || __builtin_expect (ch < rp2->start, 0)			      \
 	    || (res = __ibm935db_to_ucs4[ch + rp2->idx],		      \
 		__builtin_expect (res, L'\1') == L'\0' && ch != '\0'))	      \

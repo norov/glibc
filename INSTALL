@@ -241,24 +241,25 @@ be visible at the same locations on both the build system and HOSTNAME.
    In general, when testing the GNU C Library, `test-wrapper' may be set
 to the name and arguments of any program to run newly built binaries.
 This program must preserve the arguments to the binary being run, its
-working directory, all environment variables set as part of testing and
-the standard input, output and error file descriptors.  If
-`TEST-WRAPPER env' will not work to run a program with environment
-variables set, then `test-wrapper-env' must be set to a program that
-runs a newly built program with environment variable assignments in
-effect, those assignments being specified as `VAR=VALUE' before the
-name of the program to be run.
+working directory and the standard input, output and error file
+descriptors.  If `TEST-WRAPPER env' will not work to run a program with
+environment variables set, then `test-wrapper-env' must be set to a
+program that runs a newly built program with environment variable
+assignments in effect, those assignments being specified as `VAR=VALUE'
+before the name of the program to be run.  If multiple assignments to
+the same variable are specified, the last assignment specified must
+take precedence.
 
 Installing the C Library
 ========================
 
 To install the library and its header files, and the Info files of the
-manual, type `env LANGUAGE=C LC_ALL=C make install'.  This will build
-things, if necessary, before installing them; however, you should still
-compile everything first.  If you are installing the GNU C Library as
-your primary C library, we recommend that you shut the system down to
-single-user mode first, and reboot afterward.  This minimizes the risk
-of breaking things when the library changes out from underneath.
+manual, type `make install'.  This will build things, if necessary,
+before installing them; however, you should still compile everything
+first.  If you are installing the GNU C Library as your primary C
+library, we recommend that you shut the system down to single-user mode
+first, and reboot afterward.  This minimizes the risk of breaking
+things when the library changes out from underneath.
 
    `make install' will do the entire job of upgrading from a previous
 installation of the GNU C Library version 2.x.  There may sometimes be
@@ -328,10 +329,13 @@ build the GNU C Library:
      recommend GNU `make' version 3.79.  All earlier versions have
      severe bugs or lack features.
 
-   * GCC 4.4 or newer, GCC 4.6 recommended
+   * GCC 4.6 or newer
 
-     GCC 4.4 or higher is required; as of this writing, GCC 4.6 is the
-     compiler we advise to use to build the GNU C Library.
+     GCC 4.6 or higher is required.  In general it is recommended to use
+     the newest version of the compiler that is known to work for
+     building the GNU C Library, as newer compilers usually produce
+     better code.  As of release time, GCC 4.9 is the newest compiler
+     verified to work to build the GNU C Library.
 
      You can use whatever compiler you like to compile programs that use
      the GNU C Library.
@@ -339,7 +343,7 @@ build the GNU C Library:
      Check the FAQ for any special compiler issues on particular
      platforms.
 
-   * GNU `binutils' 2.20 or later
+   * GNU `binutils' 2.22 or later
 
      You must use GNU `binutils' (as and ld) to build the GNU C Library.
      No other assembler or linker has the necessary functionality at the
@@ -376,7 +380,7 @@ build the GNU C Library:
 
 If you change any of the `configure.ac' files you will also need
 
-   * GNU `autoconf' 2.53 or higher
+   * GNU `autoconf' 2.69 (exactly)
 
 and if you change any of the message translation files you will need
 
@@ -389,7 +393,7 @@ Specific advice for GNU/Linux systems
 =====================================
 
 If you are installing the GNU C Library on GNU/Linux systems, you need
-to have the header files from a 2.6.19.1 or newer kernel around for
+to have the header files from a 2.6.32 or newer kernel around for
 reference.  These headers must be installed using `make
 headers_install'; the headers present in the kernel source directory
 are not suitable for direct use by the GNU C Library.  You do not need

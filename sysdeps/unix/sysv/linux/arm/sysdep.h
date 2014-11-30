@@ -40,7 +40,6 @@
 #undef SYS_ify
 #define SYS_ify(syscall_name)	(__NR_##syscall_name)
 
-#define _SYS_AUXV_H 1
 #include <bits/hwcap.h>
 
 #ifdef __ASSEMBLER__
@@ -137,7 +136,7 @@
 
 #define ret_ERRVAL PSEUDO_RET_NOERRNO
 
-#if NOT_IN_libc
+#if !IS_IN (libc)
 # define SYSCALL_ERROR __local_syscall_error
 # if RTLD_PRIVATE_ERRNO
 #  define SYSCALL_ERROR_HANDLER					\
@@ -434,49 +433,5 @@ __local_syscall_error:						\
   INTERNAL_SYSCALL_RAW (number, err, nr, args)
 
 #endif	/* __ASSEMBLER__ */
-
-/* Pointer mangling support.  */
-#if (defined NOT_IN_libc && defined IS_IN_rtld) || \
-  (!defined SHARED && (!defined NOT_IN_libc || defined IS_IN_libpthread))
-# ifdef __ASSEMBLER__
-#  define PTR_MANGLE_LOAD(guard, tmp)					\
-  LDST_PCREL(ldr, guard, tmp, C_SYMBOL_NAME(__pointer_chk_guard_local));
-#  define PTR_MANGLE(dst, src, guard, tmp)				\
-  PTR_MANGLE_LOAD(guard, tmp);						\
-  PTR_MANGLE2(dst, src, guard)
-/* Use PTR_MANGLE2 for efficiency if guard is already loaded.  */
-#  define PTR_MANGLE2(dst, src, guard)		\
-  eor dst, src, guard
-#  define PTR_DEMANGLE(dst, src, guard, tmp)	\
-  PTR_MANGLE (dst, src, guard, tmp)
-#  define PTR_DEMANGLE2(dst, src, guard)	\
-  PTR_MANGLE2 (dst, src, guard)
-# else
-extern uintptr_t __pointer_chk_guard_local attribute_relro attribute_hidden;
-#  define PTR_MANGLE(var) \
-  (var) = (__typeof (var)) ((uintptr_t) (var) ^ __pointer_chk_guard_local)
-#  define PTR_DEMANGLE(var)     PTR_MANGLE (var)
-# endif
-#else
-# ifdef __ASSEMBLER__
-#  define PTR_MANGLE_LOAD(guard, tmp)					\
-  LDST_GLOBAL(ldr, guard, tmp, C_SYMBOL_NAME(__pointer_chk_guard));
-#  define PTR_MANGLE(dst, src, guard, tmp)				\
-  PTR_MANGLE_LOAD(guard, tmp);						\
-  PTR_MANGLE2(dst, src, guard)
-/* Use PTR_MANGLE2 for efficiency if guard is already loaded.  */
-#  define PTR_MANGLE2(dst, src, guard)		\
-  eor dst, src, guard
-#  define PTR_DEMANGLE(dst, src, guard, tmp)	\
-  PTR_MANGLE (dst, src, guard, tmp)
-#  define PTR_DEMANGLE2(dst, src, guard)	\
-  PTR_MANGLE2 (dst, src, guard)
-# else
-extern uintptr_t __pointer_chk_guard attribute_relro;
-#  define PTR_MANGLE(var) \
-  (var) = (__typeof (var)) ((uintptr_t) (var) ^ __pointer_chk_guard)
-#  define PTR_DEMANGLE(var)     PTR_MANGLE (var)
-# endif
-#endif
 
 #endif /* linux/arm/sysdep.h */

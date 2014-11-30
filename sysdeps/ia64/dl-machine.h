@@ -271,7 +271,7 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
 "	}\n"								      \
 "	{ .mmb\n"							      \
 "	  st8 [r2] = r17		/* Load the new _dl_argv. */\n"	      \
-"	  br.call.sptk.many b0 = _dl_init_internal#\n"			      \
+"	  br.call.sptk.many b0 = _dl_init#\n"				      \
 "	  ;;\n"								      \
 "	}\n"								      \
 "	/* Pass our finalizer function to the user,\n"			      \
@@ -320,6 +320,7 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
 
 /* According to the IA-64 specific documentation, Rela is always used.  */
 #define ELF_MACHINE_NO_REL 1
+#define ELF_MACHINE_NO_RELA 0
 
 /* Return the address of the entry point. */
 #define ELF_MACHINE_START_ADDRESS(map, start)			\

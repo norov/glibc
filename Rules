@@ -84,10 +84,6 @@ common-generated += dummy.o dummy.c
 # This makes all the auxiliary and test programs.
 
 .PHONY: others tests bench
-ifeq ($(multi-arch),no)
-tests := $(filter-out $(tests-ifunc), $(tests))
-xtests := $(filter-out $(xtests-ifunc), $(xtests))
-endif
 
 ifeq ($(build-programs),yes)
 others: $(addprefix $(objpfx),$(others) $(sysdep-others) $(extra-objs))
@@ -191,7 +187,7 @@ ifneq "$(strip $(tests) $(xtests) $(test-srcs))" ""
 # from the test programs and whatever input files are present.
 
 make-test-out = $(test-wrapper-env) \
-		GCONV_PATH=$(common-objpfx)iconvdata LC_ALL=C \
+		$(run-program-env) \
 		$($*-ENV) $(host-test-program-cmd) $($*-ARGS)
 $(objpfx)%.out: %.input $(objpfx)%
 	$(make-test-out) > $@ < $(word 1,$^); \

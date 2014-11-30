@@ -22,37 +22,22 @@
 
 
 int
-__feclearexcept (int excepts)
+feclearexcept (int excepts)
 {
-  if (ARM_HAVE_VFP)
-    {
-      unsigned long int temp;
+  fpu_control_t fpscr, new_fpscr;
 
-      /* Mask out unsupported bits/exceptions.  */
-      excepts &= FE_ALL_EXCEPT;
+  /* Fail if a VFP unit isn't present unless nothing needs to be done.  */
+  if (!ARM_HAVE_VFP)
+    return (excepts != 0);
 
-      /* Get the current floating point status. */
-      _FPU_GETCW (temp);
+  _FPU_GETCW (fpscr);
+  excepts &= FE_ALL_EXCEPT;
+  new_fpscr = fpscr & ~excepts;
 
-      /* Clear the relevant bits.  */
-      temp = (temp & ~FE_ALL_EXCEPT) | (temp & FE_ALL_EXCEPT & ~excepts);
+  /* Write new exception flags if changed.  */
+  if (new_fpscr != fpscr)
+    _FPU_SETCW (new_fpscr);
 
-      /* Put the new data in effect.  */
-      _FPU_SETCW (temp);
-
-      /* Success.  */
-      return 0;
-    }
-
-  /* Unsupported, so fail unless nothing needs to be done.  */
-  return (excepts != 0);
+  return 0;
 }
-
-#include <shlib-compat.h>
-#if SHLIB_COMPAT (libm, GLIBC_2_1, GLIBC_2_2)
-strong_alias (__feclearexcept, __old_feclearexcept)
-compat_symbol (libm, __old_feclearexcept, feclearexcept, GLIBC_2_1);
-#endif
-
-libm_hidden_ver (__feclearexcept, feclearexcept)
-versioned_symbol (libm, __feclearexcept, feclearexcept, GLIBC_2_2);
+libm_hidden_def (feclearexcept)

@@ -44,9 +44,11 @@ benchset := $(string-bench-all) $(stdlib-bench)
 CFLAGS-bench-ffs.c += -fno-builtin
 CFLAGS-bench-ffsll.c += -fno-builtin
 
-$(addprefix $(objpfx)bench-,$(bench-math)): $(common-objpfx)math/libm.so
-$(addprefix $(objpfx)bench-,$(bench-pthread)): \
-	$(common-objpfx)nptl/libpthread.so
+bench-malloc := malloc-thread
+
+$(addprefix $(objpfx)bench-,$(bench-math)): $(libm)
+$(addprefix $(objpfx)bench-,$(bench-pthread)): $(shared-thread-library)
+$(objpfx)bench-malloc-thread: $(shared-thread-library)
 
 
 
@@ -61,6 +63,7 @@ include ../Rules
 
 binaries-bench := $(addprefix $(objpfx)bench-,$(bench))
 binaries-benchset := $(addprefix $(objpfx)bench-,$(benchset))
+binaries-bench-malloc := $(addprefix $(objpfx)bench-,$(bench-malloc))
 
 # The default duration: 10 seconds.
 ifndef BENCH_DURATION
@@ -83,7 +86,8 @@ endif
 
 # This makes sure CPPFLAGS-nonlib and CFLAGS-nonlib are passed
 # for all these modules.
-cpp-srcs-left := $(binaries-benchset:=.c) $(binaries-bench:=.c)
+cpp-srcs-left := $(binaries-benchset:=.c) $(binaries-bench:=.c) \
+		 $(binaries-bench-malloc:=.c)
 lib := nonlib
 include $(patsubst %,$(..)cppflags-iterator.mk,$(cpp-srcs-left))
 
@@ -92,7 +96,7 @@ extra-objs += json-lib.o
 bench-deps := bench-skeleton.c bench-timing.h Makefile
 
 run-bench = $(test-wrapper-env) \
-	    GCONV_PATH=$(common-objpfx)iconvdata LC_ALL=C \
+	    $(run-program-env) \
 	    $($*-ENV) $(rtld-prefix) $${run}
 
 timing-type := $(objpfx)bench-timing-type
@@ -100,14 +104,22 @@ timing-type := $(objpfx)bench-timing-type
 bench-clean:
 	rm -f $(binaries-bench) $(addsuffix .o,$(binaries-bench))
 	rm -f $(binaries-benchset) $(addsuffix .o,$(binaries-benchset))
+	rm -f $(binaries-bench-malloc) $(addsuffix .o,$(binaries-bench-malloc))
 	rm -f $(timing-type) $(addsuffix .o,$(timing-type))
 
-bench: $(timing-type) bench-set bench-func
+bench: $(timing-type) bench-set bench-func bench-malloc
 
 bench-set: $(binaries-benchset)
 	for run in $^; do \
 	  echo "Running $${run}"; \
 	  $(run-bench) > $${run}.out; \
+	done
+
+bench-malloc: $(binaries-bench-malloc)
+	run=$(objpfx)bench-malloc-thread; \
+	for thr in 1 8 16 32; do \
+	  echo "Running $${run} $${thr}"; \
+	  $(run-bench) $${thr} > $${run}-$${thr}.out; \
 	done
 
 # Build and execute the benchmark functions.  This target generates JSON
@@ -132,8 +144,11 @@ bench-func: $(binaries-bench)
 	  mv -f $(objpfx)bench.out $(objpfx)bench.out.old; \
 	fi; \
 	mv -f $(objpfx)bench.out-tmp $(objpfx)bench.out
+	scripts/validate_benchout.py $(objpfx)bench.out \
+		scripts/benchout.schema.json
 
-$(timing-type) $(binaries-bench) $(binaries-benchset): %: %.o $(objpfx)json-lib.o \
+$(timing-type) $(binaries-bench) $(binaries-benchset) \
+	$(binaries-bench-malloc): %: %.o $(objpfx)json-lib.o \
   $(sort $(filter $(common-objpfx)lib%,$(link-libc))) \
   $(addprefix $(csu-objpfx),start.o) $(+preinit) $(+postinit)
 	$(+link)
@@ -142,5 +157,5 @@ $(objpfx)bench-%.c: %-inputs $(bench-deps)
 	{ if [ -n "$($*-INCLUDE)" ]; then \
 	  cat $($*-INCLUDE); \
 	fi; \
-	$(.)scripts/bench.py $(patsubst %-inputs,%,$<); } > $@-tmp
+	scripts/bench.py $(patsubst %-inputs,%,$<); } > $@-tmp
 	mv -f $@-tmp $@

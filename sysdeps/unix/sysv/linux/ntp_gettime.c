@@ -26,9 +26,6 @@
 #endif
 
 
-extern int INTUSE(__adjtimex) (struct timex *__ntx);
-
-
 int
 ntp_gettime (struct ntptimeval *ntv)
 {
@@ -36,7 +33,7 @@ ntp_gettime (struct ntptimeval *ntv)
   int result;
 
   tntx.modes = 0;
-  result = INTUSE(__adjtimex) (&tntx);
+  result = __adjtimex (&tntx);
   ntv->time = tntx.time;
   ntv->maxerror = tntx.maxerror;
   ntv->esterror = tntx.esterror;

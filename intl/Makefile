@@ -81,7 +81,8 @@ $(objpfx)mtrace-tst-gettext.out: $(objpfx)tst-gettext.out
 	$(common-objpfx)malloc/mtrace $(objpfx)tst-gettext.mtrace > $@; \
 	$(evaluate-test)
 $(objpfx)tst-gettext.out: tst-gettext.sh $(objpfx)tst-gettext
-	$(SHELL) $< $(common-objpfx) '$(test-program-prefix)' \
+	$(SHELL) $< $(common-objpfx) '$(test-program-prefix-before-env)' \
+	  '$(run-program-env)' '$(test-program-prefix-after-env)' \
 	  $(common-objpfx)intl/ $(objpfx)tst-gettext.mtrace; \
 	$(evaluate-test)
 $(objpfx)tst-translit.out: tst-translit.sh $(objpfx)tst-translit
@@ -89,7 +90,8 @@ $(objpfx)tst-translit.out: tst-translit.sh $(objpfx)tst-translit
 	  $(common-objpfx)intl/; \
 	$(evaluate-test)
 $(objpfx)tst-gettext2.out: tst-gettext2.sh $(objpfx)tst-gettext2
-	$(SHELL) $< $(common-objpfx) '$(test-program-prefix)' \
+	$(SHELL) $< $(common-objpfx) '$(test-program-prefix-before-env)' \
+	  '$(run-program-env)' '$(test-program-prefix-after-env)' \
 	  $(common-objpfx)intl/; \
 	$(evaluate-test)
 $(objpfx)tst-gettext4.out: tst-gettext4.sh $(objpfx)tst-gettext4
@@ -117,11 +119,6 @@ CFLAGS-tst-gettext3.c = -DOBJPFX=\"$(objpfx)\"
 CFLAGS-tst-gettext4.c = -DOBJPFX=\"$(objpfx)\"
 CFLAGS-tst-gettext5.c = -DOBJPFX=\"$(objpfx)\"
 CFLAGS-tst-gettext6.c = -DOBJPFX=\"$(objpfx)\"
-
-LOCPATH-ENV = LOCPATH=$(common-objpfx)localedata
-tst-codeset-ENV = $(LOCPATH-ENV)
-tst-gettext3-ENV = $(LOCPATH-ENV)
-tst-gettext5-ENV = $(LOCPATH-ENV)
 
 ifeq ($(have-thread-library),yes)
 ifeq (yes,$(build-shared))

@@ -122,7 +122,7 @@ __opendirat (int dfd, const char *name)
   flags |= O_CLOEXEC;
 #endif
   int fd;
-#ifdef IS_IN_rtld
+#if IS_IN (rtld)
   assert (dfd == AT_FDCWD);
   fd = open_not_cancel_2 (name, flags);
 #else
@@ -224,7 +224,7 @@ __alloc_dir (int fd, bool close_fd, int flags, const struct stat64 *statp)
     }
 
   dirp->fd = fd;
-#ifndef NOT_IN_libc
+#if IS_IN (libc)
   __libc_lock_init (dirp->lock);
 #endif
   dirp->allocation = allocation;

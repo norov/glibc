@@ -32,7 +32,6 @@
 #include <linux/rtnetlink.h>
 
 #include <not-cancel.h>
-#include <kernel-features.h>
 #include <bits/libc-lock.h>
 #include <atomic.h>
 #include <nscd/nscd-client.h>
@@ -62,11 +61,11 @@ static struct cached_data noai6ai_cached =
     .in6ailen = 0
   };
 
-libc_freeres_ptr (static struct cached_data *cache);
+static struct cached_data *cache;
 __libc_lock_define_initialized (static, lock);
 
 
-#ifdef IS_IN_nscd
+#if IS_IN (nscd)
 static uint32_t nl_timestamp;
 
 uint32_t
@@ -82,7 +81,7 @@ __bump_nl_timestamp (void)
 static inline uint32_t
 get_nl_timestamp (void)
 {
-#ifdef IS_IN_nscd
+#if IS_IN (nscd)
   return nl_timestamp;
 #elif defined USE_NSCD
   return __nscd_get_nl_timestamp ();
@@ -181,7 +180,7 @@ make_request (int fd, pid_t pid)
 	};
 
       ssize_t read_len = TEMP_FAILURE_RETRY (__recvmsg (fd, &msg, 0));
-      if (read_len < 0)
+      if (read_len <= 0)
 	goto out_fail2;
 
       if (msg.msg_flags & MSG_TRUNC)
@@ -402,6 +401,12 @@ __check_pf (bool *seen_ipv4, bool *seen_ipv6,
   *seen_ipv6 = true;
 }
 
+/* Free the cache if it has been allocated.  */
+libc_freeres_fn (freecache)
+{
+  if (cache)
+    __free_in6ai (cache->in6ai);
+}
 
 void
 __free_in6ai (struct in6addrinfo *ai)

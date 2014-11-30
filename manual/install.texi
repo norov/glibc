@@ -275,13 +275,15 @@ system and @var{hostname}.
 In general, when testing @theglibc{}, @samp{test-wrapper} may be set
 to the name and arguments of any program to run newly built binaries.
 This program must preserve the arguments to the binary being run, its
-working directory, all environment variables set as part of testing
-and the standard input, output and error file descriptors.  If
+working directory and the standard input, output and error file
+descriptors.  If
 @samp{@var{test-wrapper} env} will not work to run a program with
 environment variables set, then @samp{test-wrapper-env} must be set to
 a program that runs a newly built program with environment variable
 assignments in effect, those assignments being specified as
-@samp{@var{var}=@var{value}} before the name of the program to be run.
+@samp{@var{var}=@var{value}} before the name of the program to be
+run.  If multiple assignments to the same variable are specified,
+the last assignment specified must take precedence.
 
 
 @node Running make install
@@ -289,7 +291,7 @@ assignments in effect, those assignments being specified as
 @cindex installing
 
 To install the library and its header files, and the Info files of the
-manual, type @code{env LANGUAGE=C LC_ALL=C make install}.  This will
+manual, type @code{make install}.  This will
 build things, if necessary, before installing them; however, you should
 still compile everything first.  If you are installing @theglibc{} as your
 primary C library, we recommend that you shut the system down to
@@ -370,10 +372,13 @@ recommend GNU @code{make} version 3.79.  All earlier versions have severe
 bugs or lack features.
 
 @item
-GCC 4.4 or newer, GCC 4.6 recommended
+GCC 4.6 or newer
 
-GCC 4.4 or higher is required; as of this writing, GCC 4.6 is the
-compiler we advise to use to build @theglibc{}.
+GCC 4.6 or higher is required.  In general it is recommended to use
+the newest version of the compiler that is known to work for building
+@theglibc{}, as newer compilers usually produce better code.  As of
+release time, GCC 4.9 is the newest compiler verified to work to build
+@theglibc{}.
 
 You can use whatever compiler you like to compile programs that use
 @theglibc{}.
@@ -381,7 +386,7 @@ You can use whatever compiler you like to compile programs that use
 Check the FAQ for any special compiler issues on particular platforms.
 
 @item
-GNU @code{binutils} 2.20 or later
+GNU @code{binutils} 2.22 or later
 
 You must use GNU @code{binutils} (as and ld) to build @theglibc{}.
 No other assembler or linker has the necessary functionality at the
@@ -425,7 +430,7 @@ If you change any of the @file{configure.ac} files you will also need
 
 @itemize @bullet
 @item
-GNU @code{autoconf} 2.53 or higher
+GNU @code{autoconf} 2.69 (exactly)
 @end itemize
 
 @noindent
@@ -445,7 +450,7 @@ patches, although we try to avoid this.
 @cindex kernel header files
 
 If you are installing @theglibc{} on @gnulinuxsystems{}, you need to have
-the header files from a 2.6.19.1 or newer kernel around for reference.
+the header files from a 2.6.32 or newer kernel around for reference.
 These headers must be installed using @samp{make headers_install}; the
 headers present in the kernel source directory are not suitable for
 direct use by @theglibc{}.  You do not need to use that kernel, just have

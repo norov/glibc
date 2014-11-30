@@ -22,42 +22,43 @@
 
 
 int
-__fesetenv (const fenv_t *envp)
+fesetenv (const fenv_t *envp)
 {
-  if (ARM_HAVE_VFP)
+  fpu_control_t fpscr, new_fpscr, updated_fpscr;
+
+  /* Fail if a VFP unit isn't present.  */
+  if (!ARM_HAVE_VFP)
+    return 1;
+
+  _FPU_GETCW (fpscr);
+
+  if ((envp != FE_DFL_ENV) && (envp != FE_NOMASK_ENV))
     {
-      unsigned int temp;
+      /* The new FPSCR is valid, so don't merge the reserved flags.  */
+      new_fpscr = envp->__cw;
 
-      _FPU_GETCW (temp);
-      temp &= _FPU_RESERVED;
+      /* Write new FPSCR if different (ignoring NZCV flags).  */
+      if (((fpscr ^ new_fpscr) & ~_FPU_MASK_NZCV) != 0)
+	_FPU_SETCW (new_fpscr);
 
-      if (envp == FE_DFL_ENV)
-	temp |= _FPU_DEFAULT;
-      else if (envp == FE_NOMASK_ENV)
-	temp |= _FPU_IEEE;
-      else
-	temp |= envp->__cw & ~_FPU_RESERVED;
-
-      _FPU_SETCW (temp);
-
-      if (envp == FE_NOMASK_ENV)
-	{
-	  /* VFPv3 and VFPv4 do not support trapping exceptions, so
-	     test whether the relevant bits were set and fail if
-	     not.  */
-	  _FPU_GETCW (temp);
-	  if ((temp & _FPU_IEEE) != _FPU_IEEE)
-	    return 1;
-	}
-
-      /* Success.  */
       return 0;
     }
 
-  /* Unsupported, so fail.  */
-  return 1;
-}
+  /* Preserve the reserved FPSCR flags.  */
+  new_fpscr = fpscr & _FPU_RESERVED;
+  new_fpscr |= (envp == FE_DFL_ENV) ? _FPU_DEFAULT : _FPU_IEEE;
 
-#include <shlib-compat.h>
-libm_hidden_ver (__fesetenv, fesetenv)
-versioned_symbol (libm, __fesetenv, fesetenv, GLIBC_2_2);
+  if (((new_fpscr ^ fpscr) & ~_FPU_MASK_NZCV) != 0)
+    {
+      _FPU_SETCW (new_fpscr);
+
+      /* Not all VFP architectures support trapping exceptions, so
+	 test whether the relevant bits were set and fail if not.  */
+      _FPU_GETCW (updated_fpscr);
+
+      return new_fpscr & ~updated_fpscr;
+    }
+
+  return 0;
+}
+libm_hidden_def (fesetenv)

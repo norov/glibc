@@ -47,6 +47,12 @@
 #define bit_XMM_state  (1 << 1)
 #define bit_YMM_state  (2 << 1)
 
+/* The integer bit array index for the first set of internal feature bits.  */
+# define FEATURE_INDEX_1 0
+
+/* The current maximum size of the feature integer bit array.  */
+# define FEATURE_INDEX_MAX 1
+
 #ifdef	__ASSEMBLER__
 
 # include <ifunc-defines.h>
@@ -80,13 +86,6 @@ enum
     COMMON_CPUID_INDEX_80000001,	/* for AMD */
     /* Keep the following line at the end.  */
     COMMON_CPUID_INDEX_MAX
-  };
-
-enum
-  {
-    FEATURE_INDEX_1 = 0,
-    /* Keep the following line at the end.  */
-    FEATURE_INDEX_MAX
   };
 
 extern struct cpu_features
@@ -123,7 +122,7 @@ extern void __init_cpu_features (void) attribute_hidden;
 extern const struct cpu_features *__get_cpu_features (void)
      __attribute__ ((const));
 
-# ifndef NOT_IN_libc
+# if IS_IN (libc)
 #  define __get_cpu_features()	(&__cpu_features)
 # endif
 
@@ -159,7 +158,6 @@ extern const struct cpu_features *__get_cpu_features (void)
 # define HAS_SSE4_1	HAS_CPU_FEATURE (COMMON_CPUID_INDEX_1, ecx, bit_SSE4_1)
 # define HAS_SSE4_2	HAS_CPU_FEATURE (COMMON_CPUID_INDEX_1, ecx, bit_SSE4_2)
 # define HAS_RTM	HAS_CPU_FEATURE (COMMON_CPUID_INDEX_7, ebx, bit_RTM)
-# define HAS_AVX2	HAS_CPU_FEATURE (COMMON_CPUID_INDEX_7, ebx, bit_AVX2)
 
 # define index_Fast_Rep_String		FEATURE_INDEX_1
 # define index_Fast_Copy_Backward	FEATURE_INDEX_1
@@ -180,6 +178,7 @@ extern const struct cpu_features *__get_cpu_features (void)
 # define HAS_SLOW_BSF			HAS_ARCH_FEATURE (Slow_BSF)
 # define HAS_FAST_UNALIGNED_LOAD	HAS_ARCH_FEATURE (Fast_Unaligned_Load)
 # define HAS_AVX			HAS_ARCH_FEATURE (AVX_Usable)
+# define HAS_AVX2			HAS_ARCH_FEATURE (AVX2_Usable)
 # define HAS_FMA			HAS_ARCH_FEATURE (FMA_Usable)
 # define HAS_FMA4			HAS_ARCH_FEATURE (FMA4_Usable)
 

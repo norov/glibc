@@ -17,14 +17,9 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <sysdep.h>
-#include <endian.h>
 #include <math_ldbl_opt.h>
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-#define MFVSRD_R3_V1  .byte 0x66,0x00,0x23,0x7c     /* mfvsrd  r3,vs1  */
-#else
-#define MFVSRD_R3_V1  .byte 0x7c,0x23,0x00,0x66     /* mfvsrd  r3,vs1  */
-#endif
+#define MFVSRD_R3_V1  .long 0x7c230066     /* mfvsrd  r3,vs1  */
 
 /* int [r3] __finite ([fp1] x)  */
 
@@ -48,7 +43,7 @@ strong_alias (__finite, __finitef)
 hidden_def (__finitef)
 weak_alias (__finitef, finitef)
 
-#ifdef IS_IN_libm
+#if IS_IN (libm)
 # if LONG_DOUBLE_COMPAT (libm, GLIBC_2_0)
 compat_symbol (libm, __finite, __finitel, GLIBC_2_0)
 compat_symbol (libm, finite, finitel, GLIBC_2_0)

@@ -17,40 +17,29 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <fenv.h>
-#include <math.h>
 #include <fpu_control.h>
 #include <arm-features.h>
 
 
 int
-__fesetexceptflag (const fexcept_t *flagp, int excepts)
+fesetexceptflag (const fexcept_t *flagp, int excepts)
 {
-  if (ARM_HAVE_VFP)
-    {
-      fexcept_t temp;
+  fpu_control_t fpscr, new_fpscr;
 
-      /* Get the current environment.  */
-      _FPU_GETCW (temp);
+  /* Fail if a VFP unit isn't present unless nothing needs to be done.  */
+  if (!ARM_HAVE_VFP)
+    return (excepts != 0);
 
-      /* Set the desired exception mask.  */
-      temp &= ~(excepts & FE_ALL_EXCEPT);
-      temp |= (*flagp & excepts & FE_ALL_EXCEPT);
+  _FPU_GETCW (fpscr);
+  excepts &= FE_ALL_EXCEPT;
 
-      /* Save state back to the FPU.  */
-      _FPU_SETCW (temp);
+  /* Set the desired exception mask.  */
+  new_fpscr = fpscr & ~excepts;
+  new_fpscr |= *flagp & excepts;
 
-      /* Success.  */
-      return 0;
-    }
+  /* Write new exception flags if changed.  */
+  if (new_fpscr != fpscr)
+    _FPU_SETCW (new_fpscr);
 
-  /* Unsupported, so fail unless nothing needs to be done.  */
-  return (excepts != 0);
+  return 0;
 }
-
-#include <shlib-compat.h>
-#if SHLIB_COMPAT (libm, GLIBC_2_1, GLIBC_2_2)
-strong_alias (__fesetexceptflag, __old_fesetexceptflag)
-compat_symbol (libm, __old_fesetexceptflag, fesetexceptflag, GLIBC_2_1);
-#endif
-
-versioned_symbol (libm, __fesetexceptflag, fesetexceptflag, GLIBC_2_2);

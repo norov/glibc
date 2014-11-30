@@ -2,7 +2,7 @@ ifeq ($(subdir),string)
 sysdep_routines += memcpy-power7 memcpy-a2 memcpy-power6 memcpy-cell \
 		   memcpy-power4 memcpy-ppc64 memcmp-power7 memcmp-power4 \
 		   memcmp-ppc64 memset-power7 memset-power6 memset-power4 \
-		   memset-ppc64 bzero-power4 bzero-power6 bzero-power7 \
+		   memset-ppc64 memset-power8 \
 		   mempcpy-power7 mempcpy-ppc64 memchr-power7 memchr-ppc64 \
 		   memrchr-power7 memrchr-ppc64 rawmemchr-power7 \
 		   rawmemchr-ppc64 strlen-power7 strlen-ppc64 strnlen-power7 \
@@ -16,7 +16,10 @@ sysdep_routines += memcpy-power7 memcpy-a2 memcpy-power6 memcpy-cell \
 		   strcpy-power7 strcpy-ppc64 stpcpy-power7 stpcpy-ppc64 \
 		   strrchr-power7 strrchr-ppc64 strncat-power7 strncat-ppc64 \
 		   strspn-power7 strspn-ppc64 strcspn-power7 strcspn-ppc64 \
-		   strpbrk-power7 strpbrk-ppc64
+		   strpbrk-power7 strpbrk-ppc64 strncpy-power7 strncpy-ppc64 \
+		   stpncpy-power7 stpncpy-ppc64 strcmp-power7 strcmp-ppc64 \
+		   strcat-power7 strcat-ppc64 memmove-power7 memmove-ppc64 \
+		   bcopy-ppc64
 
 CFLAGS-strncase-power7.c += -mcpu=power7 -funroll-loops
 CFLAGS-strncase_l-power7.c += -mcpu=power7 -funroll-loops

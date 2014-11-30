@@ -63,7 +63,7 @@ typedef struct
 # define TLS_INIT_TCB_SIZE	sizeof (tcbhead_t)
 
 /* Alignment requirements for the initial TCB.  */
-# define TLS_INIT_TCB_ALIGN	__alignof__ (tcbhead_t)
+# define TLS_INIT_TCB_ALIGN	__alignof__ (struct pthread)
 
 /* This is the size of the TCB.  */
 # define TLS_TCB_SIZE		sizeof (tcbhead_t)
@@ -72,7 +72,7 @@ typedef struct
 # define TLS_PRE_TCB_SIZE	sizeof (struct pthread)
 
 /* Alignment requirements for the TCB.  */
-# define TLS_TCB_ALIGN		__alignof__ (tcbhead_t)
+# define TLS_TCB_ALIGN		__alignof__ (struct pthread)
 
 /* Install the dtv pointer.  The pointer passed is to the element with
    index -1 which contain the length.  */
@@ -90,8 +90,11 @@ typedef struct
 /* Code to initially initialize the thread pointer.  This might need
    special attention since 'errno' is not yet available and if the
    operation can cause a failure 'errno' must not be touched.  */
-# define TLS_INIT_TP(tcbp, secondcall) \
+# define TLS_INIT_TP(tcbp) \
   ({ __asm __volatile ("msr tpidr_el0, %0" : : "r" (tcbp)); NULL; })
+
+/* Value passed to 'clone' for initialization of the thread register.  */
+# define TLS_DEFINE_INIT_TP(tp, pd) void *tp = (pd) + 1
 
 /* Return the address of the dtv for the current thread.  */
 # define THREAD_DTV() \

@@ -44,6 +44,9 @@ typedef uintptr_t uatomicptr_t;
 typedef intmax_t atomic_max_t;
 typedef uintmax_t uatomic_max_t;
 
+#define __HAVE_64B_ATOMICS 0
+#define USE_ATOMIC_COMPILER_BUILTINS 0
+
 
 #define __arch_compare_and_exchange_val_8_acq(mem, newval, oldval) \
   (abort (), (__typeof (*mem)) 0)
@@ -96,4 +99,4 @@ typedef uintmax_t uatomic_max_t;
 #define atomic_read_barrier() \
   __asm __volatile ("membar #LoadLoad | #LoadStore" : : : "memory")
 #define atomic_write_barrier() \
-  __asm __volatile ("membar #StoreLoad | #StoreStore" : : : "memory")
+  __asm __volatile ("membar #LoadStore | #StoreStore" : : : "memory")

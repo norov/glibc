@@ -22,27 +22,16 @@
 
 
 int
-__fegetenv (fenv_t *envp)
+fegetenv (fenv_t *envp)
 {
-  if (ARM_HAVE_VFP)
-    {
-      unsigned long int temp;
-      _FPU_GETCW (temp);
-      envp->__cw = temp;
+  fpu_control_t fpscr;
 
-      /* Success.  */
-      return 0;
-    }
+  /* Fail if a VFP unit isn't present.  */
+  if (!ARM_HAVE_VFP)
+    return 1;
 
-  /* Unsupported, so fail.  */
-  return 1;
+  _FPU_GETCW (fpscr);
+  envp->__cw = fpscr;
+  return 0;
 }
-
-#include <shlib-compat.h>
-#if SHLIB_COMPAT (libm, GLIBC_2_1, GLIBC_2_2)
-strong_alias (__fegetenv, __old_fegetenv)
-compat_symbol (libm, __old_fegetenv, fegetenv, GLIBC_2_1);
-#endif
-
-libm_hidden_ver (__fegetenv, fegetenv)
-versioned_symbol (libm, __fegetenv, fegetenv, GLIBC_2_2);
+libm_hidden_def (fegetenv)

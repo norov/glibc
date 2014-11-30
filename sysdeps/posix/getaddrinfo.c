@@ -710,16 +710,20 @@ gaih_inet (const char *name, const struct gaih_service *service,
 		  struct gaih_addrtuple *addrfree = addrmem;
 		  for (int i = 0; i < air->naddrs; ++i)
 		    {
+		      socklen_t size = (air->family[i] == AF_INET
+					? INADDRSZ : IN6ADDRSZ);
+
 		      if (!((air->family[i] == AF_INET
 			     && req->ai_family == AF_INET6
 			     && (req->ai_flags & AI_V4MAPPED) != 0)
 			    || req->ai_family == AF_UNSPEC
 			    || air->family[i] == req->ai_family))
-			/* Skip over non-matching result.  */
-			continue;
+			{
+			  /* Skip over non-matching result.  */
+			  addrs += size;
+			  continue;
+			}
 
-		      socklen_t size = (air->family[i] == AF_INET
-					? INADDRSZ : IN6ADDRSZ);
 		      if (*pat == NULL)
 			{
 			  *pat = addrfree++;
@@ -863,8 +867,7 @@ gaih_inet (const char *name, const struct gaih_service *service,
 		      if (status != NSS_STATUS_TRYAGAIN
 			  || rc != ERANGE || herrno != NETDB_INTERNAL)
 			{
-			  if (status == NSS_STATUS_TRYAGAIN
-			      && herrno == TRY_AGAIN)
+			  if (herrno == TRY_AGAIN)
 			    no_data = EAI_AGAIN;
 			  else
 			    no_data = herrno == NO_DATA;
@@ -2623,11 +2626,11 @@ getaddrinfo (const char *name, const char *service,
 	  __libc_lock_lock (lock);
 	  if (__libc_once_get (old_once) && gaiconf_reload_flag)
 	    gaiconf_reload ();
-	  qsort_r (order, nresults, sizeof (order[0]), rfc3484_sort, &src);
+	  __qsort_r (order, nresults, sizeof (order[0]), rfc3484_sort, &src);
 	  __libc_lock_unlock (lock);
 	}
       else
-	qsort_r (order, nresults, sizeof (order[0]), rfc3484_sort, &src);
+	__qsort_r (order, nresults, sizeof (order[0]), rfc3484_sort, &src);
 
       /* Queue the results up as they come out of sorting.  */
       q = p = results[order[0]].dest_addr;

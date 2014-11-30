@@ -28,6 +28,18 @@
 #include <features.h>
 #include <stdbool.h>
 
+#ifndef DOS
+#include "ufc-crypt.h"
+#else
+/*
+ * Thanks to greg%wind@plains.NoDak.edu (Greg W. Wettstein)
+ * for DOS patches
+ */
+#include "pl.h"
+#include "ufc.h"
+#endif
+#include "crypt.h"
+
 /* crypt.c */
 extern void _ufc_doit_r (ufc_long itr, struct crypt_data * __restrict __data,
 			 ufc_long *res);
@@ -56,5 +68,9 @@ extern void __encrypt_r (char * __restrict __block, int __edflag,
 extern char *__crypt_r (const char *__key, const char *__salt,
 			     struct crypt_data * __restrict __data);
 extern char *fcrypt (const char *key, const char *salt);
+
+extern void __b64_from_24bit (char **cp, int *buflen,
+			      unsigned int b2, unsigned int b1, unsigned int b0,
+			      int n);
 
 #endif  /* crypt-private.h */

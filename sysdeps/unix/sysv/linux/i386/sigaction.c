@@ -26,8 +26,6 @@
 #include <sys/syscall.h>
 #include <ldsodefs.h>
 
-#include <kernel-features.h>
-
 /* The difference here is that the sigaction structure used in the
    kernel is not the same as we use in the libc.  Therefore we must
    translate it here.  */
@@ -86,15 +84,7 @@ __libc_sigaction (int sig, const struct sigaction *act, struct sigaction *oact)
 }
 libc_hidden_def (__libc_sigaction)
 
-#ifdef WRAPPER_INCLUDE
-# include WRAPPER_INCLUDE
-#endif
-
-#ifndef LIBC_SIGACTION
-weak_alias (__libc_sigaction, __sigaction)
-libc_hidden_weak (__sigaction)
-weak_alias (__libc_sigaction, sigaction)
-#endif
+#include <nptl/sigaction.c>
 
 /* NOTE: Please think twice before making any changes to the bits of
    code below.  GDB needs some intimate knowledge about it to

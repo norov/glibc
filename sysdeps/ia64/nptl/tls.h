@@ -109,8 +109,12 @@ register struct pthread *__thread_self __asm__("r13");
 #define THREAD_SYSINFO(pd) \
   (((tcbhead_t *) ((char *) (pd) + TLS_PRE_TCB_SIZE))->__private)
 
-#if defined NEED_DL_SYSINFO
+#ifdef NEED_DL_SYSINFO
 # define INIT_SYSINFO   THREAD_SELF_SYSINFO = (void *) GLRO(dl_sysinfo)
+# define SETUP_THREAD_SYSINFO(pd) \
+  (THREAD_SYSINFO (pd) = THREAD_SELF_SYSINFO)
+# define CHECK_THREAD_SYSINFO(pd) \
+  assert (THREAD_SYSINFO (pd) == THREAD_SELF_SYSINFO)
 #else
 # define INIT_SYSINFO   NULL
 #endif
@@ -118,8 +122,12 @@ register struct pthread *__thread_self __asm__("r13");
 /* Code to initially initialize the thread pointer.  This might need
    special attention since 'errno' is not yet available and if the
    operation can cause a failure 'errno' must not be touched.  */
-# define TLS_INIT_TP(thrdescr, secondcall) \
+# define TLS_INIT_TP(thrdescr) \
   (__thread_self = (thrdescr), INIT_SYSINFO, NULL)
+
+/* Value passed to 'clone2' for initialization of the thread register.  */
+# define TLS_DEFINE_INIT_TP(tp, pd) \
+  void *tp = (char *) (pd) + TLS_PRE_TCB_SIZE
 
 /* Return the address of the dtv for the current thread.  */
 #  define THREAD_DTV() \

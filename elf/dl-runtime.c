@@ -29,7 +29,7 @@
 #include <dl-irel.h>
 
 
-#if (!defined ELF_MACHINE_NO_RELA && !defined ELF_MACHINE_PLT_REL) \
+#if (!ELF_MACHINE_NO_RELA && !defined ELF_MACHINE_PLT_REL) \
     || ELF_MACHINE_NO_REL
 # define PLTREL  ElfW(Rela)
 #else
@@ -158,7 +158,7 @@ _dl_profile_fixup (
 		   struct link_map *l, ElfW(Word) reloc_arg,
 		   ElfW(Addr) retaddr, void *regs, long int *framesizep)
 {
-  void (*mcount_fct) (ElfW(Addr), ElfW(Addr)) = INTUSE(_dl_mcount);
+  void (*mcount_fct) (ElfW(Addr), ElfW(Addr)) = _dl_mcount;
 
   if (l->l_reloc_result == NULL)
     {

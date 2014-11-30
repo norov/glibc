@@ -75,17 +75,32 @@ _IO_wdo_write (fp, data, to_do)
 	{
 	  enum __codecvt_result result;
 	  const wchar_t *new_data;
+	  char mb_buf[MB_LEN_MAX];
+	  char *write_base, *write_ptr, *buf_end;
+
+	  if (fp->_IO_write_ptr - fp->_IO_write_base < sizeof (mb_buf))
+	    {
+	      /* Make sure we have room for at least one multibyte
+		 character.  */
+	      write_ptr = write_base = mb_buf;
+	      buf_end = mb_buf + sizeof (mb_buf);
+	    }
+	  else
+	    {
+	      write_ptr = fp->_IO_write_ptr;
+	      write_base = fp->_IO_write_base;
+	      buf_end = fp->_IO_buf_end;
+	    }
 
 	  /* Now convert from the internal format into the external buffer.  */
 	  result = (*cc->__codecvt_do_out) (cc, &fp->_wide_data->_IO_state,
 					    data, data + to_do, &new_data,
-					    fp->_IO_write_ptr,
-					    fp->_IO_buf_end,
-					    &fp->_IO_write_ptr);
+					    write_ptr,
+					    buf_end,
+					    &write_ptr);
 
 	  /* Write out what we produced so far.  */
-	  if (_IO_new_do_write (fp, fp->_IO_write_base,
-				fp->_IO_write_ptr - fp->_IO_write_base) == EOF)
+	  if (_IO_new_do_write (fp, write_base, write_ptr - write_base) == EOF)
 	    /* Something went wrong.  */
 	    return WEOF;
 
@@ -708,14 +723,25 @@ do_ftell_wide (_IO_FILE *fp)
 		 sequences must be complete since they are accepted as
 		 wchar_t; if not, then that is an error.  */
 	      if (__glibc_unlikely (status != __codecvt_ok))
-		return WEOF;
+		{
+		  free (out);
+		  return WEOF;
+		}
 
 	      offset += outstop - out;
+	      free (out);
 	    }
 
-	  /* _IO_read_end coincides with fp._offset, so the actual file
-	     position is fp._offset - (_IO_read_end - new_write_ptr).  */
-	  offset -= fp->_IO_read_end - fp->_IO_write_ptr;
+	  /* We don't trust _IO_read_end to represent the current file offset
+	     when writing in append mode because the value would have to be
+	     shifted to the end of the file during a flush.  Use the write base
+	     instead, along with the new offset we got above when we did a seek
+	     to the end of the file.  */
+	  if (append_mode)
+	    offset += fp->_IO_write_ptr - fp->_IO_write_base;
+	  /* For all other modes, _IO_read_end represents the file offset.  */
+	  else
+	    offset += fp->_IO_write_ptr - fp->_IO_read_end;
 	}
     }
 

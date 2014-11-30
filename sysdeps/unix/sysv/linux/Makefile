@@ -141,9 +141,13 @@ endif
 ifeq ($(subdir),posix)
 sysdep_headers += bits/initspin.h
 
-sysdep_routines += exit-thread sched_getcpu
+sysdep_routines += sched_getcpu
 
 tests += tst-getcpu
+
+CFLAGS-fork.c = $(libio-mtsafe)
+CFLAGS-getpid.o = -fomit-frame-pointer
+CFLAGS-getpid.os = -fomit-frame-pointer
 endif
 
 ifeq ($(subdir),inet)
@@ -174,7 +178,11 @@ ifeq ($(subdir),elf)
 sysdep-rtld-routines += dl-brk dl-sbrk dl-getcwd dl-openat64 dl-opendir \
 			dl-fxstatat64
 
-CPPFLAGS-lddlibc4 += -DNOT_IN_libc
+libof-lddlibc4 = lddlibc4
+
+others += pldd
+install-bin += pldd
+$(objpfx)pldd: $(objpfx)xmalloc.o
 endif
 
 ifeq ($(subdir),rt)
@@ -185,4 +193,8 @@ endif
 ifeq ($(subdir),nscd)
 sysdep-CFLAGS += -DHAVE_EPOLL -DHAVE_SENDFILE -DHAVE_INOTIFY -DHAVE_NETLINK
 CFLAGS-gai.c += -DNEED_NETLINK
+endif
+
+ifeq ($(subdir),nptl)
+tests += tst-setgetname
 endif

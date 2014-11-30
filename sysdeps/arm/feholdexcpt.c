@@ -16,35 +16,18 @@
    License along with the GNU C Library.  If not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <fenv.h>
-#include <fpu_control.h>
+#include <fenv_private.h>
 #include <arm-features.h>
 
 
 int
 feholdexcept (fenv_t *envp)
 {
-  if (ARM_HAVE_VFP)
-    {
-      unsigned long int temp;
+  /* Fail if a VFP unit isn't present.  */
+  if (!ARM_HAVE_VFP)
+    return 1;
 
-      /* Store the environment.  */
-      _FPU_GETCW(temp);
-      envp->__cw = temp;
-
-      /* Now set all exceptions to non-stop.  */
-      temp &= ~(FE_ALL_EXCEPT << FE_EXCEPT_SHIFT);
-
-      /* And clear all exception flags.  */
-      temp &= ~FE_ALL_EXCEPT;
-
-      _FPU_SETCW(temp);
-
-      return 0;
-    }
-
-  /* Unsupported, so fail.  */
-  return 1;
+  libc_feholdexcept_vfp (envp);
+  return 0;
 }
-
 libm_hidden_def (feholdexcept)

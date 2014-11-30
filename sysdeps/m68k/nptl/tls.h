@@ -103,7 +103,7 @@ typedef struct
 /* Code to initially initialize the thread pointer.  This might need
    special attention since 'errno' is not yet available and if the
    operation can cause a failure 'errno' must not be touched.  */
-# define TLS_INIT_TP(tcbp, secondcall)					\
+# define TLS_INIT_TP(tcbp)						\
   ({									\
     INTERNAL_SYSCALL_DECL (err);					\
     int _sys_result;							\
@@ -111,6 +111,9 @@ typedef struct
     _sys_result = INTERNAL_SYSCALL (set_thread_area, err, 1,		\
 				    ((void *) (tcbp)) + TLS_TCB_OFFSET); \
     INTERNAL_SYSCALL_ERROR_P (_sys_result, err) ? "unknown error" : NULL; })
+
+# define TLS_DEFINE_INIT_TP(tp, pd) \
+  void *tp = (void *) (pd) + TLS_TCB_OFFSET + TLS_PRE_TCB_SIZE
 
 extern void * __m68k_read_tp (void);
 
