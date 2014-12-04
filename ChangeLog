@@ -1,3 +1,172 @@
+2014-12-04  Roland McGrath  <roland@hack.frob.com>
+
+	* io/openat64.c: #include <libc-internal.h>
+	(__openat64): Prototypify.  Use ignore_value on MODE.
+	* io/openat.c: Likewise.
+	* misc/reboot.c: #include <libc-internal.h>
+	(reboot): Prototypify.  Use ignore_value on HOWTO.
+	* misc/ptrace.c: #include <libc-internal.h>
+	(ptrace): Prototypify.  Use ignore_value for va_arg'd parameters.
+
+2014-12-04  Joseph Myers  <joseph@codesourcery.com>
+
+	* conform/list-header-symbols.pl (%extra_syms): Add h_errno for
+	XPG4, UNIX98 and XOPEN2K.
+	* conform/Makefile (test-xfail-XOPEN2K/grp.h/linknamespace):
+	Remove variable.
+	(test-xfail-XOPEN2K/pwd.h/linknamespace): Likewise.
+
+2014-12-04  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* libio/fileops.c: Use ISO C style for function definitions.
+	* libio/iofopen.c: Likewise.
+	* libio/wfileops.c: Likewise.
+
+	[BZ #17653]
+	* libio/fileops.c (_IO_new_file_underflow): Unset cached
+	offset on EOF.
+	* libio/wfileops.c (_IO_wfile_underflow): Likewise.
+	* libio/tst-ftell-active-handler.c (fgets_func_t): New type.
+	(fgets_func): Function pointer to fgets and fgetws.
+	(do_ftell_test): Add test to verify ftell value after read
+	EOF.
+	(do_test): Set fgets_func.
+
+	* libio/tst-ftell-active-handler.c (do_ftruncate_test): Add
+	O_TRUNC flag for w and w+ modes.
+	(do_rewind_test): Likewise.
+	(do_ftell_test): Likewise.
+	(do_write_test): Likewise.
+
+	[BZ #17647]
+	* libio/fileops.c (do_ftell): Seek only when there are
+	unflushed writes.
+	* libio/wfileops.c (do_ftell_wide): Likewise.
+	* libio/tst-ftell-active-handler.c (do_ftruncate_test): New
+	test case.
+	(do_one_test): Call it.
+
+2014-12-03  Joseph Myers  <joseph@codesourcery.com>
+
+	* conform/list-header-symbols.pl (%extra_syms): Add getdate_err
+	for XPG4, UNIX98, XOPEN2K and XOPEN2K8.
+	* conform/Makefile (test-xfail-XOPEN2K/pthread.h/linknamespace):
+	Remove variable.
+	(test-xfail-XOPEN2K/time.h/linknamespace): Likewise.
+	(test-xfail-XOPEN2K8/pthread.h/linknamespace): Likewise.
+	(test-xfail-XOPEN2K8/time.h/linknamespace): Likewise.
+
+2014-12-02  Joseph Myers  <joseph@codesourcery.com>
+
+	* conform/Makefile (test-xfail-XOPEN2K/aio.h/linknamespace):
+	Remove variable.
+	(test-xfail-XOPEN2K8/aio.h/linknamespace): Likewise.
+
+	[BZ #17668]
+	* inet/ifaddrs.c (getifaddrs): Rename to __getifaddrs and define
+	as weak alias of __getifaddrs.  Use libc_hidden_weak.
+	(freeifaddrs): Rename to __freeifaddrs and define as weak alias of
+	__freeifaddrs.  Use libc_hidden_weak.
+	* sysdeps/gnu/ifaddrs.c (getifaddrs): Rename to __getifaddrs and
+	define as weak alias of __getifaddrs.  Use libc_hidden_weak.
+	(freeifaddrs): Rename to __freeifaddrs and define as weak alias of
+	__freeifaddrs.  Use libc_hidden_weak.
+	* sysdeps/unix/sysv/linux/ifaddrs.c (getifaddrs): Rename to
+	__getifaddrs and define as weak alias of __getifaddrs.  Use
+	libc_hidden_weak.
+	(freeifaddrs): Rename to __freeifaddrs and define as weak alias of
+	__freeifaddrs.  Use libc_hidden_weak.
+	* conform/Makefile (test-xfail-XOPEN2K/net/if.h/linknamespace):
+	Remove variable.
+	(test-xfail-POSIX2008/net/if.h/linknamespace): Likewise.
+	(test-xfail-XOPEN2K8/net/if.h/linknamespace): Likewise.
+
+2014-12-02  Petar Jovanovic  <petar.jovanovic@rt-rk.com>
+
+	[BZ #17601]
+	* sysdeps/mips/start.S (__start): Use indirect jump to call
+	__libc_start_main.
+
+2014-12-02  Joseph Myers  <joseph@codesourcery.com>
+
+	* nptl/tst-stack4.c (dso_process): Use int not uintptr_t for t.
+
+	* nptl/tst-mutex1.c: Include <stdbool.h>.
+	[!ATTR] (ATTR_NULL): New macro.
+	(do_test): Test !ATTR_NULL instead of ATTR != NULL.
+	* nptl/tst-mutexpi1.c (ATTR_NULL): New macro.
+	* nptl/tst-mutexpp1.c (ATTR_NULL): New macro.
+
+	* posix/tst-getopt_long1.c (do_test): Cast elements of argv array
+	to char *.
+
+	[BZ #17665]
+	* posix/unistd.h [__USE_MISC || (__USE_XOPEN && !__USE_UNIX98)]:
+	Change conditional to [__USE_MISC].
+
+	[BZ #17664]
+	* misc/mntent_r.c (__getmntent_r): Use __fgets_unlocked instead of
+	fgets_unlocked.
+	* resolv/res_hconf.c [IS_IN (libc)] (fgets_unlocked): Define to
+	__fgets_unlocked.
+	* resolv/res_init.c (__res_vinit): Use __fgets_unlocked instead of
+	fgets_unlocked.
+	* conform/Makefile (test-xfail-XPG4/sys/statvfs.h/linknamespace):
+	Remove variable.
+	(test-xfail-POSIX/sys/mman.h/linknamespace): Likewise.
+	(test-xfail-UNIX98/sys/mman.h/linknamespace): Likewise.
+	(test-xfail-UNIX98/sys/statvfs.h/linknamespace): Likewise.
+	(test-xfail-XOPEN2K/sys/mman.h/linknamespace): Likewise.
+	(test-xfail-XOPEN2K/sys/statvfs.h/linknamespace): Likewise.
+	(test-xfail-POSIX2008/sys/mman.h/linknamespace): Likewise.
+	(test-xfail-POSIX2008/sys/statvfs.h/linknamespace): Likewise.
+	(test-xfail-XOPEN2K8/sys/mman.h/linknamespace): Likewise.
+	(test-xfail-XOPEN2K8/sys/statvfs.h/linknamespace): Likewise.
+
+	* elf/tst-unique4lib.cc (b): Mark with __attribute__ ((used)).
+
+2014-12-02  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/powerpc64/multiarch/Makefile [sysdep_routines]:
+	Remove strpbrk objects.
+	* sysdeps/powerpc/powerpc64/multiarch/ifunc-impl-list.c
+	(__libc_ifunc_impl_list): Remove strpbrk implementation.
+	* sysdeps/powerpc/powerpc64/multiarch/strpbrk-ppc64.c: Remove file.
+	* sysdeps/powerpc/powerpc64/multiarch/strpbrk.c: Remove file.
+	* sysdeps/powerpc/powerpc64/power7/strpbrk.S: Remove file.
+	* sysdeps/powerpc/powerpc64/strpbrk.S: New file.
+
+	* sysdeps/powerpc/powerpc64/multiarch/Makefile [sysdep_routines]:
+	Remove strcspn objects.
+	* sysdeps/powerpc/powerpc64/multiarch/ifunc-impl-list.c
+	(__libc_ifunc_impl_list): Remove strcspn implementation.
+	* sysdeps/powerpc/powerpc64/multiarch/strcspn-ppc64.c: Remove file.
+	* sysdeps/powerpc/powerpc64/multiarch/strcspn.c: Remove file.
+	* sysdeps/powerpc/powerpc64/power7/strcspn.S: Remove file.
+	* sysdeps/powerpc/powerpc64/strcspn.S: New file.
+
+	* sysdeps/powerpc/powerpc64/multiarch/Makefile [sysdep_routines]:
+	Remove strspn objetcs.
+	* sysdeps/powerpc/powerpc64/multiarch/ifunc-impl-list.c
+	(__libc_ifunc_impl_list): Remove strspn implementation.
+	* sysdeps/powerpc/powerpc64/multiarch/strspn-power7.S: Remove file.
+	* sysdeps/powerpc/powerpc64/multiarch/strspn-ppc64.c: Likewise.
+	* sysdeps/powerpc/powerpc64/power7/strspn.S: Remove file.
+	* sysdeps/powerpc/powerpc64/strspn.S: New file.
+
+2014-12-01  James Lemke  <jwlemke@codesourcery.com>
+
+	[BZ #17581]
+	* malloc/hooks.c
+	(mem2mem_check): Add a terminator to the chain of checking blocks.
+	(malloc_check_get_size): Use it here.
+	(mem2chunk_check): Ditto.
+
+2014-12-01  Rajalakshmi Srinivasaraghavan <raji@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/powerpc64/strtok.S: New file.
+	* sysdeps/powerpc/powerpc64/strtok_r.S: New file.
+
 2014-11-29  Carlos O'Donell  <carlos@redhat.com>
 
 	* bits/ioctl-types.h: Indent preprocessor directives correctly.

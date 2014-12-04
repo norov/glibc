@@ -1,4 +1,4 @@
-/* Optimized strcspn implementation for POWER7.
+/* Optimized strtok_r implementation for PowerPC64.
    Copyright (C) 2014 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
@@ -16,25 +16,9 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <sysdep.h>
+#define USE_AS_STRTOK_R
+#include <sysdeps/powerpc/powerpc64/strtok.S>
 
-#undef EALIGN
-#define EALIGN(name, alignt, words)				\
-  .section ".text";						\
-  ENTRY_2(__strcspn_power7)					\
-  .align ALIGNARG(alignt);					\
-  EALIGN_W_##words;						\
-  BODY_LABEL(__strcspn_power7):					\
-  cfi_startproc;						\
-  LOCALENTRY(__strcspn_power7)
-
-#undef END
-#define END(name)						\
-  cfi_endproc;							\
-  TRACEBACK(__strcspn_power7)					\
-  END_2(__strcspn_power7)
-
-#undef libc_hidden_builtin_def
-#define libc_hidden_builtin_def(name)
-
-#include <sysdeps/powerpc/powerpc64/power7/strcspn.S>
+weak_alias (__strtok_r, strtok_r)
+libc_hidden_def (__strtok_r)
+libc_hidden_builtin_def (strtok_r)

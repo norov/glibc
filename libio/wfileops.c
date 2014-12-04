@@ -54,10 +54,7 @@
 /* Convert TO_DO wide character from DATA to FP.
    Then mark FP as having empty buffers. */
 int
-_IO_wdo_write (fp, data, to_do)
-     _IO_FILE *fp;
-     const wchar_t *data;
-     _IO_size_t to_do;
+_IO_wdo_write (_IO_FILE *fp, const wchar_t *data, _IO_size_t to_do)
 {
   struct _IO_codecvt *cc = fp->_codecvt;
 
@@ -131,8 +128,7 @@ libc_hidden_def (_IO_wdo_write)
 
 
 wint_t
-_IO_wfile_underflow (fp)
-     _IO_FILE *fp;
+_IO_wfile_underflow (_IO_FILE *fp)
 {
   struct _IO_codecvt *cd;
   enum __codecvt_result status;
@@ -257,7 +253,10 @@ _IO_wfile_underflow (fp)
   if (count <= 0)
     {
       if (count == 0 && naccbuf == 0)
-	fp->_flags |= _IO_EOF_SEEN;
+	{
+	  fp->_flags |= _IO_EOF_SEEN;
+	  fp->_offset = _IO_pos_BAD;
+	}
       else
 	fp->_flags |= _IO_ERR_SEEN, count = 0;
     }
@@ -425,9 +424,7 @@ _IO_wfile_underflow_maybe_mmap (_IO_FILE *fp)
 
 
 wint_t
-_IO_wfile_overflow (f, wch)
-     _IO_FILE *f;
-     wint_t wch;
+_IO_wfile_overflow (_IO_FILE *f, wint_t wch)
 {
   if (f->_flags & _IO_NO_WRITES) /* SET ERROR */
     {
@@ -499,8 +496,7 @@ _IO_wfile_overflow (f, wch)
 libc_hidden_def (_IO_wfile_overflow)
 
 wint_t
-_IO_wfile_sync (fp)
-     _IO_FILE *fp;
+_IO_wfile_sync (_IO_FILE *fp)
 {
   _IO_ssize_t delta;
   wint_t retval = 0;
@@ -626,16 +622,15 @@ do_ftell_wide (_IO_FILE *fp)
       const wchar_t *wide_read_base;
       const wchar_t *wide_read_ptr;
       const wchar_t *wide_read_end;
-      bool was_writing = ((fp->_wide_data->_IO_write_ptr
-			   > fp->_wide_data->_IO_write_base)
-			  || _IO_in_put_mode (fp));
+      bool unflushed_writes = (fp->_wide_data->_IO_write_ptr
+			       > fp->_wide_data->_IO_write_base);
 
       bool append_mode = (fp->_flags & _IO_IS_APPENDING) == _IO_IS_APPENDING;
 
       /* When we have unflushed writes in append mode, seek to the end of the
 	 file and record that offset.  This is the only time we change the file
 	 stream state and it is safe since the file handle is active.  */
-      if (was_writing && append_mode)
+      if (unflushed_writes && append_mode)
 	{
 	  result = _IO_SYSSEEK (fp, 0, _IO_seek_end);
 	  if (result == _IO_pos_BAD)
@@ -674,7 +669,7 @@ do_ftell_wide (_IO_FILE *fp)
       struct _IO_codecvt *cv = fp->_codecvt;
       int clen = (*cv->__codecvt_do_encoding) (cv);
 
-      if (!was_writing)
+      if (!unflushed_writes)
 	{
 	  if (clen > 0)
 	    {
@@ -765,11 +760,7 @@ do_ftell_wide (_IO_FILE *fp)
 }
 
 _IO_off64_t
-_IO_wfile_seekoff (fp, offset, dir, mode)
-     _IO_FILE *fp;
-     _IO_off64_t offset;
-     int dir;
-     int mode;
+_IO_wfile_seekoff (_IO_FILE *fp, _IO_off64_t offset, int dir, int mode)
 {
   _IO_off64_t result;
   _IO_off64_t delta, new_offset;
@@ -980,10 +971,7 @@ libc_hidden_def (_IO_wfile_seekoff)
 
 
 _IO_size_t
-_IO_wfile_xsputn (f, data, n)
-     _IO_FILE *f;
-     const void *data;
-     _IO_size_t n;
+_IO_wfile_xsputn (_IO_FILE *f, const void *data, _IO_size_t n)
 {
   const wchar_t *s = (const wchar_t *) data;
   _IO_size_t to_do = n;

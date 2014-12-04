@@ -84,6 +84,7 @@ ca_FR.UTF-8/UTF-8 \
 ca_FR/ISO-8859-15 \
 ca_IT.UTF-8/UTF-8 \
 ca_IT/ISO-8859-15 \
+ce_RU/UTF-8 \
 cmn_TW/UTF-8 \
 crh_UA/UTF-8 \
 cs_CZ.UTF-8/UTF-8 \
@@ -355,6 +356,7 @@ pt_PT.UTF-8/UTF-8 \
 pt_PT/ISO-8859-1 \
 pt_PT@euro/ISO-8859-15 \
 quz_PE/UTF-8 \
+raj_IN/UTF-8 \
 ro_RO.UTF-8/UTF-8 \
 ro_RO/ISO-8859-2 \
 ru_RU.KOI8-R/KOI8-R \
