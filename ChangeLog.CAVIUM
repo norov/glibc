@@ -1,3 +1,10 @@
+2014-12-05  Andrew Pinski  <apinski@cavium.com>
+
+	* sysdeps/nptl/malloc-machine.h (__atomic_is_single_thread): New define.
+	(mutex_lock): Don't call __libc_lock_* for single threaded.
+	(mutex_trylock): Likewise.
+	(mutex_unlock): Likewise.
+
 2014-10-30  Andrew Senkevich  <andrew.n.senkevich@gmail.com>
 
 	* sysdeps/i386/tls-macros.h (TLS_IE, TLS_LD, TLS_GD): Keep
