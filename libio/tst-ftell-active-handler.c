@@ -364,11 +364,11 @@ do_ftell_test (const char *filename)
 	     reading.  */
 	  if (test_modes[i].fd_mode != O_WRONLY)
 	    {
-	      char tmpbuf[data_len];
+	      wchar_t tmpbuf[data_len];
 
 	      rewind (fp);
 
-	      while (fgets_func (tmpbuf, sizeof (tmpbuf), fp) && !feof (fp));
+	      while (fgets_func (tmpbuf, data_len, fp) && !feof (fp));
 
 	      write_ret = write (fd, data, data_len);
 	      if (write_ret != data_len)
