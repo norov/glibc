@@ -36,21 +36,25 @@
 #define SETALL		17		/* set all semval's */
 
 
+#if !defined(__IPC_TIME_T_64_BITS) && __WORDSIZE == 64
+#define __IPC_TIME_T_64_BITS
+#endif
+
 /* Data structure describing a set of semaphores.  */
 struct semid_ds
 {
   struct ipc_perm sem_perm;		/* operation permission struct */
   __time_t sem_otime;			/* last semop() time */
-#if __WORDSIZE == 32
+#ifndef __IPC_TIME_T_64_BITS
   unsigned long int __glibc_reserved1;
 #endif
   __time_t sem_ctime;			/* last time changed by semctl() */
-#if __WORDSIZE == 32
+#ifndef __IPC_TIME_T_64_BITS
   unsigned long int __glibc_reserved2;
 #endif
-  unsigned long int sem_nsems;		/* number of semaphores in set */
-  unsigned long int __glibc_reserved3;
-  unsigned long int __glibc_reserved4;
+  __syscall_ulong_t sem_nsems;		/* number of semaphores in set */
+  __syscall_ulong_t __glibc_reserved3;
+  __syscall_ulong_t __glibc_reserved4;
 };
 
 /* The user should define a union like the following to use it for arguments

@@ -1,6 +1,15 @@
 case "$machine" in
 aarch64*)
 	base_machine=aarch64
-	machine=aarch64
+	case "$CC $CFLAGS $CPPFLAGS " in
+		*" -mabi=ilp32 "*) aarch64_config_abi=ilp32 ;;
+		*" -mabi=lp64 "*) aarch64_config_abi=lp64 ;;
+		*) aarch64_config_abi=default ;;
+	esac
+	case $aarch64_config_abi in
+		default) machine=aarch64/lp64 aarch64_config_abi=lp64 ;;
+		ilp32) machine=aarch64/ilp32 ;;
+		lp64) machine=aarch64/lp64 ;;
+	esac
 	;;
 esac

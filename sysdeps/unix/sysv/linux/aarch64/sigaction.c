@@ -39,15 +39,17 @@ __libc_sigaction (int sig, const struct sigaction *act, struct sigaction *oact)
 
   if (act)
     {
-      kact.k_sa_handler = act->sa_handler;
+      kact.k_sa_handler = (unsigned long long)(uintptr_t)act->sa_handler;
       memcpy (&kact.sa_mask, &act->sa_mask, sizeof (sigset_t));
       kact.sa_flags = act->sa_flags;
 #ifdef HAVE_SA_RESTORER
       if (kact.sa_flags & SA_RESTORER)
-	kact.sa_restorer = act->sa_restorer;
+	kact.sa_restorer = (unsigned long long)(uintptr_t)act->sa_restorer;
 #endif
     }
 
+  /* This is needed for ILP32 as the structures are two different sizes due to
+     using the LP64 structure.  */
   result = INLINE_SYSCALL (rt_sigaction, 4, sig,
 			   act ? &kact : NULL,
 			   oact ? &koact : NULL, _NSIG / 8);
@@ -55,11 +57,11 @@ __libc_sigaction (int sig, const struct sigaction *act, struct sigaction *oact)
     {
       if (oact && result >= 0)
 	{
-	  oact->sa_handler = koact.k_sa_handler;
+	  oact->sa_handler = (void*)(uintptr_t)koact.k_sa_handler;
 	  memcpy (&oact->sa_mask, &koact.sa_mask, sizeof (sigset_t));
 	  oact->sa_flags = koact.sa_flags;
 #ifdef HAVE_SA_RESTORER
-	  oact->sa_restorer = koact.sa_restorer;
+	  oact->sa_restorer = (void*)(uintptr_t)koact.sa_restorer;
 #endif
 	}
     }

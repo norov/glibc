@@ -19,14 +19,22 @@
 #ifndef	_SIGSET_H_types
 # define _SIGSET_H_types	1
 
+#include <bits/types.h>
+
 typedef int __sig_atomic_t;
+
+#ifndef __SIGSET_INNER_T
+typedef unsigned long  __sigset_inner_t;
+#else
+typedef __SIGSET_INNER_T __sigset_inner_t;
+#endif
 
 /* A `sigset_t' has a bit for each signal.  */
 
-# define _SIGSET_NWORDS	(1024 / (8 * sizeof (unsigned long int)))
+# define _SIGSET_NWORDS	(1024 / (8 * sizeof (__sigset_inner_t)))
 typedef struct
   {
-    unsigned long int __val[_SIGSET_NWORDS];
+    __sigset_inner_t __val[_SIGSET_NWORDS];
   } __sigset_t;
 
 #endif
@@ -47,10 +55,10 @@ typedef struct
 
 /* Return a mask that includes the bit for SIG only.  */
 # define __sigmask(sig) \
-  (((unsigned long int) 1) << (((sig) - 1) % (8 * sizeof (unsigned long int))))
+  (((__sigset_inner_t) 1) << (((sig) - 1) % (8 * sizeof (__sigset_inner_t))))
 
 /* Return the word index for SIG.  */
-# define __sigword(sig)	(((sig) - 1) / (8 * sizeof (unsigned long int)))
+# define __sigword(sig)	(((sig) - 1) / (8 * sizeof (__sigset_inner_t)))
 
 # if defined __GNUC__ && __GNUC__ >= 2
 #  define __sigemptyset(set) \
@@ -108,8 +116,8 @@ extern int __sigdelset (__sigset_t *, int);
   _EXTERN_INLINE int							      \
   NAME (CONST __sigset_t *__set, int __sig)				      \
   {									      \
-    unsigned long int __mask = __sigmask (__sig);			      \
-    unsigned long int __word = __sigword (__sig);			      \
+    __sigset_inner_t __mask = __sigmask (__sig);			      \
+    __sigset_inner_t __word = __sigword (__sig);			      \
     return BODY;							      \
   }
 
