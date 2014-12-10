@@ -1,3 +1,7 @@
+2014-12-09  Andrew Pinski  <apinski@cavium.com>
+
+	* sysdeps/aarch64/strchrnul.S (vrepmask): Use v7 instead of v15.
+
 2014-12-05  Andrew Pinski  <apinski@cavium.com>
 
 	* sysdeps/nptl/malloc-machine.h (__atomic_is_single_thread): New define.
