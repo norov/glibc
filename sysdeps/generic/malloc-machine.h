@@ -44,6 +44,9 @@ typedef int mutex_t;
 				 _rvalue = *mem; if (_rvalue == (old)) { *(mem) = newval; } }		 \
 				 _rvalue; })
 
+#define malloc_cas_acq(mem, newval, old) ({ typeof (*mem) _rvalue;					 \
+				 _rvalue = *mem; if (_rvalue == (old)) { *(mem) = newval; } }		 \
+				 _rvalue; })
 typedef void *tsd_key_t;
 # define tsd_key_create(key, destr) do {} while(0)
 # define tsd_setspecific(key, data) ((key) = (data))
