@@ -38,6 +38,14 @@ __libc_lock_define (typedef, mutex_t)
 				 else _rvalue = catomic_compare_and_exchange_val_rel (mem, newval, old);			\
 				 _rvalue; })
 
+#define malloc_cas_acq(mem, newval, old) ({ typeof (*mem) _rvalue;									\
+				 if (__atomic_is_single_thread) { _rvalue = *mem; if (_rvalue == (old)) { *(mem) = newval; } }	\
+				 else _rvalue = catomic_compare_and_exchange_val_acq (mem, newval, old);			\
+				 _rvalue; })
+
+#define malloc_or(mem, value) ({ if (__atomic_is_single_thread) *mem |= value; else catomic_or (mem, value); })
+#define malloc_and(mem, value) ({ if (__atomic_is_single_thread) *mem &= value; else catomic_and (mem, value); })
+
 /* This is defined by newer gcc version unique for each module.  */
 extern void *__dso_handle __attribute__ ((__weak__));
 
