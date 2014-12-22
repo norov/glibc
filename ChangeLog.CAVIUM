@@ -1,5 +1,13 @@
 2014-12-22  Andrew Pinski  <apinski@cavium.com>
 
+	Part of Bug #13670
+	* malloc/malloc.c (_int_free): Use malloc_cas_rel
+	instead of catomic_compare_and_exchange_val_rel.
+	* sysdeps/generic/malloc-machine.h (malloc_cas_rel): New macro.
+	* sysdeps/nptl/malloc-machine.h (malloc_cas_rel): New macro.
+
+2014-12-22  Andrew Pinski  <apinski@cavium.com>
+
 	* sysdeps/aarch64/strchr.S: Use ldp instead of ld1
 	for little-endian.
 	* sysdeps/aarch64/strchrnul.S: Likewise.
