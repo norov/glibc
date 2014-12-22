@@ -38,7 +38,9 @@
 
 #define vrepchr		v0
 #define vdata1		v1
+#define qdata1		q1
 #define vdata2		v2
+#define qdata2		q2
 #define vhas_nul1	v3
 #define vhas_nul2	v4
 #define vhas_chr1	v5
@@ -79,7 +81,11 @@ ENTRY (strchr)
 	   the padding bytes to a safe value, we calculate the syndrome
 	   for all the bytes, but then mask off those bits of the
 	   syndrome that are related to the padding.  */
+#ifdef __AARCH64EB__
 	ld1	{vdata1.16b, vdata2.16b}, [src], #32
+#else
+	ldp	qdata1, qdata2, [src], #32
+#endif
 	neg	tmp1, tmp1
 	cmeq	vhas_nul1.16b, vdata1.16b, #0
 	cmeq	vhas_chr1.16b, vdata1.16b, vrepchr.16b
@@ -102,7 +108,11 @@ ENTRY (strchr)
 	cbnz	tmp1, L(tail)
 
 L(loop):
+#ifdef __AARCH64EB__
 	ld1	{vdata1.16b, vdata2.16b}, [src], #32
+#else
+	ldp	qdata1, qdata2, [src], #32
+#endif
 	cmeq	vhas_nul1.16b, vdata1.16b, #0
 	cmeq	vhas_chr1.16b, vdata1.16b, vrepchr.16b
 	cmeq	vhas_nul2.16b, vdata2.16b, #0
