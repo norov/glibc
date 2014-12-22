@@ -33,6 +33,11 @@ __libc_lock_define (typedef, mutex_t)
 #define mutex_unlock(m)		__libc_lock_unlock (*(m))
 #define MUTEX_INITIALIZER	LLL_LOCK_INITIALIZER
 
+#define malloc_cas_rel(mem, newval, old) ({ typeof (*mem) _rvalue;									\
+				 if (__atomic_is_single_thread) { _rvalue = *mem; if (_rvalue == (old)) { *(mem) = newval; } }	\
+				 else _rvalue = catomic_compare_and_exchange_val_rel (mem, newval, old);			\
+				 _rvalue; })
+
 /* This is defined by newer gcc version unique for each module.  */
 extern void *__dso_handle __attribute__ ((__weak__));
 

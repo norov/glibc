@@ -3938,7 +3938,7 @@ _int_free (mstate av, mchunkptr p, int have_lock)
 	  old_idx = fastbin_index(chunksize(old));
 	p->fd = old2 = old;
       }
-    while ((old = catomic_compare_and_exchange_val_rel (fb, p, old2)) != old2);
+    while ((old = malloc_cas_rel(fb, p, old2)) != old2);
 
     if (have_lock && old != NULL && __builtin_expect (old_idx != idx, 0))
       {
