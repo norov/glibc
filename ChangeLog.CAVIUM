@@ -1,3 +1,9 @@
+2014-12-22  Andrew Pinski  <apinski@cavium.com>
+
+	* sysdeps/aarch64/strchr.S: Use ldp instead of ld1
+	for little-endian.
+	* sysdeps/aarch64/strchrnul.S: Likewise.
+
 2014-12-09  Andrew Pinski  <apinski@cavium.com>
 
 	* sysdeps/aarch64/strchrnul.S (vrepmask): Use v7 instead of v15.
