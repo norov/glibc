@@ -1,3 +1,82 @@
+2014-12-22  Andrew Pinski  <apinski@cavium.com>
+
+	Part of Bug #13670
+	* malloc/malloc.c (_int_free): Use malloc_cas_rel
+	instead of catomic_compare_and_exchange_val_rel.
+	* sysdeps/generic/malloc-machine.h (malloc_cas_rel): New macro.
+	* sysdeps/nptl/malloc-machine.h (malloc_cas_rel): New macro.
+
+2014-12-22  Andrew Pinski  <apinski@cavium.com>
+
+	* sysdeps/aarch64/strchr.S: Use ldp instead of ld1
+	for little-endian.
+	* sysdeps/aarch64/strchrnul.S: Likewise.
+
+2014-12-09  Andrew Pinski  <apinski@cavium.com>
+
+	* sysdeps/aarch64/strchrnul.S (vrepmask): Use v7 instead of v15.
+
+2014-12-05  Andrew Pinski  <apinski@cavium.com>
+
+	* sysdeps/nptl/malloc-machine.h (__atomic_is_single_thread): New define.
+	(mutex_lock): Don't call __libc_lock_* for single threaded.
+	(mutex_trylock): Likewise.
+	(mutex_unlock): Likewise.
+
+2014-10-30  Andrew Senkevich  <andrew.n.senkevich@gmail.com>
+
+	* sysdeps/i386/tls-macros.h (TLS_IE, TLS_LD, TLS_GD): Keep
+	define in PIC mode only if gcc version < 5.0
+	* sysdeps/unix/sysv/linux/i386/sysdep.h (check_consistency):
+	Keep define only if gcc version < 5.0
+
+2014-06-13  Manjunath Matti  <mmatti@caviumnetworks.com>
+
+	Backported: Fix ARM build with GCC 4.10 merge.
+	2014-05-20  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/arm/unwind-forcedunwind.c
+	(libgcc_s_resume): Use __attribute_used__.
+	* sysdeps/unix/sysv/linux/arm/unwind-resume.c (libgcc_s_resume):
+	Likewise.
+
+2012-08-29  Andrew Pinski  <apinski@cavium.com>	
+
+	* ports/sysdeps/mips/preconfigure: Append octeon3 to the machine
+	variable.
+	* ports/sysdeps/unix/sysv/linux/mips/configure.in: Add Octeon3 support
+	(lib32-fp/lib64-fp).
+	* ports/sysdeps/unix/sysv/linux/mips/configure: Regnerate.
+
+2014-03-21  Andrew Pinski  <apinski@cavium.com>
+
+	* config.make.in: s/libc_cv_slibdir/slibdir.
+	* configure.ac: Likewise.
+	* sysdeps/gnu/configure.ac: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/configure.ac: Likewise.
+	* configure: Regenerate.
+	* sysdeps/gnu/configure: Rengnerate.
+	* sysdeps/unix/sysv/linux/aarch64/configure: Regenerate.
+
+2012-10-10  Andrew Pinski  <apinski@cavium.com>
+
+        Bug #4882
+        Revert:
+        2012-07-11  Adam Nemet  <anemet@caviumnetworks.com>
+        * ports/sysdeps/unix/sysv/linux/mips/configure.in: Use it to appe
+        /octeon2 to libdir and slibdir.
+        * ports/sysdeps/unix/sysv/linux/mips/configure: Regenerate.
+
+2012-09-10  Andrew Pinski  <apinski@cavium.com>
+
+	Bug #4632
+	* libio/stdio.h (gets): Declare it for __USE_GNU also.
+
+2012-07-26  Chandrakala Chavva  <cchavva@caviumnetworks.com>
+
+	Patch from NSN
+        * debug/Makefile (CFLAGS-segfault.c): Compile with unwind tables.
+
 2012-07-11  Adam Nemet  <anemet@caviumnetworks.com>
 
 	Bug #1633
