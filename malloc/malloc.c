@@ -1638,8 +1638,8 @@ typedef struct malloc_chunk *mfastbinptr;
 #define FASTCHUNKS_BIT        (1U)
 
 #define have_fastchunks(M)     (((M)->flags & FASTCHUNKS_BIT) == 0)
-#define clear_fastchunks(M)    catomic_or (&(M)->flags, FASTCHUNKS_BIT)
-#define set_fastchunks(M)      catomic_and (&(M)->flags, ~FASTCHUNKS_BIT)
+#define clear_fastchunks(M)    malloc_or (&(M)->flags, FASTCHUNKS_BIT)
+#define set_fastchunks(M)      malloc_and (&(M)->flags, ~FASTCHUNKS_BIT)
 
 /*
    NONCONTIGUOUS_BIT indicates that MORECORE does not return contiguous
@@ -3369,7 +3369,7 @@ _int_malloc (mstate av, size_t bytes)
           if (victim == NULL)
             break;
         }
-      while ((pp = catomic_compare_and_exchange_val_acq (fb, victim->fd, victim))
+      while ((pp = malloc_cas_acq (fb, victim->fd, victim))
              != victim);
       if (victim != 0)
         {
