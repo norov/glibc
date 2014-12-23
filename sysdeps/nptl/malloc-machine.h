@@ -45,6 +45,10 @@ __libc_lock_define (typedef, mutex_t)
 
 #define malloc_or(mem, value) ({ if (__atomic_is_single_thread) *mem |= value; else catomic_or (mem, value); })
 #define malloc_and(mem, value) ({ if (__atomic_is_single_thread) *mem &= value; else catomic_and (mem, value); })
+#define malloc_exchange_acq(mem, newval) ({ typeof (*mem) _rvalue;									\
+				 if (__atomic_is_single_thread) { _rvalue = *mem; *(mem) = newval; }	\
+				 else _rvalue = atomic_exchange_acq (mem, newval);			\
+				 _rvalue; })
 
 /* This is defined by newer gcc version unique for each module.  */
 extern void *__dso_handle __attribute__ ((__weak__));
