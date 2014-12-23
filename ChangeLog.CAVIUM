@@ -1,6 +1,12 @@
 2014-12-22  Andrew Pinski  <apinski@cavium.com>
 
 	Bug #13670
+	* sysdeps/nptl/malloc-machine.h (malloc_exchange_acq): New macro.
+	* malloc/malloc.c (malloc_consolidate): Use malloc_exchange_acq.
+
+2014-12-22  Andrew Pinski  <apinski@cavium.com>
+
+	Bug #13670
 	* malloc/malloc.c (clear_fastchunks): Use malloc_or.
 	(set_fastchunks): Use malloc_and.
 	(_int_malloc): Use malloc_cas_acq instead of catomic_compare_and_exchange_val_acq.
