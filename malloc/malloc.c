@@ -4151,7 +4151,7 @@ static void malloc_consolidate(mstate av)
     maxfb = &fastbin (av, NFASTBINS - 1);
     fb = &fastbin (av, 0);
     do {
-      p = atomic_exchange_acq (fb, 0);
+      p = malloc_exchange_acq (fb, 0);
       if (p != 0) {
 	do {
 	  check_inuse_chunk(av, p);
