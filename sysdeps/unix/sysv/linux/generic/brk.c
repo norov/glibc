@@ -33,7 +33,7 @@ __brk (void *addr)
 {
   INTERNAL_SYSCALL_DECL (err);
 
-  __curbrk = (void *) INTERNAL_SYSCALL (brk, err, 1, addr);
+  __curbrk = (void *) (size_t) INTERNAL_SYSCALL (brk, err, 1, addr);
   if (__curbrk < addr)
     {
       __set_errno (ENOMEM);
