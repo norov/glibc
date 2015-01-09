@@ -19,7 +19,7 @@
 #include <sys/ucontext.h>
 
 #define SIGCONTEXT siginfo_t *_si, struct ucontext *
-#define GET_PC(ctx) ((void *) (ctx)->uc_mcontext.pc)
+#define GET_PC(ctx) ((void *) (size_t) (ctx)->uc_mcontext.pc)
 
 /* There is no reliable way to get the sigcontext unless we use a
    three-argument signal handler.  */

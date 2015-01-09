@@ -1,3 +1,8 @@
+2015-01-09  Andrew Pinski  <apinski@cavium.com>
+
+	* sysdeps/aarch64/jmpbuf-unwind.h (_JMPBUF_CFA_UNWINDS_ADJ): Fix ILP32 warning.
+	* sysdeps/unix/sysv/linux/aarch64/sigcontextinfo.h (GET_PC): Likewise.
+
 2014-12-22  Andrew Pinski  <apinski@cavium.com>
 
 	Bug #13670
