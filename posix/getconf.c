@@ -1,4 +1,4 @@
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
+/* Copyright (C) 1991-2015 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,9 @@
 
 #include "../version.h"
 #define PACKAGE _libc_intl_domainname
+
+#define NEED_SPEC_ARRAY 1
+#include <posix-conf-vars.h>
 
 struct conf
   {
@@ -387,23 +390,6 @@ static const struct conf vars[] =
   };
 
 
-static const struct { const char *name; int num; } specs[] =
-  {
-    { "XBS5_ILP32_OFF32", _SC_XBS5_ILP32_OFF32 },
-    { "XBS5_ILP32_OFFBIG", _SC_XBS5_ILP32_OFFBIG },
-    { "XBS5_LP64_OFF64", _SC_XBS5_LP64_OFF64 },
-    { "XBS5_LPBIG_OFFBIG", _SC_XBS5_LPBIG_OFFBIG },
-    { "POSIX_V6_ILP32_OFF32", _SC_V6_ILP32_OFF32 },
-    { "POSIX_V6_ILP32_OFFBIG", _SC_V6_ILP32_OFFBIG },
-    { "POSIX_V6_LP64_OFF64", _SC_V6_LP64_OFF64 },
-    { "POSIX_V6_LPBIG_OFFBIG", _SC_V6_LPBIG_OFFBIG },
-    { "POSIX_V7_ILP32_OFF32", _SC_V7_ILP32_OFF32 },
-    { "POSIX_V7_ILP32_OFFBIG", _SC_V7_ILP32_OFFBIG },
-    { "POSIX_V7_LP64_OFF64", _SC_V7_LP64_OFF64 },
-    { "POSIX_V7_LPBIG_OFFBIG", _SC_V7_LPBIG_OFFBIG },
-  };
-static const int nspecs = sizeof (specs) / sizeof (specs[0]);
-
 extern const char *__progname;
 
 
@@ -483,7 +469,7 @@ main (int argc, char *argv[])
 Copyright (C) %s Free Software Foundation, Inc.\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\
-"), "2014");
+"), "2015");
       printf (gettext ("Written by %s.\n"), "Roland McGrath");
       return 0;
     }
@@ -542,7 +528,7 @@ environment SPEC.\n\n"));
   /* Check for the specifications we know.  */
   if (spec != NULL)
     {
-      int i;
+      size_t i;
       for (i = 0; i < nspecs; ++i)
 	if (strcmp (spec, specs[i].name) == 0)
 	  break;

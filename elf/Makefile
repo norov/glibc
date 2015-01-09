@@ -1,4 +1,4 @@
-# Copyright (C) 1995-2014 Free Software Foundation, Inc.
+# Copyright (C) 1995-2015 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -861,6 +861,8 @@ $(objpfx)tst-execstack-needed: $(objpfx)tst-execstack-mod.so
 LDFLAGS-tst-execstack-needed = -Wl,-z,noexecstack
 
 LDFLAGS-tst-execstack-prog = -Wl,-z,execstack
+CFLAGS-tst-execstack-prog.c += -Wno-trampolines
+CFLAGS-tst-execstack-mod.c += -Wno-trampolines
 endif
 
 LDFLAGS-tst-array2 = $(no-as-needed)

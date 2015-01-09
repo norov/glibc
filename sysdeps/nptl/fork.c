@@ -1,4 +1,4 @@
-/* Copyright (C) 2002-2014 Free Software Foundation, Inc.
+/* Copyright (C) 2002-2015 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -32,21 +32,14 @@
 #include <arch-fork.h>
 
 
-unsigned long int *__fork_generation_pointer;
-
-
-
-/* The single linked list of all currently registered fork handlers.  */
-struct fork_handler *__fork_handlers;
-
-
 static void
 fresetlockfiles (void)
 {
   _IO_ITER i;
 
   for (i = _IO_iter_begin(); i != _IO_iter_end(); i = _IO_iter_next(i))
-    _IO_lock_init (*((_IO_lock_t *) _IO_iter_file(i)->_lock));
+    if ((_IO_iter_file (i)->_flags & _IO_USER_LOCK) == 0)
+      _IO_lock_init (*((_IO_lock_t *) _IO_iter_file(i)->_lock));
 }
 
 

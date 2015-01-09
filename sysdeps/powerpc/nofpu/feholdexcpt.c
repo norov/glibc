@@ -1,6 +1,6 @@
 /* Store current floating-point environment and clear exceptions
    (soft-float edition).
-   Copyright (C) 2002-2014 Free Software Foundation, Inc.
+   Copyright (C) 2002-2015 Free Software Foundation, Inc.
    Contributed by Aldy Hernandez <aldyh@redhat.com>, 2002.
    This file is part of the GNU C Library.
 
@@ -22,7 +22,7 @@
 #include "soft-supp.h"
 
 int
-feholdexcept (fenv_t *envp)
+__feholdexcept (fenv_t *envp)
 {
   fenv_union_t u;
 
@@ -40,4 +40,6 @@ feholdexcept (fenv_t *envp)
 
   return 0;
 }
-libm_hidden_def (feholdexcept)
+libm_hidden_def (__feholdexcept)
+weak_alias (__feholdexcept, feholdexcept)
+libm_hidden_weak (feholdexcept)

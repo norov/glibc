@@ -1,4 +1,4 @@
-/* Copyright (C) 2002-2014 Free Software Foundation, Inc.
+/* Copyright (C) 2002-2015 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -414,7 +414,7 @@ START_THREAD_DEFN
 	  this->__list.__next = NULL;
 
 	  atomic_or (&this->__lock, FUTEX_OWNER_DIED);
-	  lll_futex_wake (this->__lock, 1, /* XYZ */ LLL_SHARED);
+	  lll_futex_wake (&this->__lock, 1, /* XYZ */ LLL_SHARED);
 	}
       while (robust != (void *) &pd->robust_head);
     }

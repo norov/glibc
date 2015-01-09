@@ -1,4 +1,4 @@
-/* Copyright (C) 2013-2014 Free Software Foundation, Inc.
+/* Copyright (C) 2013-2015 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -27,6 +27,7 @@
   (!memchr ((h) + (h_l), '\0', (j) + (n_l) - (h_l))	\
    && ((h_l) = (j) + (n_l)))
 #include "str-two-way.h"
+typeof(two_way_short_needle) two_way_short_needle __attribute__((unused));
 
 #undef strstr
 
@@ -153,7 +154,7 @@ STRSTR2 (const char *haystack_start, const char *needle)
       /* Look for a terminating '\0'.  */
       zero_matches = __insn_v1cmpeqi (v, 0);
       uint64_t byte1_matches = __insn_v1cmpeq (v, byte1);
-      if (__builtin_expect (zero_matches, 0))
+      if (__builtin_expect (zero_matches != 0, 0))
 	{
 	  /* This is the last vector.  Don't worry about matches
 	     crossing into the next vector.  Shift the second byte
@@ -238,7 +239,7 @@ STRSTR (const char *haystack_start, const char *needle_start)
     }
 
   /* Fail if NEEDLE is longer than HAYSTACK.  */
-  if (strnlen (haystack, needle_len) < needle_len)
+  if (__strnlen (haystack, needle_len) < needle_len)
     return NULL;
 
   /* Perform the search.  Abstract memory is considered to be an array

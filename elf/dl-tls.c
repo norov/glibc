@@ -1,5 +1,5 @@
 /* Thread-local storage handling in the ELF dynamic linker.  Generic version.
-   Copyright (C) 2002-2014 Free Software Foundation, Inc.
+   Copyright (C) 2002-2015 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -809,6 +809,16 @@ update_get_addr (GET_ADDR_ARGS)
   return (void *) p + GET_ADDR_OFFSET;
 }
 
+/* For all machines that have a non-macro version of __tls_get_addr, we
+   want to use rtld_hidden_proto/rtld_hidden_def in order to call the
+   internal alias for __tls_get_addr from ld.so. This avoids a PLT entry
+   in ld.so for __tls_get_addr.  */
+
+#ifndef __tls_get_addr
+extern void * __tls_get_addr (GET_ADDR_ARGS);
+rtld_hidden_proto (__tls_get_addr)
+rtld_hidden_def (__tls_get_addr)
+#endif
 
 /* The generic dynamic and local dynamic model cannot be used in
    statically linked applications.  */

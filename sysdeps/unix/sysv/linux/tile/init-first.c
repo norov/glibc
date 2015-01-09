@@ -1,4 +1,4 @@
-/* Copyright (C) 2012-2014 Free Software Foundation, Inc.
+/* Copyright (C) 2012-2015 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -19,9 +19,11 @@
 #include <dl-vdso.h>
 #include <bits/libc-vdso.h>
 
-long int (*__vdso_gettimeofday) (struct timeval *, void *) attribute_hidden;
+struct syscall_return_value (*__vdso_gettimeofday) (struct timeval *, void *)
+  attribute_hidden;
 
-long int (*__vdso_clock_gettime) (clockid_t, struct timespec *)
+struct syscall_return_value (*__vdso_clock_gettime) (clockid_t,
+                                                     struct timespec *)
   __attribute__ ((nocommon));
 strong_alias (__vdso_clock_gettime, __GI___vdso_clock_gettime attribute_hidden)
 

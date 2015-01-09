@@ -1,4 +1,4 @@
-/* Copyright (C) 2002-2014 Free Software Foundation, Inc.
+/* Copyright (C) 2002-2015 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -25,8 +25,7 @@
 
 
 int
-pthread_cancel (th)
-     pthread_t th;
+pthread_cancel (pthread_t th)
 {
   volatile struct pthread *pd = (volatile struct pthread *) th;
 

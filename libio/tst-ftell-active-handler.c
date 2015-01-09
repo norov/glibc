@@ -1,6 +1,6 @@
 /* Verify that ftell returns the correct value at various points before and
    after the handler on which it is called becomes active.
-   Copyright (C) 2014 Free Software Foundation, Inc.
+   Copyright (C) 2014-2015 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -165,7 +165,7 @@ do_ftruncate_test (const char *filename)
 	     it.  */
 	  if (offset != new_offset)
 	    {
-	      printf ("Incorrect offset.  Expected %zu, but got %ld\n",
+	      printf ("Incorrect offset.  Expected %ld, but got %ld\n",
 		      offset, new_offset);
 
 	      ret |= 1;
@@ -574,23 +574,23 @@ do_append_test (const char *filename)
 
   if (seek_ret != new_seek_ret)
     {
-      printf ("incorrectly modified file offset to %ld, should be %ld",
-	      new_seek_ret, seek_ret);
+      printf ("incorrectly modified file offset to %jd, should be %jd",
+	      (intmax_t)  new_seek_ret, (intmax_t) seek_ret);
       ret |= 1;
     }
   else
-    printf ("retained current file offset %ld", seek_ret);
+    printf ("retained current file offset %jd", (intmax_t) seek_ret);
 
   new_seek_ret = ftello (fp);
 
   if (seek_ret != new_seek_ret)
     {
-      printf (", ftello reported incorrect offset %ld, should be %ld\n",
-	      new_seek_ret, seek_ret);
+      printf (", ftello reported incorrect offset %jd, should be %jd\n",
+	      (intmax_t) new_seek_ret, (intmax_t) seek_ret);
       ret |= 1;
     }
   else
-    printf (", ftello reported correct offset %ld\n", seek_ret);
+    printf (", ftello reported correct offset %jd\n", (intmax_t) seek_ret);
 
   fclose (fp);
 

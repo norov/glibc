@@ -1,5 +1,5 @@
 /* Double-precision floating point square root.
-   Copyright (C) 1997-2014 Free Software Foundation, Inc.
+   Copyright (C) 1997-2015 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -142,12 +142,12 @@ __slow_ieee754_sqrt (double x)
       /* For some reason, some PowerPC32 processors don't implement
 	 FE_INVALID_SQRT.  */
 #ifdef FE_INVALID_SQRT
-      feraiseexcept (FE_INVALID_SQRT);
+      __feraiseexcept (FE_INVALID_SQRT);
 
       fenv_union_t u = { .fenv = fegetenv_register () };
       if ((u.l & FE_INVALID) == 0)
 #endif
-	feraiseexcept (FE_INVALID);
+	__feraiseexcept (FE_INVALID);
       x = a_nan.value;
     }
   return f_wash (x);

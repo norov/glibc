@@ -53,7 +53,7 @@
      __l; })
 #endif
 
-#ifdef PIC
+#if defined PIC && !__GNUC_PREREQ (5,0)
 # define TLS_GD(x) \
   ({ int *__l, __c, __d;						      \
      asm ("leal " #x "@tlsgd(%%ebx),%%eax\n\t"				      \

@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2014 Free Software Foundation, Inc.
+/* Copyright (C) 2004-2015 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -52,6 +52,7 @@ END(__feraiseexcept)
 strong_alias (__feraiseexcept, __old_feraiseexcept)
 compat_symbol (libm, __old_feraiseexcept, feraiseexcept, GLIBC_2_1);
 # endif
+libm_hidden_def (__feraiseexcept)
 libm_hidden_ver (__feraiseexcept, feraiseexcept)
 versioned_symbol (libm, __feraiseexcept, feraiseexcept, GLIBC_2_2);
 #endif

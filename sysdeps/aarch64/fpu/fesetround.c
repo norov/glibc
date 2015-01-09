@@ -1,4 +1,4 @@
-/* Copyright (C) 1997-2014 Free Software Foundation, Inc.
+/* Copyright (C) 1997-2015 Free Software Foundation, Inc.
 
    This file is part of the GNU C Library.
 
@@ -17,31 +17,18 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <fenv.h>
+#include <math_private.h>
 #include <fpu_control.h>
 
 int
-fesetround (int round)
+__fesetround (int round)
 {
-  fpu_control_t fpcr;
-  fpu_control_t fpcr_new;
+  if (round & ~_FPU_FPCR_RM_MASK)
+    return 1;
 
-  switch (round)
-    {
-    case FE_TONEAREST:
-    case FE_UPWARD:
-    case FE_DOWNWARD:
-    case FE_TOWARDZERO:
-      _FPU_GETCW (fpcr);
-      fpcr_new = (fpcr & ~FE_TOWARDZERO) | round;
-
-      if (fpcr != fpcr_new)
-	_FPU_SETCW (fpcr_new);
-      return 0;
-
-    default:
-      return 1;
-    }
-
-  return 1;
+  libc_fesetround_aarch64 (round);
+  return 0;
 }
-libm_hidden_def (fesetround)
+libm_hidden_def (__fesetround)
+weak_alias (__fesetround, fesetround)
+libm_hidden_weak (fesetround)

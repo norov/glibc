@@ -96,6 +96,7 @@ static const char rcsid[] = "$BINDId: res_send.c,v 8.38 2000/03/30 20:16:51 vixi
 #include <string.h>
 #include <unistd.h>
 #include <kernel-features.h>
+#include <libc-internal.h>
 
 #if PACKETSZ > 65536
 #define MAXPACKET       PACKETSZ
@@ -430,7 +431,13 @@ __libc_res_nsend(res_state statp, const u_char *buf, int buflen,
 					ns++;
 				if (ns == MAXNS)
 					break;
+				/* NS never exceeds MAXNS, but gcc 4.9 somehow
+				   does not see this.  */
+				DIAG_PUSH_NEEDS_COMMENT;
+				DIAG_IGNORE_NEEDS_COMMENT (4.9,
+							   "-Warray-bounds");
 				EXT(statp).nsmap[ns] = n;
+				DIAG_POP_NEEDS_COMMENT;
 				map[n] = ns++;
 			}
 		EXT(statp).nscount = n;
@@ -668,7 +675,24 @@ send_vc(res_state statp,
 	// int anssiz = *anssizp;
 	HEADER *anhp = (HEADER *) ans;
 	struct sockaddr_in6 *nsap = EXT(statp).nsaddrs[ns];
-	int truncating, connreset, resplen, n;
+	int truncating, connreset, n;
+	/* On some architectures compiler might emit a warning indicating
+	   'resplen' may be used uninitialized.  However if buf2 == NULL
+	   then this code won't be executed; if buf2 != NULL, then first
+	   time round the loop recvresp1 and recvresp2 will be 0 so this
+	   code won't be executed but "thisresplenp = &resplen;" followed
+	   by "*thisresplenp = rlen;" will be executed so that subsequent
+	   times round the loop resplen has been initialized.  So this is
+	   a false-positive.
+	 */
+#if __GNUC_PREREQ (4, 7)
+	DIAG_PUSH_NEEDS_COMMENT;
+	DIAG_IGNORE_NEEDS_COMMENT (5, "-Wmaybe-uninitialized");
+#endif
+	int resplen;
+#if __GNUC_PREREQ (4, 7)
+	DIAG_POP_NEEDS_COMMENT;
+#endif
 	struct iovec iov[4];
 	u_short len;
 	u_short len2;
@@ -787,6 +811,10 @@ send_vc(res_state statp,
 			/* No buffer allocated for the first
 			   reply.  We can try to use the rest
 			   of the user-provided buffer.  */
+#if __GNUC_PREREQ (4, 7)
+			DIAG_PUSH_NEEDS_COMMENT;
+			DIAG_IGNORE_NEEDS_COMMENT (5, "-Wmaybe-uninitialized");
+#endif
 #if _STRING_ARCH_unaligned
 			*anssizp2 = orig_anssizp - resplen;
 			*ansp2 = *ansp + resplen;
@@ -796,6 +824,9 @@ send_vc(res_state statp,
 			     & ~(__alignof__ (HEADER) - 1));
 			*anssizp2 = orig_anssizp - aligned_resplen;
 			*ansp2 = *ansp + aligned_resplen;
+#endif
+#if __GNUC_PREREQ (4, 7)
+			DIAG_POP_NEEDS_COMMENT;
 #endif
 		} else {
 			/* The first reply did not fit into the

@@ -1,5 +1,5 @@
 /* Machine-dependent ELF dynamic relocation inline functions.  MIPS version.
-   Copyright (C) 1996-2014 Free Software Foundation, Inc.
+   Copyright (C) 1996-2015 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Kazumoto Kojima <kkojima@info.kanagawa-u.ac.jp>.
 
@@ -30,6 +30,7 @@
 #endif
 
 #include <sgidefs.h>
+#include <sysdep.h>
 #include <sys/asm.h>
 #include <dl-tls.h>
 
@@ -99,6 +100,11 @@ elf_machine_matches_host (const ElfW(Ehdr) *ehdr)
   if ((ehdr->e_flags & EF_MIPS_NAN2008) != ELF_MACHINE_NAN2008)
     return 0;
 
+  /* Ensure that the old O32 FP64 ABI is never loaded, it is not supported
+     on linux.  */
+  if (ehdr->e_flags & EF_MIPS_FP64)
+    return 0;
+
   switch (ehdr->e_machine)
     {
     case EM_MIPS:
@@ -138,9 +144,14 @@ elf_machine_load_address (void)
 #ifndef __mips16
   asm ("	.set noreorder\n"
        "	" STRINGXP (PTR_LA) " %0, 0f\n"
+# if __mips_isa_rev < 6
        "	bltzal $0, 0f\n"
        "	nop\n"
        "0:	" STRINGXP (PTR_SUBU) " %0, $31, %0\n"
+# else
+       "0:	addiupc $31, 0\n"
+       "	" STRINGXP (PTR_SUBU) " %0, $31, %0\n"
+# endif
        "	.set reorder\n"
        :	"=r" (addr)
        :	/* No inputs */
@@ -241,6 +252,13 @@ do {									\
       and not just plain _start.  */
 
 #ifndef __mips16
+# if __mips_isa_rev < 6
+#  define LCOFF STRINGXP(.Lcof2)
+#  define LOAD_31 STRINGXP(bltzal $8) "," STRINGXP(.Lcof2)
+# else
+#  define LCOFF STRINGXP(.Lcof1)
+#  define LOAD_31 "addiupc $31, 0"
+# endif
 # define RTLD_START asm (\
 	".text\n\
 	" _RTLD_PROLOGUE(ENTRY_POINT) "\
@@ -255,9 +273,9 @@ do {									\
 	move $4, $29\n\
 	" STRINGXP(PTR_SUBIU) " $29, 16\n\
 	\n\
-	" STRINGXP(PTR_LA) " $8, .Lcoff\n\
-	bltzal $8, .Lcoff\n\
-.Lcoff:	" STRINGXP(PTR_SUBU) " $8, $31, $8\n\
+	" STRINGXP(PTR_LA) " $8, " LCOFF "\n\
+.Lcof1:	" LOAD_31 "\n\
+.Lcof2:	" STRINGXP(PTR_SUBU) " $8, $31, $8\n\
 	\n\
 	" STRINGXP(PTR_LA) " $25, _dl_start\n\
 	" STRINGXP(PTR_ADDU) " $25, $8\n\

@@ -253,6 +253,13 @@ AC_ARG_ENABLE([all-warnings],
 	      [])
 AC_SUBST(all_warnings)
 
+AC_ARG_ENABLE([werror],
+	      AC_HELP_STRING([--disable-werror],
+			     [do not build with -Werror]),
+	      [enable_werror=$enableval],
+	      [enable_werror=yes])
+AC_SUBST(enable_werror)
+
 AC_ARG_ENABLE([multi-arch],
 	      AC_HELP_STRING([--enable-multi-arch],
 			     [enable single DSO with optimizations for multiple architectures]),
@@ -922,7 +929,7 @@ AC_CHECK_PROG_VER(MSGFMT, gnumsgfmt gmsgfmt msgfmt, --version,
   MSGFMT=: aux_missing="$aux_missing msgfmt")
 AC_CHECK_PROG_VER(MAKEINFO, makeinfo, --version,
   [GNU texinfo.* \([0-9][0-9.]*\)],
-  [4.[5-9]*|4.[1-9][0-9]*|[5-9].*],
+  [4.[7-9]*|4.[1-9][0-9]*|[5-9].*],
   MAKEINFO=: aux_missing="$aux_missing makeinfo")
 AC_CHECK_PROG_VER(SED, sed, --version,
   [GNU sed[^0-9]* \([0-9]*\.[0-9.]*\)],
@@ -1041,7 +1048,10 @@ if test "$PERL" != no &&
 fi
 AC_PATH_PROG(INSTALL_INFO, install-info, no,
 	     $PATH:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin)
-AC_PATH_PROG(BISON, bison, no, $PATH:/usr/local/bin:/usr/bin:/bin)
+AC_CHECK_PROG_VER(BISON, bison, --version,
+		  [bison (GNU Bison) \([0-9]*\.[0-9.]*\)],
+		  [2.7*|[3-9].*|[1-9][0-9]*],
+		  BISON=no)
 
 AC_CACHE_CHECK(for libc-friendly stddef.h, libc_cv_friendly_stddef, [dnl
 AC_TRY_COMPILE(dnl

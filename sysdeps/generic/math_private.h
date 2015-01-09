@@ -399,7 +399,7 @@ extern long double __gamma_productl (long double x, long double x_eps,
 static __always_inline void
 default_libc_feholdexcept (fenv_t *e)
 {
-  (void) feholdexcept (e);
+  (void) __feholdexcept (e);
 }
 
 #ifndef libc_feholdexcept
@@ -415,7 +415,7 @@ default_libc_feholdexcept (fenv_t *e)
 static __always_inline void
 default_libc_fesetround (int r)
 {
-  (void) fesetround (r);
+  (void) __fesetround (r);
 }
 
 #ifndef libc_fesetround
@@ -431,8 +431,8 @@ default_libc_fesetround (int r)
 static __always_inline void
 default_libc_feholdexcept_setround (fenv_t *e, int r)
 {
-  feholdexcept (e);
-  fesetround (r);
+  __feholdexcept (e);
+  __fesetround (r);
 }
 
 #ifndef libc_feholdexcept_setround
@@ -462,7 +462,7 @@ default_libc_feholdexcept_setround (fenv_t *e, int r)
 static __always_inline void
 default_libc_fesetenv (fenv_t *e)
 {
-  (void) fesetenv (e);
+  (void) __fesetenv (e);
 }
 
 #ifndef libc_fesetenv
@@ -478,7 +478,7 @@ default_libc_fesetenv (fenv_t *e)
 static __always_inline void
 default_libc_feupdateenv (fenv_t *e)
 {
-  (void) feupdateenv (e);
+  (void) __feupdateenv (e);
 }
 
 #ifndef libc_feupdateenv
@@ -499,7 +499,7 @@ static __always_inline int
 default_libc_feupdateenv_test (fenv_t *e, int ex)
 {
   int ret = fetestexcept (ex);
-  feupdateenv (e);
+  __feupdateenv (e);
   return ret;
 }
 
@@ -598,8 +598,8 @@ libc_feholdsetround_ctx (struct rm_ctx *ctx, int round)
   if (__glibc_unlikely (round != get_rounding_mode ()))
     {
       ctx->updated_status = true;
-      fegetenv (&ctx->env);
-      fesetround (round);
+      __fegetenv (&ctx->env);
+      __fesetround (round);
     }
 }
 
@@ -608,25 +608,25 @@ libc_feresetround_ctx (struct rm_ctx *ctx)
 {
   /* Restore the rounding mode if updated.  */
   if (__glibc_unlikely (ctx->updated_status))
-    feupdateenv (&ctx->env);
+    __feupdateenv (&ctx->env);
 }
 
 static __always_inline void
 libc_feholdsetround_noex_ctx (struct rm_ctx *ctx, int round)
 {
   /* Save exception flags and rounding mode.  */
-  fegetenv (&ctx->env);
+  __fegetenv (&ctx->env);
 
   /* Update rounding mode only if different.  */
   if (__glibc_unlikely (round != get_rounding_mode ()))
-    fesetround (round);
+    __fesetround (round);
 }
 
 static __always_inline void
 libc_feresetround_noex_ctx (struct rm_ctx *ctx)
 {
   /* Restore exception flags and rounding mode.  */
-  fesetenv (&ctx->env);
+  __fesetenv (&ctx->env);
 }
 
 # define libc_feholdsetroundf_ctx libc_feholdsetround_ctx

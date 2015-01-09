@@ -1,5 +1,5 @@
 /* Malloc implementation for multiple threads without lock contention.
-   Copyright (C) 1996-2014 Free Software Foundation, Inc.
+   Copyright (C) 1996-2015 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Wolfram Gloger <wg@malloc.de>
    and Doug Lea <dl@cs.oswego.edu>, 2001.
@@ -1854,14 +1854,14 @@ static int check_action = DEFAULT_CHECK_ACTION;
 
 static int perturb_byte;
 
-static inline void
+static void
 alloc_perturb (char *p, size_t n)
 {
   if (__glibc_unlikely (perturb_byte))
     memset (p, perturb_byte ^ 0xff, n);
 }
 
-static inline void
+static void
 free_perturb (char *p, size_t n)
 {
   if (__glibc_unlikely (perturb_byte))
@@ -4974,7 +4974,7 @@ __posix_memalign (void **memptr, size_t alignment, size_t size)
   /* Test whether the SIZE argument is valid.  It must be a power of
      two multiple of sizeof (void *).  */
   if (alignment % sizeof (void *) != 0
-      || !powerof2 (alignment / sizeof (void *)) != 0
+      || !powerof2 (alignment / sizeof (void *))
       || alignment == 0)
     return EINVAL;
 

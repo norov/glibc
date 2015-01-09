@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2014 Free Software Foundation, Inc.
+/* Copyright (C) 2009-2015 Free Software Foundation, Inc.
 
    This file is part of the GNU C Library.
 
@@ -20,7 +20,7 @@
 #include <fpu_control.h>
 
 int
-feupdateenv (const fenv_t *envp)
+__feupdateenv (const fenv_t *envp)
 {
   fpu_control_t fpcr;
   fpu_control_t fpcr_new;
@@ -45,7 +45,7 @@ feupdateenv (const fenv_t *envp)
         _FPU_SETFPSR (fpsr_new);
 
       if (excepts & (fpcr_new >> FE_EXCEPT_SHIFT))
-        return feraiseexcept (excepts);
+        return __feraiseexcept (excepts);
 
       return 0;
     }
@@ -80,8 +80,10 @@ feupdateenv (const fenv_t *envp)
     }
 
   if (excepts & (fpcr_new >> FE_EXCEPT_SHIFT))
-    return feraiseexcept (excepts);
+    return __feraiseexcept (excepts);
 
   return 0;
 }
-libm_hidden_def (feupdateenv)
+libm_hidden_def (__feupdateenv)
+weak_alias (__feupdateenv, feupdateenv)
+libm_hidden_weak (feupdateenv)

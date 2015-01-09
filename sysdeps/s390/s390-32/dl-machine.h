@@ -1,5 +1,5 @@
 /* Machine-dependent ELF dynamic relocation inline functions.  S390 Version.
-   Copyright (C) 2000-2014 Free Software Foundation, Inc.
+   Copyright (C) 2000-2015 Free Software Foundation, Inc.
    Contributed by Carl Pederson & Martin Schwidefsky.
    This file is part of the GNU C Library.
 
@@ -72,7 +72,7 @@ elf_machine_load_address (void)
 
   asm( "   bras  1,2f\n"
        "1: .long _GLOBAL_OFFSET_TABLE_ - 1b\n"
-       "   .long _dl_start - 1b - 0x80000000\n"
+       "   .long (_dl_start - 1b - 0x80000000) & 0x00000000ffffffff\n"
        "2: l     %0,4(1)\n"
        "   ar    %0,1\n"
        "   al    1,0(1)\n"

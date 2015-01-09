@@ -1,3 +1,1813 @@
+2015-01-08  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/pthread/timer_routines.c: Fix <pthreadP.h> include to use
+	<nptl/pthreadP.h> instead.
+	* sysdeps/pthread/aio_notify.c: Include <signal.h> for raise decl.
+
+	* signal/allocrtsig.c (RESERVED_SIGRT): New macro, defined to 0 if not
+	already defined.
+	[__SIGRTMIN] (init): Function removed.
+	[__SIGRTMIN] (initialized): Variable removed.
+	[!__SIGRTMIN] (current_rtmin, current_rtmax): Variables removed.
+	[__SIGRTMIN] (current_rtmin, current_rtmax): Initialize to
+	__SIGRTMIN + RESERVED_SIGRT and __SIGRTMAX, respectively.
+	(__libc_current_sigrtmin) [__SIGRTMIN]: Don't call init.
+	(__libc_current_sigrtmin) [!__SIGRTMIN]: Just return -1.
+	(__libc_current_sigrtmin): Add __libc_current_sigrtmin_private alias.
+	(__libc_current_sigrtmax) [__SIGRTMIN]: Don't call init.
+	(__libc_current_sigrtmax) [!__SIGRTMIN]: Just return -1.
+	(__libc_current_sigrtmax): Add __libc_current_sigrtmax_private alias.
+	(__libc_allocate_rtsig) [__SIGRTMIN]: Don't call init.
+	(__libc_allocate_rtsig): Add __libc_allocate_rtsig_private alias.
+	* sysdeps/nptl/allocrtsig.c: New file.
+	* sysdeps/unix/sysv/linux/allocrtsig.c: File removed.
+	* sysdeps/unix/sysv/linux/testrtsig.h: File removed.
+	* sysdeps/generic/testrtsig.h: File removed.
+
+	* nptl/pthread_sigmask.c [SIGCANCEL || SIGTIMER || SIGSETXID]: #error.
+	(pthread_sigmask): Call sigprocmask, not __sigprocmask.
+
+	* nptl/nptl-init.c (pthread_functions): Conditionalize
+	.ptr__nptl_setxid initialization on [SIGSETXID].
+
+	* sysdeps/nptl/sys/procfs.h: New file.
+	* nptl_db/Makefile (headers): Add it.
+	* sysdeps/unix/sysv/linux/Makefile (sysdep_headers): Don't add it.
+
+	* nptl/pthreadP.h (check_cpuset_attr): Moved ...
+	* sysdeps/unix/sysv/linux/check-cpuset.h: ... to this new file.
+	* nptl/pthread_attr_setaffinity.c: Include it.
+	* nptl/pthread_setattr_default_np.c: Likewise.
+	* nptl/check-cpuset.h: New file.
+
+2015-01-08  Richard Henderson  <rth@redhat.com>
+
+	* elf/Makefile (CFLAGS-tst-execstack-mod.c): Add -Wno-trampolines
+	(CFLAGS-tst-execstack-prog.c): Likewise.
+	* nptl/Makefile (CFLAGS-tst-execstack-mod.c): Likewise.
+
+2015-01-08  Chung-Lin Tang  <cltang@codesourcery.com>
+	    Sandra Loosemore  <sandra@codesourcery.com>
+	    Andrew Jenner  <andrew@codesourcery.com>
+	    Joseph Myers  <joseph@codesourcery.com>
+	    Nathan Sidwell  <nathan@codesourcery.com>
+
+	* elf/elf.h (EM_ALTERA_NIOS2): New machine number for Altera Nios II.
+	(DT_NIOS2_GP): New dynamic entry type for Nios II _gp address.
+	(R_NIOS2_NONE,R_NIOS2_S16,R_NIOS2_U16): Define Nios II relocations.
+	(R_NIOS2_PCREL16,R_NIOS2_CALL26,R_NIOS2_IMM5): Likewise.
+	(R_NIOS2_CACHE_OPX,R_NIOS2_IMM6,R_NIOS2_IMM8,R_NIOS2_HI16): Likewise.
+	(R_NIOS2_LO16,R_NIOS2_HIADJ16,R_NIOS2_BFD_RELOC_32): Likewise.
+	(R_NIOS2_BFD_RELOC_16,R_NIOS2_BFD_RELOC_8,R_NIOS2_GPREL): Likewise.
+        (R_NIOS2_GNU_VTINHERIT,R_NIOS2_GNU_VTENTRY,R_NIOS2_UJMP): Likewise.
+        (R_NIOS2_CJMP,R_NIOS2_CALLR,R_NIOS2_ALIGN,R_NIOS2_GOT16): Likewise.
+        (R_NIOS2_CALL16,R_NIOS2_GOTOFF_LO,R_NIOS2_GOTOFF_HA): Likewise.
+        (R_NIOS2_PCREL_LO,R_NIOS2_PCREL_HA,R_NIOS2_TLS_GD16): Likewise.
+        (R_NIOS2_TLS_LDM16,R_NIOS2_TLS_LDO16,R_NIOS2_TLS_IE16): Likewise.
+        (R_NIOS2_TLS_LE16,R_NIOS2_TLS_DTPMOD,R_NIOS2_TLS_DTPREL): Likewise.
+	(R_NIOS2_TLS_TPREL,R_NIOS2_COPY,R_NIOS2_GLOB_DAT): Likewise.
+	(R_NIOS2_JUMP_SLOT,R_NIOS2_RELATIVE,R_NIOS2_GOTOFF): Likewise.
+	(R_NIOS2_CALL26_NOAT,R_NIOS2_GOT_LO,R_NIOS2_GOT_HA): Likewise.
+	(R_NIOS2_CALL_LO,R_NIOS2_CALL_HA): Likewise.
+
+2015-01-08  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/unix/sysv/linux/futimens.c (futimens): Use address of first
+	timespec struct member in syscall macro.
+	* sysdeps/unix/sysv/linux/utimensat.c (utimensat): Likewise.
+	* sysdeps/unix/sysv/linux/futimesat.c (futimesat): Use address of
+	first timeval struct member in syscall macro.
+	* sysdeps/unix/sysv/linux/utimes.c (__utimeS): Likewise.
+
+2015-01-07  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #17748]
+	* include/fenv.h (__feupdateenv): Use libm_hidden_proto.
+	* math/feupdateenv.c (__feupdateenv): Use libm_hidden_def.
+	* sysdeps/aarch64/fpu/feupdateenv.c (feupdateenv): Rename to
+	__feupdateenv and define as weak alias of __feupdateenv.  Use
+	libm_hidden_weak.
+	* sysdeps/alpha/fpu/feupdateenv.c (__feupdateenv): Use
+	libm_hidden_def.
+	* sysdeps/arm/feupdateenv.c (feupdateenv): Rename to __feupdateenv
+	and define as weak alias of __feupdateenv.  Use libm_hidden_weak.
+	* sysdeps/hppa/fpu/feupdateenv.c (feupdateenv): Likewise.
+	* sysdeps/i386/fpu/feupdateenv.c (__feupdateenv): Use
+	libm_hidden_def.
+	* sysdeps/ia64/fpu/feupdateenv.c (feupdateenv): Rename to
+	__feupdateenv and define as weak alias of __feupdateenv.  Use
+	libm_hidden_weak.
+	* sysdeps/m68k/fpu/feupdateenv.c (__feupdateenv): Use
+	libm_hidden_def.
+	* sysdeps/mips/fpu/feupdateenv.c (feupdateenv): Rename to
+	__feupdateenv and define as weak alias of __feupdateenv.  Use
+	libm_hidden_weak.
+	* sysdeps/powerpc/fpu/feupdateenv.c (__feupdateenv): Use
+	libm_hidden_def.
+	* sysdeps/powerpc/nofpu/feupdateenv.c (__feupdateenv): Likewise.
+	* sysdeps/powerpc/powerpc32/e500/nofpu/feupdateenv.c
+	(__feupdateenv): Likewise.
+	* sysdeps/s390/fpu/feupdateenv.c (feupdateenv): Rename to
+	__feupdateenv and define as weak alias of __feupdateenv.  Use
+	libm_hidden_weak.
+	* sysdeps/sh/sh4/fpu/feupdateenv.c (feupdateenv): Likewise.
+	* sysdeps/sparc/fpu/feupdateenv.c (__feupdateenv): Use
+	libm_hidden_def.
+	* sysdeps/tile/math_private.h (__feupdateenv): New inline
+	function.
+	* sysdeps/x86_64/fpu/feupdateenv.c (__feupdateenv): Use
+	libm_hidden_def.
+	* sysdeps/generic/math_private.h (default_libc_feupdateenv): Call
+	__feupdateenv instead of feupdateenv.
+	(default_libc_feupdateenv_test): Likewise.
+	(libc_feresetround_ctx): Likewise.
+
+2015-01-07  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/unix/sysv/linux/mips/pread.c (__libc_pread): Fix function
+	prototype.
+
+2015-01-07  Chris Metcalf  <cmetcalf@ezchip.com>
+
+	* posix/regcomp.c (parse_bracket_exp): Initialize type to
+	COLL_SYM in a couple of places to avoid uninitialized variable
+	wanings on tilegx gcc 4.8.2.
+
+2015-01-07  Richard Earnshaw  <rearnsha@arm.com>
+
+	* sysdeps/aarch64/strcpy.S: New file.
+	* sysdeps/aarch64/stpcpy.S: New file.
+	* NEWS: Updated.
+
+2015-01-07  Richard Earnshaw  <rearnsha@arm.com>
+
+	* sysdeps/aarch64/strrchr.S: New file.
+	* NEWS: Updated.
+
+2015-01-07  Eric Biggers  <ebiggers3@gmail.com>
+
+	[BZ #17658]
+	* stdlib/setenv.c: Fix memory leak when setting large,
+	duplicate string.
+
+2015-01-06  Vladimir A. Nazarenko  <naszar@ya.ru>
+
+	[BZ #17273]
+	* misc/mntent_r.c (__getmntent_r): Cut off trailing spaces
+	and tabs from buffer before parsing fstab entry.
+	* misc/tst-mntent.c (main): Add test for mount entry with
+	trailing spaces and tabs.
+
+2015-01-06  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #17748]
+	* include/fenv.h (__fesetround): Declare.  Use libm_hidden_proto.
+	* math/fesetround.c (fesetround): Rename to __fesetround and
+	define as weak alias of __fesetround.  Use libm_hidden_weak.
+	* sysdeps/aarch64/fpu/fesetround.c (fesetround): Likewise.
+	* sysdeps/alpha/fpu/fesetround.c (fesetround): Likewise.
+	* sysdeps/arm/fesetround.c (fesetround): Likewise.
+	* sysdeps/hppa/fpu/fesetround.c (fesetround): Likewise.
+	* sysdeps/i386/fpu/fesetround.c (fesetround): Likewise.
+	* sysdeps/ia64/fpu/fesetround.c (fesetround): Likewise.
+	* sysdeps/m68k/fpu/fesetround.c (fesetround): Likewise.
+	* sysdeps/mips/fpu/fesetround.c (fesetround): Likewise.
+	* sysdeps/powerpc/fpu/fenv_libc.h (__fesetround): Rename to
+	__fesetround_inline.
+	* sysdeps/powerpc/fpu/fenv_private.h (libc_fesetround_ppc): Call
+	__fesetround_inline instead of __fesetround.
+	* sysdeps/powerpc/fpu/fesetround.c (fesetround): Rename to
+	__fesetround and define as weak alias of __fesetround.  Use
+	libm_hidden_weak.  Call __fesetround_inline instead of
+	__fesetround.
+	* sysdeps/powerpc/nofpu/fesetround.c (fesetround): Rename to
+	__fesetround and define as weak alias of __fesetround.  Use
+	libm_hidden_weak.
+	* sysdeps/powerpc/powerpc32/e500/nofpu/fesetround.c (fesetround):
+	Likewise.
+	* sysdeps/s390/fpu/fesetround.c (fesetround): Likewise.
+	* sysdeps/sh/sh4/fpu/fesetround.c (fesetround): Likewise.
+	* sysdeps/sparc/fpu/fesetround.c (fesetround): Likewise.
+	* sysdeps/tile/math_private.h (__fesetround): New inline function.
+	* sysdeps/x86_64/fpu/fesetround.c (fesetround): Rename to
+	__fesetround and define as weak alias of __fesetround.  Use
+	libm_hidden_weak.
+	* sysdeps/generic/math_private.h (default_libc_fesetround): Call
+	__fesetround instead of fesetround.
+	(default_libc_feholdexcept_setround): Likewise.
+	(libc_feholdsetround_ctx): Likewise.
+	(libc_feholdsetround_noex_ctx): Likewise.
+
+	[BZ #17748]
+	* include/fenv.h (__fesetenv): Use libm_hidden_proto.
+	* math/fesetenv.c (__fesetenv): Use libm_hidden_def.
+	* sysdeps/aarch64/fpu/fesetenv.c (fesetenv): Rename to __fesetenv
+	and define as weak alias of __fesetenv.  Use libm_hidden_weak.
+	* sysdeps/alpha/fpu/fesetenv.c (__fesetenv): Use libm_hidden_def.
+	* sysdeps/arm/fesetenv.c (fesetenv): Rename to __fesetenv and
+	define as weak alias of __fesetenv.  Use libm_hidden_weak.
+	* sysdeps/hppa/fpu/fesetenv.c (fesetenv): Likewise.
+	* sysdeps/i386/fpu/fesetenv.c (__fesetenv): Use libm_hidden_def.
+	* sysdeps/ia64/fpu/fesetenv.c (fesetenv): Rename to __fesetenv and
+	define as weak alias of __fesetenv.  Use libm_hidden_weak.
+	* sysdeps/m68k/fpu/fesetenv.c (__fesetenv): Use libm_hidden_def.
+	* sysdeps/mips/fpu/fesetenv.c (fesetenv): Rename to __fesetenv and
+	define as weak alias of __fesetenv.  Use libm_hidden_weak.
+	* sysdeps/powerpc/fpu/fesetenv.c (__fesetenv): Use
+	libm_hidden_def.
+	* sysdeps/powerpc/nofpu/fesetenv.c (__fesetenv): Likewise.
+	* sysdeps/powerpc/powerpc32/e500/nofpu/fesetenv.c (__fesetenv):
+	Likewise.
+	* sysdeps/s390/fpu/fesetenv.c (fesetenv): Rename to __fesetenv and
+	define as weak alias of __fesetenv.  Use libm_hidden_weak.
+	* sysdeps/sh/sh4/fpu/fesetenv.c (fesetenv): Likewise.
+	* sysdeps/sparc/fpu/fesetenv.c (__fesetenv): Use libm_hidden_def.
+	* sysdeps/tile/math_private.h (__fesetenv): New inline function.
+	* sysdeps/x86_64/fpu/fesetenv.c (fesetenv): Rename to __fesetenv
+	and define as weak alias of __fesetenv.  Use libm_hidden_weak.
+	* sysdeps/generic/math_private.h (default_libc_fesetenv): Use
+	__fesetenv instead of fesetenv.
+	(libc_feresetround_noex_ctx): Likewise.
+	* sysdeps/alpha/fpu/feupdateenv.c (__feupdateenv): Likewise.
+	* sysdeps/hppa/fpu/feupdateenv.c (feupdateenv): Likewise.
+	* sysdeps/i386/fpu/feupdateenv.c (__feupdateenv): Likewise.
+	* sysdeps/ia64/fpu/feupdateenv.c (feupdateenv): Likewise.
+	* sysdeps/m68k/fpu/feupdateenv.c (__feupdateenv): Likewise.
+	* sysdeps/mips/fpu/feupdateenv.c (feupdateenv): Likewise.
+	* sysdeps/powerpc/nofpu/feupdateenv.c (__feupdateenv): Likewise.
+	* sysdeps/powerpc/powerpc32/e500/nofpu/feupdateenv.c
+	(__feupdateenv): Likewise.
+	* sysdeps/s390/fpu/feupdateenv.c (feupdateenv): Likewise.
+	* sysdeps/sh/sh4/fpu/feupdateenv.c (feupdateenv): Likewise.
+	* sysdeps/sparc/fpu/feupdateenv.c (__feupdateenv): Likewise.
+	* sysdeps/x86_64/fpu/feupdateenv.c (__feupdateenv): Likewise.
+
+2015-01-06  Aurelien Jarno  <aurelien@aurel32.net>
+
+	[BZ #17806]
+	* resolv/res_init.c (__res_iclose): Only clear nsinit if the
+	addresses have been freed.
+
+2015-01-06  Aurelien Jarno  <aurelien@aurel32.net>
+
+	* resolv/res_init.c (__res_vinit): Improve comments about nserv
+	and nservall.
+
+2015-01-06  Ondřej Bílka  <neleai@seznam.cz>
+
+	* sysdeps/unix/sysv/linux/check_pf.c (make_request):
+	Clean up check_pf allocation pattern. addresses
+
+2015-01-06  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* nptl/pthread_cancel.c (pthread_cancel): Use ANSI prototype.
+	* nptl/pthread_cond_timedwait.c (__pthread_cond_timedwait): Likewise.
+	* nptl/pthread_cond_wait.c (__pthread_cond_wait): Likewise.
+	* nptl/pthread_exit.c (__pthread_exit): Likewise.
+	* nptl/pthread_join.c (pthread_join): Likewise.
+	* nptl/pthread_timedjoin.c (pthread_timedjoin_np): Likewise.
+	* sysdeps/posix/waitid.c (__waitid): Likewise.
+	* sysdeps/unix/sysv/linux/arm/pread.c (__libc_pread): Likewise.
+	* sysdeps/unix/sysv/linux/arm/pread64.c (__libc_pread64): Likewise.
+	* sysdeps/unix/sysv/linux/arm/pwrite.c (__libc_pwrite): Likewise.
+	* sysdeps/unix/sysv/linux/arm/pwrite64.c (__libc_pwrite64): Likewise.
+	* sysdeps/unix/sysv/linux/generic/wordsize-32/pread.c (__libc_pread):
+	Likewise.
+	* sysdeps/unix/sysv/linux/generic/wordsize-32/pread64.c
+	(__libc_pread64): Likewise.
+	* sysdeps/unix/sysv/linux/generic/wordsize-32/pwrite.c
+	(__libc_pwrite): Likewise.
+	* sysdeps/unix/sysv/linux/generic/wordsize-32/pwrite64.c
+	(__libc_pwrite64): Likewsie.
+	* sysdeps/unix/sysv/linux/mips/pread.c (__libc_pread): Likewise.
+	* sysdeps/unix/sysv/linux/mips/pread64.c (__libc_pread64): Likewise.
+	* sysdeps/unix/sysv/linux/mips/pwrite.c (__libc_pwrite): Likewise.
+	* sysdeps/unix/sysv/linux/mips/pwrite64.c (__libc_pwrite64): Likewise.
+	* sysdeps/unix/sysv/linux/msgrcv.c (__libc_msgrcv): Likewise.
+	* sysdeps/unix/sysv/linux/msgsnd.c (__libc_msgsnd): Likewise.
+	* sysdeps/unix/sysv/linux/openat.c (OPENAT_NOT_CANCEL): Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/pread.c (__libc_pread):
+	Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/pread64.c
+	(__libc_pread64): Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/pwrite.c (__libc_pwrite):
+	Likewise.
+	* sysdeps/unix/sysv/linux/powerpc/powerpc32/pwrite64.c
+	(__libc_pwrite64): Likewise.
+	* sysdeps/unix/sysv/linux/pread.c (__libc_pread): Likewise.
+	* sysdeps/unix/sysv/linux/pread64.c (__libc_pread64): Likewise.
+	* sysdeps/unix/sysv/linux/preadv.c (PREADV): Likewise.
+	* sysdeps/unix/sysv/linux/pthread_kill.c (__pthread_kill): Likewise.
+	* sysdeps/unix/sysv/linux/pwrite.c (__libc_pwrite): Likewise.
+	* sysdeps/unix/sysv/linux/pwrite64.c (__libc_pwrite64): Likewise.
+	* sysdeps/unix/sysv/linux/pwritev.c (__libc_pwritev): Likewise.
+	* sysdeps/unix/sysv/linux/sh/pread.c (__libc_pread): Likewise.
+	* sysdeps/unix/sysv/linux/sh/pread64.c (__libc_pread64): Likewise.
+	* sysdeps/unix/sysv/linux/sh/pwrite.c (__libc_pwrite): Likewise.
+	* sysdeps/unix/sysv/linux/sh/pwrite64.c (__libc_write64): Likewise.
+	* sysdeps/unix/sysv/linux/sigsuspend.c (__sigsuspend): Likewise.
+	* sysdeps/unix/sysv/linux/sigtimedwait.c (__sigtimedwait): Likewise.
+	* sysdeps/unix/sysv/linux/sigwait.c (__sigwait): Likewise.
+	* sysdeps/unix/sysv/linux/sigwaitinfo.c (__sigwaitinfo): Likewise.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/msgrcv.c (__libc_msgrcv):
+	Likewise.
+
+2015-01-06  Andrew Senkevich  <andrew.n.senkevich@gmail.com>
+
+	* math/Makefile (CFLAGS-test-float.c): Remove -frounding-math.
+	(CFLAGS-test-double.c): Likewise.
+	(CFLAGS-test-ldouble.c): Likewise.
+	(CPPFLAGS-test-ifloat.c): Likewise.
+	(CPPFLAGS-test-idouble.c): Likewise.
+	(CPPFLAGS-test-ildoubl.c): Likewise.
+	(CFLAGS-test-test-fenv.c): Remove variable.
+	(CFLAGS-test-misc.c): Likewise.
+
+2015-01-06  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #17797]
+	* bits/time.h (CLOCKS_PER_SEC): Changed to ((clock_t) 1000000).
+	* sysdeps/unix/sysv/linux/bits/time.h (CLOCKS_PER_SEC): Likewise.
+	* sysdeps/unix/sysv/linux/clock.c (clock): _Static_assert
+	CLOCKS_PER_SEC == 1000000.
+	* time/clocktest.c (main): Replace %ld with %jd and cast to
+	intmax_t.
+
+2015-01-05  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/generic/unwind-resume.h: New file.
+	* sysdeps/gnu/unwind-resume.c: Include it.
+	(libgcc_s_personality): Use PERSONALITY_PROTO macro for the prototype.
+	(__gcc_personality_v0): Likewise, and PERSONALITY_ARGS for the callee
+	argument list.
+	(libgcc_s_resume): Variable renamed to __libgcc_s_resume, made hidden
+	global rather than static.
+	(_Unwind_Resume): Update user.
+	Conditionalize definition on [!HAVE_ARCH_UNWIND_RESUME].
+	(init): Likewise.  Renamed to __libgcc_s_init, made hidden global
+	rather than static.  Add __attribute__ ((cold)).
+	(_Unwind_Resume, __gcc_personality_v0): Update callers.
+	* sysdeps/nptl/unwind-forcedunwind.c: Likewise.
+	* sysdeps/arm/arm-unwind-resume.S: New file.
+	* sysdeps/arm/rt-arm-unwind-resume.S: New file.
+	* sysdeps/arm/pt-arm-unwind-resume.S: New file.
+	* sysdeps/arm/Makefile [$(subdir) = csu]
+	(sysdep_routines, shared-only-routines): Add arm-unwind-resume.
+	[$(subdir) = rt] (librt-sysdep_routines, librt-shared-only-routines):
+	Add rt-arm-unwind-resume.
+	[$(subdir) = nptl]
+	(libpthread-sysdep_routines, libpthread-shared-only-routines):
+	Add pt-arm-unwind-resume.
+	* sysdeps/unix/sysv/linux/arm/unwind-resume.c: File removed.
+	* sysdeps/unix/sysv/linux/arm/unwind-forcedunwind.c: File removed.
+
+2015-01-05  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #17748]
+	* include/fenv.h (__feholdexcept): Declare.  Use
+	libm_hidden_proto.
+	* math/feholdexcpt.c (feholdexcept): Rename to __feholdexcept and
+	define as weak alias of __feholdexcept.  Use libm_hidden_weak.
+	* sysdeps/aarch64/fpu/feholdexcpt.c (feholdexcept): Likewise.
+	* sysdeps/alpha/fpu/feholdexcpt.c (feholdexcept): Likewise.
+	* sysdeps/arm/feholdexcpt.c (feholdexcept): Likewise.
+	* sysdeps/hppa/fpu/feholdexcpt.c (feholdexcept): Likewise.
+	* sysdeps/i386/fpu/feholdexcpt.c (feholdexcept): Likewise.
+	* sysdeps/ia64/fpu/feholdexcpt.c (feholdexcept): Likewise.
+	* sysdeps/m68k/fpu/feholdexcpt.c (feholdexcept): Likewise.
+	* sysdeps/mips/fpu/feholdexcpt.c (feholdexcept): Likewise.
+	* sysdeps/powerpc/fpu/feholdexcpt.c (feholdexcept): Likewise.
+	* sysdeps/powerpc/nofpu/feholdexcpt.c (feholdexcept): Likewise.
+	* sysdeps/powerpc/powerpc32/e500/nofpu/feholdexcpt.c
+	(feholdexcept): Likewise.
+	* sysdeps/s390/fpu/feholdexcpt.c (feholdexcept): Likewise.
+	* sysdeps/sh/sh4/fpu/feholdexcpt.c (feholdexcept): Likewise.
+	* sysdeps/sparc/fpu/feholdexcpt.c (feholdexcept): Likewise.
+	* sysdeps/x86_64/fpu/feholdexcpt.c (feholdexcept): Likewise.
+	* sysdeps/generic/math_private.h (default_libc_feholdexcept): Use
+	__feholdexcept instead of feholdexcept.
+	(default_libc_feholdexcept_setround): Likewise.
+
+2015-01-05  Steve Ellcey  <sellcey@imgtec.com>
+
+	* sysdeps/mips/memset.S (memset): Modify for mips32r6/mips64r6
+	to avoid using stl/str to align destination.
+
+2015-01-05  Steve Ellcey  <sellcey@imgtec.com>
+
+	* sysdeps/mips/memcpy.S: Add support for mips32r6/mips64r6.
+
+2015-01-05  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #17796]
+	* sysdeps/unix/sysv/linux/mips/mips64/n64/posix_fadvise.c
+	[!SHLIB_COMPAT(libc, GLIBC_2_2, GLIBC_2_3_3)] (posix_fadvise64):
+	Define as weak alias not strong alias.
+
+2015-01-05  Steve Ellcey  <sellcey@imgtec.com>
+
+	* sysdeps/mips/dl-machine.h (elf_machine_load_address): Replace
+	bltzal with addiupc.
+	(RTLD_START): Ditto.
+
+2015-01-05  Chris Metcalf  <cmetcalf@ezchip.com>
+
+        * sysdeps/unix/sysv/linux/tile/bits/libc-vdso.h: Fix return type
+        for __vdso_* functions in declarations.
+        * sysdeps/unix/sysv/linux/tile/init-first.c: Likewise for
+        definitions.
+        * sysdeps/unix/sysv/linux/tile/sysdep.h (INLINE_VSYSCALL,
+        INTERNAL_VSYSCALL): Use struct return types to check for error.
+
+	* sysdeps/ieee754/dbl-64/wordsize-64/s_llround.c [!defined _LP64
+	&& REGISTER_CAST_INT32_TO_INT64]: Provide explicit lround()
+	function with cast from llround().
+	* sysdeps/tile/sysdep.h (REGISTER_CAST_INT32_TO_INT64): Define.
+	* sysdeps/x86_64/x32/sysdep.h (REGISTER_CAST_INT32_TO_INT64):
+	Define.
+
+2015-01-05  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #17793]
+	* sysdeps/unix/sysv/linux/arm/posix_fadvise64.c (posix_fadvise64):
+	Define as weak alias not strong alias.
+
+	[BZ #17635]
+	* ctype/ctype-c99.c: New file.  isblank implementation moved from
+	...
+	* ctype/ctype-extn.c: ... here.
+	(__isblank_l): Move to ...
+	* ctype/ctype-c99_l.c: ... here.  New file.
+	* ctype/Makefile (routines): Add ctype-c99 and ctype-c99_l.
+	* conform/Makefile (test-xfail-ISO99/ctype.h/linknamespace):
+	Remove variable.
+	(test-xfail-ISO11/ctype.h/linknamespace): Likewise.
+	(test-xfail-XPG3/ctype.h/linknamespace): Likewise.
+	(test-xfail-XPG4/ctype.h/linknamespace): Likewise.
+	(test-xfail-UNIX98/ctype.h/linknamespace): Likewise.
+	(test-xfail-POSIX2008/ctype.h/linknamespace): Likewise.
+
+	[BZ #17777]
+	* sysdeps/unix/sysv/linux/wordsize-64/posix_fadvise.c
+	(posix_fadvise64): Define as weak alias not strong alias.
+	* sysdeps/unix/sysv/linux/wordsize-64/posix_fallocate.c
+	(posix_fallocate64): Likewise.
+	* conform/Makefile (test-xfail-XOPEN2K/fcntl.h/linknamespace):
+	Remove variable.
+	(test-xfail-XOPEN2K/mqueue.h/linknamespace): Likewise.
+	(test-xfail-POSIX2008/fcntl.h/linknamespace): Likewise.
+	(test-xfail-POSIX2008/mqueue.h/linknamespace): Likewise.
+	(test-xfail-XOPEN2K8/fcntl.h/linknamespace): Likewise.
+	(test-xfail-XOPEN2K8/mqueue.h/linknamespace): Likewise.
+
+2015-01-05  Matthew Fortune  <matthew.fortune@imgtec.com>
+
+	[BZ #16191]
+	* NEWS: Mention bug fix.
+	* sysdeps/unix/sysv/linux/mips/sys/user.h (PAGE_SHIFT): Remove.
+	(PAGE_SIZE, PAGE_MASK, NBPG, UPAGES): Likewise.
+	(HOST_TEXT_START_ADDR, HOST_DATA_START_ADDR): Likewise.
+	(HOST_STACK_END_ADDR): Likewise.
+
+2015-01-02  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #17748]
+	* include/fenv.h (__fegetround): Declare.  Use libm_hidden_proto.
+	* math/fegetround.c (fegetround): Rename to __fegetround and
+	define as weak alias of __fegetround.  Use libm_hidden_weak.
+	* sysdeps/aarch64/fpu/fegetround.c (fegetround): Likewise.
+	* sysdeps/alpha/fpu/fegetround.c (fegetround): Likewise.
+	* sysdeps/arm/fegetround.c (fegetround): Likewise.
+	* sysdeps/hppa/fpu/fegetround.c (fegetround): Likewise.
+	* sysdeps/i386/fpu/fegetround.c (fegetround): Likewise.
+	* sysdeps/ia64/fpu/fegetround.c (fegetround): Likewise.
+	* sysdeps/m68k/fpu/fegetround.c (fegetround): Likewise.
+	* sysdeps/mips/fpu/fegetround.c (fegetround): Likewise.
+	* sysdeps/powerpc/fpu/fegetround.c (fegetround): Likewise.
+	Undefine after rather than before function definition; use
+	parentheses around function name in definition.
+	(__fegetround): Also undefine macro after function definition.
+	* sysdeps/powerpc/nofpu/fegetround.c (fegetround): Rename to
+	__fegetround and define as weak alias of __fegetround.  Use
+	libm_hidden_weak.  Do not undefine as macro.
+	* sysdeps/powerpc/powerpc32/e500/nofpu/fegetround.c (fegetround):
+	Likewise.
+	* sysdeps/s390/fpu/fegetround.c (fegetround): Rename to
+	__fegetround and define as weak alias of __fegetround.  Use
+	libm_hidden_weak.
+	* sysdeps/sh/sh4/fpu/fegetround.c (fegetround): Likewise.
+	* sysdeps/sparc/fpu/fegetround.c (fegetround): Likewise.
+	* sysdeps/tile/math_private.h (__fegetround): New inline function.
+	* sysdeps/x86_64/fpu/fegetround.c (fegetround): Rename to
+	__fegetround and define as weak alias of __fegetround.  Use
+	libm_hidden_weak.
+	* sysdeps/ieee754/dbl-64/e_sqrt.c (__ieee754_sqrt): Use
+	__fegetround instead of fegetround.
+
+	[BZ #17782]
+	* sysdeps/unix/sysv/linux/mips/bits/termios.h (TIOCSER_TEMT):
+	Condition macro definition on [__USE_MISC].
+
+	[BZ #17781]
+	* sysdeps/unix/sysv/linux/mips/bits/sigaction.h
+	(struct sigaction): Change type of sa_flags field to int.
+
+	[BZ #17780]
+	* sysdeps/unix/sysv/linux/mips/bits/fcntl.h (struct flock)
+	[!__USE_FILE_OFFSET64 && _MIPS_SIM != _ABI64]: Rename pad field to
+	__glibc_reserved0.
+
+	* nptl/version.c (banner): Use single year in copyright notice.
+
+	* NEWS: Update copyright dates.
+	* catgets/gencat.c (print_version): Likewise.
+	* csu/version.c (banner): Likewise.
+	* debug/catchsegv.sh: Likewise.
+	* debug/pcprofiledump.c (print_version): Likewise.
+	* debug/xtrace.sh (do_version): Likewise.
+	* elf/ldconfig.c (print_version): Likewise.
+	* elf/ldd.bash.in: Likewise.
+	* elf/pldd.c (print_version): Likewise.
+	* elf/sotruss.sh: Likewise.
+	* elf/sprof.c (print_version): Likewise.
+	* iconv/iconv_prog.c (print_version): Likewise.
+	* iconv/iconvconfig.c (print_version): Likewise.
+	* locale/programs/locale.c (print_version): Likewise.
+	* locale/programs/localedef.c (print_version): Likewise.
+	* login/programs/pt_chown.c (print_version): Likewise.
+	* malloc/memusage.sh (do_version): Likewise.
+	* malloc/memusagestat.c (print_version): Likewise.
+	* malloc/mtrace.pl: Likewise.
+	* manual/libc.texinfo: Likewise.
+	* nptl/version.c (banner): Likewise.
+	* nscd/nscd.c (print_version): Likewise.
+	* nss/getent.c (print_version): Likewise.
+	* nss/makedb.c (print_version): Likewise.
+	* posix/getconf.c (main): Likewise.
+	* scripts/test-installation.pl: Likewise.
+	* sysdeps/unix/sysv/linux/lddlibc4.c (main): Likewise.
+
+2015-01-02  Will Newton  <will.newton@linaro.org>
+
+	* sysdeps/arm/armv7/configure: Removed.
+	* sysdeps/arm/armv7/configure.ac: Likewise.
+
+2015-01-02  Joseph Myers  <joseph@codesourcery.com>
+
+	* All files with FSF copyright notices: Update copyright dates
+	using scripts/update-copyrights.
+	* intl/plural.c: Regenerated.
+	* locale/programs/charmap-kw.h: Likewise.
+	* locale/programs/locfile-kw.h: Likewise.
+
+2015-01-02  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* scripts/gen-posix-conf-vars.awk (END): Don't use sprintf.
+
+2014-12-31  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #17748]
+	* include/fenv.h (__fegetenv): Use libm_hidden_proto.
+	* math/fegetenv.c (__fegetenv): Use libm_hidden_def.
+	* sysdeps/aarch64/fpu/fegetenv.c (fegetenv): Rename to __fegetenv
+	and define as weak alias of __fegetenv.  Use libm_hidden_weak.
+	* sysdeps/alpha/fpu/fegetenv.c (__fegetenv): Use libm_hidden_def.
+	* sysdeps/arm/fegetenv.c (fegetenv): Rename to __fegetenv and
+	define as weak alias of __fegetenv.  Use libm_hidden_weak.
+	* sysdeps/hppa/fpu/fegetenv.c (fegetenv): Likewise.
+	* sysdeps/i386/fpu/fegetenv.c (__fegetenv): Use libm_hidden_def.
+	* sysdeps/ia64/fpu/fegetenv.c (fegetenv): Rename to __fegetenv and
+	define as weak alias of __fegetenv.  Use libm_hidden_weak.
+	* sysdeps/m68k/fpu/fegetenv.c (__fegetenv): Use libm_hidden_def.
+	* sysdeps/mips/fpu/fegetenv.c (fegetenv): Rename to __fegetenv and
+	define as weak alias of __fegetenv.  Use libm_hidden_weak.
+	* sysdeps/powerpc/fpu/fegetenv.c (__fegetenv): Use
+	libm_hidden_def.
+	* sysdeps/powerpc/nofpu/fegetenv.c (__fegetenv): Likewise.
+	* sysdeps/powerpc/powerpc32/e500/nofpu/fegetenv.c (__fegetenv):
+	Likewise.
+	* sysdeps/s390/fpu/fegetenv.c (fegetenv): Rename to __fegetenv and
+	define as weak alias of __fegetenv.  Use libm_hidden_weak.
+	* sysdeps/sh/sh4/fpu/fegetenv.c (fegetenv): Likewise.
+	* sysdeps/sparc/fpu/fegetenv.c (__fegetenv): Use libm_hidden_def.
+	* sysdeps/tile/math_private.h (__fegetenv): New inline function.
+	* sysdeps/x86_64/fpu/fegetenv.c (fegetenv): Rename to __fegetenv
+	and define as weak alias of __fegetenv.  Use libm_hidden_weak.
+	* sysdeps/generic/math_private.h (libc_feholdsetround_ctx): Use
+	__fegetenv instead of fegetenv.
+	(libc_feholdsetround_noex_ctx): Likewise.
+
+2014-12-31  Matthew Fortune  <matthew.fortune@imgtec.com>
+
+	* elf/elf.h (PT_MIPS_ABIFLAGS): Define.
+	(Elf_MIPS_ABIFlags_v0): New structure.
+	(EF_MIPS_FP64): Define.
+	(MIPS_AFL_REG_NONE, MIPS_AFL_REG_32, MIPS_AFL_REG_64): Likewise.
+	(MIPS_AFL_REG_128, MIPS_AFL_ASE_DSP, MIPS_AFL_ASE_DSP64): Likewise.
+	(MIPS_AFL_ASE_DSPR2, MIPS_AFL_ASE_EVA, MIPS_AFL_ASE_MCU): Likewise.
+	(MIPS_AFL_ASE_MDMX, MIPS_AFL_ASE_MIPS3D, MIPS_AFL_ASE_MT): Likewise.
+	(MIPS_AFL_ASE_SMARTMIPS, MIPS_AFL_ASE_VIRT): Likewise.
+	(MIPS_AFL_ASE_VIRT64, MIPS_AFL_ASE_MSA, MIPS_AFL_ASE_MSA64): Likewise.
+	(MIPS_AFL_ASE_MIPS16, MIPS_AFL_ASE_MICROMIPS): Likewise.
+	(MIPS_AFL_ASE_XPA, MIPS_AFL_EXT_XLR, MIPS_AFL_EXT_OCTEON2): Likewise.
+	(MIPS_AFL_EXT_OCTEONP, MIPS_AFL_EXT_LOONGSON_3A): Likewise.
+	(MIPS_AFL_EXT_OCTEON, MIPS_AFL_EXT_5900, MIPS_AFL_EXT_4010): Likewise.
+	(MIPS_AFL_EXT_4100, MIPS_AFL_EXT_3900, MIPS_AFL_EXT_10000): Likewise.
+	(MIPS_AFL_EXT_SB1, MIPS_AFL_EXT_4111, MIPS_AFL_EXT_4120): Likewise.
+	(MIPS_AFL_EXT_5400, MIPS_AFL_EXT_5500): Likewise.
+	(MIPS_AFL_EXT_LOONGSON_2E, MIPS_AFL_EXT_LOONGSON_2F): Likewise.
+	(Val_GNU_MIPS_ABI_FP_ANY, Val_GNU_MIPS_ABI_FP_DOUBLE): New enum values.
+	(Val_GNU_MIPS_ABI_FP_SINGLE, Val_GNU_MIPS_ABI_FP_SOFT): Likewise.
+	(Val_GNU_MIPS_ABI_FP_OLD_64, Val_GNU_MIPS_ABI_FP_XX): Likewise.
+	(Val_GNU_MIPS_ABI_FP_64, Val_GNU_MIPS_ABI_FP_64A): Likewise.
+	(Val_GNU_MIPS_ABI_FP_MAX): Likewise.
+	* sysdeps/mips/Makefile [subdir=elf]: Add tst-abi-interlink,
+	tst-mode-switch-1, tst-mode-switch-2, tst-mode-switch-3 tests.
+	* sysdeps/mips/bits/linkmap.h (struct link_map_machine): Add fpmode
+	field.
+	* sysdeps/mips/dl-machine.h (elf_machine_matches_host): Reject
+	EF_MIPS_FP64.
+	* sysdeps/mips/dl-machine-reject-phdr.h: New file.
+	* sysdeps/mips/tst-abi-fp32mod.c: Likewise.
+	* sysdeps/mips/tst-abi-fpxxmod.c: Likewise.
+	* sysdeps/mips/tst-abi-fpxxomod.c: Likewise.
+	* sysdeps/mips/tst-abi-fp64mod.c: Likewise.
+	* sysdeps/mips/tst-abi-fp64amod.c: Likewise.
+	* sysdeps/mips/tst-abi-interlink.c: Likewise.
+	* sysdeps/mips/tst-mode-switch-1.c: Likewise.
+	* sysdeps/mips/tst-mode-switch-2.c: Likewise.
+	* sysdeps/mips/tst-mode-switch-3.c: Likewise.
+	* sysdeps/unix/sysv/linux/mips/configure.ac (o32-fpabi): Define to
+	record the current FP ABI extension.
+	(mips-mode-switch): Define to show if kernel headers support mode
+	switching.
+	* sysdeps/unix/sysv/linux/mips/configure: Regenerate.
+	* sysdeps/unix/sysv/linux/mips/ldsodefs.h: Increase maximum
+	supported SYSV ABI version to 3.
+	* sysdeps/unix/sysv/linux/mips/libc-abis: Add new MIPS_O32_FP64
+	feature.
+
+2014-12-31  Rajalakshmi Srinivasaraghavan  <raji@linux.vnet.ibm.com>
+	    Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/powerpc/powerpc64/power7/strcpy.S (strcpy): Optimize unaligned
+	path.
+	* benchtests/bench-strcpy.c (test_main): Add more unaligned inputs.
+
+2014-12-31  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/powerpc/bits/fenvinline.h (fegetround): Rename macro to
+	__fegetround and redefine to call __fegetround.  Remove condition
+	on [!__NO_MATH_INLINES].
+	* sysdeps/powerpc/fpu/fenv_libc.h (__fegetround): Remove inline
+	function.
+	* sysdeps/powerpc/nofpu/fenv_libc.h: Remove file.
+	* sysdeps/powerpc/powerpc32/e500/nofpu/fenv_libc.h (__fegetround):
+	Remove macro.
+	* sysdeps/ieee754/ldbl-128ibm/s_llrintl.c: Include <fenv.h>
+	instead of <fenv_libc.h>.
+	(__llrintl): Call fegetround instead of __fegetround.
+	* sysdeps/ieee754/ldbl-128ibm/s_llroundl.c: Include <fenv.h>
+	instead of <fenv_libc.h>.
+	* sysdeps/ieee754/ldbl-128ibm/s_lrintl.c: Likewise.
+	(__lrintl): Call fegetround instead of __fegetround.
+	* sysdeps/ieee754/ldbl-128ibm/s_lroundl.c: Include <fenv.h>
+	instead of <fenv_libc.h>.
+	* sysdeps/ieee754/ldbl-128ibm/s_rintl.c: Likewise.
+	(__rintl): Call fegetround instead of __fegetround.
+
+2014-12-31  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* scripts/gen-posix-conf-vars.awk: Don't use multi-dimensional
+	arrays.
+
+2014-12-30  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #17775]
+	* sysdeps/i386/dl-machine.h (PI_STATIC_AND_HIDDEN): Removed.
+	(elf_machine_dynamic) [!PI_STATIC_AND_HIDDEN]: Likewise.
+	(elf_machine_load_address) [!PI_STATIC_AND_HIDDEN]: Likewise.
+
+2014-12-30  Andrew Senkevich  <andrew.senkevich@intel.com>
+
+	* sysdeps/i386/tls-macros.h: Include <features.h>.
+	(TLS_LE): Use non-PIC version for GCC >= 5.0.
+	(TLS_IE): Likewise.
+	(TLS_LD): Likewise.
+	(TLS_GD): Likewise.
+	* sysdeps/unix/sysv/linux/i386/sysdep.h (check_consistency): Don't
+	define for GCC >= 5.0.
+
+2014-12-30  Chris Metcalf  <cmetcalf@ezchip.com>
+
+	* math/test-fenv.c (test_single_exception, set_single_exc,
+	feenv_nomask_test, feenv_mask_test, feexcp_nomask_test,
+	feexcp_mask_test, feenable_test, fe_single_test): Add
+	[!FE_ALL_EXCEPT] test so these routines are not compiled in the
+	case where they are not used.
+	* math/libm-test.inc: Likewise.
+	* setjmp/test-setjmp-fp.c: Mark attribute ((unused)) on variable
+	unused in the absence of FP rounding/exception support.
+	* stdio-common/tst-printf-round.c: Likewise.
+	* stdlib/tst-strtod-round.c: Likewise.
+	* stdlib/tst-strtod-underflow.c: Likewise.
+
+2014-12-30  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #17723]
+	* include/fenv.h (__feraiseexcept): Use libm_hidden_proto.
+	* math/fraiseexcpt.c (__feraiseexcept): Use libm_hidden_def.
+	* sysdeps/aarch64/fpu/fraiseexcpt.c (feraiseexcept): Rename to
+	__feraiseexcept and define as weak alias of __feraiseexcept.  Use
+	libm_hidden_weak.
+	* sysdeps/arm/fraiseexcpt.c (feraiseexcept): Likewise.
+	* sysdeps/hppa/fpu/fraiseexcpt.c (feraiseexcept): Likewise.
+	* sysdeps/i386/fpu/fraiseexcpt.c (__feraiseexcept): Use
+	libm_hidden_def.
+	* sysdeps/ia64/fpu/fraiseexcpt.c (feraiseexcept): Rename to
+	__feraiseexcept and define as weak alias of __feraiseexcept.  Use
+	libm_hidden_weak.
+	* sysdeps/m68k/coldfire/fpu/fraiseexcpt.c (feraiseexcept):
+	Likewise.
+	* sysdeps/microblaze/math_private.h (__feraiseexcept): New macro.
+	* sysdeps/mips/fpu/fraiseexcpt.c (feraiseexcept): Rename to
+	__feraiseexcept and define as weak alias of __feraiseexcept.  Use
+	libm_hidden_weak.
+	* sysdeps/powerpc/fpu/fraiseexcpt.c (__feraiseexcept): Use
+	libm_hidden_def.
+	* sysdeps/powerpc/nofpu/fraiseexcpt.c (__feraiseexcept): Likewise.
+	* sysdeps/powerpc/powerpc32/e500/nofpu/fraiseexcpt.c
+	(__feraiseexcept): Likewise.
+	* sysdeps/s390/fpu/fraiseexcpt.c (feraiseexcept): Rename to
+	__feraiseexcept and define as weak alias of __feraiseexcept.  Use
+	libm_hidden_weak.
+	* sysdeps/sh/sh4/fpu/fraiseexcpt.c (feraiseexcept): Likewise.
+	* sysdeps/sparc/fpu/fraiseexcpt.c (__feraiseexcept): Use
+	libm_hidden_def.
+	* sysdeps/tile/math_private.h (__feraiseexcept): New macro.
+	* sysdeps/unix/sysv/linux/alpha/fraiseexcpt.S (__feraiseexcept):
+	Use libm_hidden_def.
+	* sysdeps/x86_64/fpu/fraiseexcpt.c (__feraiseexcept): Use
+	libm_hidden_def.
+	(feraiseexcept): Define as weak not strong alias.  Use
+	libm_hidden_weak.
+	* sysdeps/x86/fpu/bits/fenv.h (__feraiseexcept_invalid_divbyzero):
+	New inline function.  Factored out of ...
+	(feraiseexcept): ... here.  Use __feraiseexcept_invalid_divbyzero.
+	* sysdeps/x86/fpu/include/bits/fenv.h: New file.
+	* math/e_scalb.c (invalid_fn): Call __feraiseexcept instead of
+	feraiseexcept.
+	* math/w_acos.c (__acos): Likewise.
+	* math/w_asin.c (__asin): Likewise.
+	* math/w_ilogb.c (__ilogb): Likewise.
+	* math/w_j0.c (y0): Likewise.
+	* math/w_j1.c (y1): Likewise.
+	* math/w_jn.c (yn): Likewise.
+	* math/w_log.c (__log): Likewise.
+	* math/w_log10.c (__log10): Likewise.
+	* sysdeps/aarch64/fpu/feupdateenv.c (feupdateenv): Likewise.
+	* sysdeps/aarch64/fpu/math_private.h
+	(libc_feupdateenv_test_aarch64): Likewise.
+	* sysdeps/alpha/fpu/feupdateenv.c (__feupdateenv): Likewise.
+	* sysdeps/arm/fenv_private.h (libc_feupdateenv_test_vfp): Likewise.
+	* sysdeps/arm/feupdateenv.c (feupdateenv): Likewise.
+	* sysdeps/ia64/fpu/feupdateenv.c (feupdateenv): Likewise.
+	* sysdeps/m68k/fpu/feupdateenv.c (__feupdateenv): Likewise.
+	* sysdeps/mips/fpu/feupdateenv.c (feupdateenv): Likewise.
+	* sysdeps/powerpc/fpu/e_sqrt.c (__slow_ieee754_sqrt): Likewise.
+	* sysdeps/s390/fpu/feupdateenv.c (feupdateenv): Likewise.
+	* sysdeps/sh/sh4/fpu/feupdateenv.c (feupdateenv): Likewise.
+	* sysdeps/sparc/fpu/feupdateenv.c (__feupdateenv): Likewise.
+
+2014-12-30  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #17732]
+	* io/test-utime.c (main): Replace %ld with %jd and cast to
+	intmax_t.
+	* libio/tst-ftell-active-handler.c (do_append_test): Likewise.
+	* nptl/tst-mutex5.c: Include <stdint.h>.
+	(do_test): Replace %ld with %jd and cast to intmax_t.
+	* posix/tst-regex.c (run_test): Likewise.
+	(run_test_backwards): Likewise.
+	* rt/tst-clock.c: Include <stdint.h>.
+	(clock_test): Replace %ld with %jd and cast to intmax_t.
+	* rt/tst-cpuclock1.c: Include <stdint.h>.
+	(do_test): Replace %lu with %ju and cast to uintmax_t.
+	* rt/tst-cpuclock2.c: Include <stdint.h>.
+	(do_test): Replace %lu with %ju and cast to uintmax_t.
+	* rt/tst-mqueue1.c: Include <stdint.h>.
+	(check_attrs): Replace %ld with %jd and cast to intmax_t.
+	* rt/tst-mqueue3.c (fct): Replace %ld with %jd and cast to
+	intmax_t.
+	* rt/tst-mqueue4.c (do_test): Likewise.
+	* rt/tst-timer4.c: Include <stdint.h>.
+	(check_ts): Replace %ld with %jd and cast to intmax_t.
+	(do_test): Likewise.
+	* stdio-common/tst-fmemopen2.c (do_test): Replace %ld with %jd
+	and cast to intmax_t.
+	* sysdeps/pthread/tst-timer.c (main): Likewise.
+	* time/clocktest.c (main): Likewise.
+	* time/tst-posixtz.c (do_test): Likewise.
+	* timezone/tst-timezone.c (main): Likewise.
+
+2014-12-30  Andrew Senkevich  <andrew.senkevich@intel.com>
+	    H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/i386/i686/multiarch/bcopy-sse2-unaligned.S: New file.
+	* sysdeps/i386/i686/multiarch/memcpy-sse2-unaligned.S: Likewise.
+	* sysdeps/i386/i686/multiarch/memmove-sse2-unaligned.S: Likewise.
+	* sysdeps/i386/i686/multiarch/mempcpy-sse2-unaligned.S: Likewise.
+	* sysdeps/i386/i686/multiarch/bcopy.S: Select the sse2_unaligned
+	version if bit_Fast_Unaligned_Load is set.
+	* sysdeps/i386/i686/multiarch/memcpy.S: Likewise.
+	* sysdeps/i386/i686/multiarch/memcpy_chk.S: Likewise.
+	* sysdeps/i386/i686/multiarch/memmove.S: Likewise.
+	* sysdeps/i386/i686/multiarch/memmove_chk.S: Likewise.
+	* sysdeps/i386/i686/multiarch/mempcpy.S: Likewise.
+	* sysdeps/i386/i686/multiarch/mempcpy_chk.S: Likewise.
+	* sysdeps/i386/i686/multiarch/Makefile (sysdep_routines): Add
+	bcopy-sse2-unaligned, memcpy-sse2-unaligned,
+	memmove-sse2-unaligned and mempcpy-sse2-unaligned.
+	* sysdeps/i386/i686/multiarch/ifunc-impl-list.c (MAX_IFUNC): Set
+	to 4.
+	(__libc_ifunc_impl_list): Test __bcopy_sse2_unaligned,
+	__memmove_chk_sse2_unaligned, __memmove_sse2_unaligned,
+	__memcpy_chk_sse2_unaligned, __memcpy_sse2_unaligned,
+	__mempcpy_chk_sse2_unaligned, and __mempcpy_sse2_unaligned.
+
+2014-12-29  Chris Metcalf  <cmetcalf@ezchip.com>
+
+	* sysdeps/unix/sysv/linux/tst-setgetname.c (do_test): Use #ifndef
+	instead of #if to avoid a Wundef warning.
+	* stdlib/tst-limits.c (do_test): Likewise.
+
+	* sysdeps/tile/math_private.h (fetestexcept): Add macro to
+	parallel other exception macros.
+	(fegetenv): Convert from macro to extern inline so that it applies
+	retroactively to inline functions already seen by the compiler.
+	(fesetenv, feupdateenv, fegetround, fesetround): Likewise.
+
+	* posix/Makefile (before-compile): Use $(objpfx) for
+	posix-conf-vars-def.h.
+
+2014-12-29  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* posix/getconf.c (main): Use size_t for type of I.
+	* scripts-gen-posix-conf-vars.awk (END): Use size_t for type of
+	NSPEC.
+
+	* posix/posix-conf-vars.list (SPEC:XBS5): Add sysconf prefix.
+	* posix/confstr.c: Define NEED_SPEC_ARRAY to 0.
+	* posix/posix-envs.def: Likewise.
+	* sysdeps/posix/sysconf.c: Likewise.
+	* posix/getconf.c: Define NEED_SPEC_ARRAY to 1.
+	(specs): Remove array.
+	* scripts/gen-posix-conf-vars.awk: Support generation of specs
+	array.
+
+	* posix/posix-conf-vars.list: Add _POSIX sysconf namespace.
+	* sysdeps/posix/sysconf.c: Include posix-conf-vars.h.
+	(__sysconf): Use CONF_IS_* macros.
+
+	* posix/Makefile (before-compile): Add posix-conf-vars-def.h.
+	($(objpfx)posix-conf-vars-def.h): New target.
+	* posix/posix-conf-vars.list: New file.
+	* posix/posix-conf-vars.h: New file.
+	* posix/confstr.c: Include posix-conf-vars.h.
+	(confstr): Use CONF_IS_* macros.
+	* posix/posix-envs.def: Include posix-conf-vars.h.  Use
+	CONF_IS_* macros.
+	* scripts/gen-posix-conf-vars.awk: New file.
+
+2014-12-26  Chris Metcalf  <cmetcalf@ezchip.com>
+
+	* sysdeps/tile/math_private.h (fegetenv, fesetenv, feupdateenv,
+	fegetround): Add no-op macros to avoid linknamespace issues.
+
+	* sysdeps/unix/sysv/linux/clock_settime.c (SYSDEP_SETTIME): Remove
+	definitions of INTERNAL_VSYSCALL and INLINE_VSYSCALL.
+
+	* sysdeps/unix/sysv/linux/tile/sysdep.h
+	(HAVE_CLOCK_GETTIME_VSYSCALL): Move definition out of
+	assembly-specific section to avoid a redefinition warning.
+
+	* sysdeps/tile/jmpbuf-unwind.h (_JMPBUF_CFA_UNWINDS_ADJ): Cast to
+	long before casting to pointer to avoid a cast warning.
+
+2014-12-23  Chris Metcalf  <cmetcalf@ezchip.com>
+
+	* sysdeps/tile/tilegx/Implies: New file.
+
+2014-12-23  Richard Earnshaw  <rearnsha@arm.com>
+
+	* string/stpcpy.c (__stpcpy): Rewrite using strlen and memcpy.
+
+2014-12-23  Florian Weimer  <fweimer@redhat.com>
+
+	* iconvdata/run-iconv-test.sh: Actually test iconv modules.
+
+2014-12-22  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/kernel-features.h (__ASSUME_UTIMES): Do
+	not define.
+	* sysdeps/unix/sysv/linux/utimes.c: Do not include
+	<kernel-features.h>.
+	(__utimes) [__NR_utimes]: Make code unconditional.
+	(__utimes) [!__ASSUME_UTIMES]: Remove conditional code.
+	* sysdeps/unix/sysv/linux/aarch64/kernel-features.h
+	(__ASSUME_UTIMES): Do not undefine.
+	* sysdeps/unix/sysv/linux/tile/kernel-features.h
+	(__ASSUME_UTIMES): Likewise.
+	* sysdeps/unix/sysv/linux/hppa/kernel-features.h
+	(__ASSUME_UTIMES): Define for [__LINUX_KERNEL_VERSION >= 0x030e00]
+	instead of undefining for [__LINUX_KERNEL_VERSION < 0x030e00].
+	* sysdeps/unix/sysv/linux/hppa/utimes.c: New file.
+
+2014-12-22  Steve Ellcey  <sellcey@imgtec.com>
+
+	* sysdeps/mips/memcpy.S: Fix preprocessor indentation.
+
+2014-12-22  Chris Metcalf  <cmetcalf@ezchip.com>
+
+	[BZ #17747]
+	* math/w_j0.c [defined NO_LONG_DOUBLE] (j0, y0): Convert strong
+	alias to weak alias for j0l, y0l.
+	* math/w_j1.c [defined NO_LONG_DOUBLE] (j1, y1): Likewise.
+	* math/w_jn.c [defined NO_LONG_DOUBLE] (jn, yn): Likewise.
+
+	[BZ #17746]
+	* sysdeps/tile/tilegx/strstr.c (STRSTR2): Remove implicit boolean
+	conversion.
+
+2014-12-22  Steve Ellcey  <sellcey@imgtec.com>
+
+	* sysdeps/unix/mips/sysdep.h (__mips_isa_rev): Set
+	to zero if not already defined.
+
+2014-12-22  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #17724]
+	* sysdeps/ieee754/k_standard.c: Don't include <float.h>.
+	(__kernel_standard_f): Remove.  Moved to k_standardf.c.
+	(__kernel_standard_l): Remove.  Moved to k_standardl.c with
+	(char *) casts added.
+	* sysdeps/ieee754/k_standardf.c: New file.
+	* sysdeps/ieee754/k_standardl.c: Likewise.
+	* math/Makefile (libm-support): Remove k_standard.
+	(libm-calls): Add k_standard.
+
+2014-12-22  Wilco Dijkstra  <wdijkstr@arm.com>
+
+	* sysdeps/aarch64/fpu/feenablxcpt.c (feenableexcept):
+	Optimize to avoid an unnecessary FPCR read.
+
+2014-12-22  Wilco Dijkstra  <wdijkstr@arm.com>
+
+	* sysdeps/aarch64/fpu/fesetenv.c (fesetenv):
+	Optimize to reduce FPCR/FPSR accesses.
+
+2014-12-22  Wilco Dijkstra  <wdijkstr@arm.com>
+
+	* sysdeps/aarch64/fpu/ftestexcept.c (fetestexcept):
+	Call libc_fetestexcept_aarch64.
+
+2014-12-22  Wilco Dijkstra  <wdijkstr@arm.com>
+
+	* sysdeps/aarch64/fpu/fesetround.c (fesetround):
+	Call libc_fesetround_aarch64.
+
+2014-12-22  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #17733]
+	* sysdeps/unix/sysv/linux/bind.S (NO_WEAK_ALIAS): Do not define.
+	(__bind): Do not define as weak alias.
+	* sysdeps/unix/sysv/linux/getsockname.S (NO_WEAK_ALIAS): Do not
+	define.
+	(__getsockname): Do not define as weak alias.
+
+2014-12-22  Will Newton  <will.newton@linaro.org>
+
+	* manual/install.texi: Document that we require bison 2.7
+	or above.
+	* INSTALL: Regenerate.
+	* configure.ac: Use AC_CHECK_PROG_VER instead of
+	AC_PATH_PROG when checking for bison and check for
+	version 2.7 or above.
+	* configure: Regenerate.
+
+2014-12-21  Chris Metcalf  <cmetcalf@ezchip.com>
+
+	[BZ #17745]
+	* sysdeps/tile/ffs.c (__ffs): Moved ffsll definition...
+	* sysdeps/tile/ffsll.c (ffsll): To here.
+
+	* sysdeps/unix/sysv/linux/tile/localplt.data: Removed.
+
+2014-12-21  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* elf/dl-tls.c (__tls_get_addr): Provide the hidden definition
+	if not defined.
+	* sysdeps/i386/dl-tls.h (___tls_get_addr): Provide the hidden
+	definition.
+	* sysdeps/i386/dl-tlsdesc.S (_dl_tlsdesc_dynamic): Call the
+	hidden ___tls_get_addr.
+	* sysdeps/x86_64/dl-tlsdesc.S (_dl_tlsdesc_dynamic): Call the
+	hidden __tls_get_addr.
+	* sysdeps/generic/localplt.data (__tls_get_addr): Removed.
+	* sysdeps/unix/sysv/linux/i386/localplt.data (___tls_get_addr):
+	Likewise.
+
+2014-12-21  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/m68k/dl-machine.h (RTLD_START): Remove @PLTPC from
+	_dl_init call.
+
+2014-12-21  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/i386/dl-machine.h (_dl_start_user): Remove @PLT
+	from "call _dl_init@PLT".
+	* sysdeps/x86_64/dl-machine.h (_dl_start_user): Likewise.
+
+2014-12-21  Anders Kaseorg  <andersk@mit.edu>
+
+	* manual/search.texi: (Array Sort Function): Clarify stable sorting
+	guarantees.
+
+2014-12-20  Chris Metcalf  <cmetcalf@ezchip.com>
+
+	* sysdeps/unix/sysv/linux/tile/localplt.data: New file.
+
+2014-12-19  Chris Metcalf  <cmetcalf@ezchip.com>
+
+	[BZ #17744]
+	* sysdeps/tile/tilegx/strstr.c (STRSTR): Call __strnlen, not
+	strnlen.
+
+2014-12-19  Steve Ellcey  <sellcey@imgtec.com>
+
+	* sysdeps/mips/addmul_1.S (__mpn_addmul_1): Use mulu/muhu instead
+	of multu on MIPSr6.
+	* sysdeps/mips/mul_1.S (__mpn_mul_1): Ditto.
+	* sysdeps/mips/submul_1.S (__mpn_submul_1): Ditto.
+	* sysdeps/mips/mips64/addmul_1.S (__mpn_addmul_1): Ditto.
+	* sysdeps/mips/mips64/mul_1.S (__mpn_mul_1): Ditto.
+	* sysdeps/mips/mips64/submul_1.S (__mpn_submul_1): Ditto.
+
+2014-12-19  Steve Ellcey  <sellcey@imgtec.com>
+
+	* sysdeps/mips/sys/asm.h (PTR_ADDU): Use addu on mips32r6/mips64r6.
+	(PTR_ADDIU): Use addiu for mips32r6/mips64r6.
+	(PTR_SUBU): Use subu for mips32r6/mips64r6.
+	(PTR_SUBIU): Use subu for mips32r6/mips64r6 (subiu does not exist).
+	* sysdeps/mips/machine-gmon.h (PTR_ADDU_STRING) Use addu for
+	mips32r6/mips64r6.
+	(PTR_SUBU_STRING) Use subu for mips32r6/mips64r6.
+
+2014-12-19  Ondřej Bílka  <neleai@seznam.cz>
+
+	* string/strncat.c (STRNCAT): Simplify implementation.
+
+2014-12-19  David S. Miller  <davem@davemloft.net>
+
+	* sysdeps/sparc/sparc32/soft-fp/q_neg.c (_Q_neg): Use a union to
+	access the quad as both a long double and as a series of 4 words.
+
+	* get-dynamic-info.h (elf_get_dynamic_info): Ignore -Warray-bounds for a
+	link_map->l_info array access.
+
+2014-12-19  Chris Metcalf  <cmetcalf@ezchip.com>
+
+	* iconvdata/tst-loading.c (TIMEOUT): Increase timeout 10 sec.
+
+	* math/atest-exp.c (TIMEOUT): Increase timeout to 10 sec.
+	* math/atest-exp2.c (TIMEOUT): Likewise.
+	* math/atest-sincos.c (TIMEOUT): Likewise.
+
+2014-12-19  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/x32/Makefile (CFLAGS-s_llround.c): Replace
+	-Wno-error with -fno-builtin-lround.
+
+2014-12-19  Torvald Riegel  <triegel@redhat.com>
+
+	* sysdeps/unix/sysv/linux/i386/lowlevellock-futex.h: New file.
+	Contains futex constants and functions moved over from ...
+	* sysdeps/unix/sysv/linux/i386/lowlevellock.h: ... here.  Include
+	<lowlevellock-futex.h>.
+	(lll_wait_tid): Use lll_futex_wait instead of assembly code.
+	(lll_timedwait_tid): Add comments and parentheses around macro
+	arguments.
+
+2014-12-19  Torvald Riegel  <triegel@redhat.com>
+
+	* sysdeps/unix/sysv/linux/x86_64/lowlevellock.h: Include
+	<lowlevellock-futex.h>.  Remove FUTEX_* constants defined there.
+	(__lll_private_flag): Remove.
+	(lll_futex_wait): Likewise.
+	(lll_futex_timed_wait): Likewise.
+	(lll_futex_wake): Likewise.
+	(lll_futex_requeue): Likewise.
+	(lll_wait_tid): Use lll_futex_wait instead of assembly code.
+	(__lll_timedwait_tid): Spell out argument names.
+	(lll_timedwait_tid): Add comments and parentheses around macro
+	arguments.
+	* sysdeps/unix/sysv/linux/lowlevellock-futex.h: Make FUTEX_* constants,
+	LLL_SHARED and LLL_PRIVATE usable from assembly code.
+
+2014-12-19  Torvald Riegel  <triegel@redhat.com>
+
+	* sysdeps/unix/sysv/linux/sh/libc-lowlevellock.S: Remove file.
+	* sysdeps/unix/sysv/linux/sh/lowlevellock.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/lowlevellock.h: Likewise.
+	* sysdeps/unix/sysv/linux/sh/lowlevelrobustlock.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/pthread_barrier_wait.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/pthread_cond_broadcast.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/pthread_cond_signal.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/pthread_cond_timedwait.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/pthread_cond_wait.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/pthread_rwlock_timedrdlock.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/pthread_rwlock_timedwrlock.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/pthread_rwlock_rdlock.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/pthread_rwlock_unlock.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/pthread_rwlock_wrlock.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/sh4/lowlevellock.h: Likewise.
+	* sysdeps/unix/sysv/linux/sh/sem_post.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/sem_timedwait.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/sem_trywait.S: Likewise.
+	* sysdeps/unix/sysv/linux/sh/sem_wait.S: Likewise.
+
+2014-12-19  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/x32/Makefile: New file.
+
+2014-12-19  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/i386/ldbl2mpn.c (__mpn_extract_long_double): Replace
+	1L with (mp_limb_t) 1.
+
+2014-12-17  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/nptl/fork.c (__fork_generation_pointer): Variable moved ...
+	* nptl/libc_pthread_init.c: ... here.
+	* sysdeps/nptl/fork.c (__fork_handlers): Variable moved ...
+	* nptl/register-atfork.c: ... here.
+
+	* sysdeps/nptl/gai_misc.h (__gai_start_notify_thread):
+	Use pthread_sigmask rather than INTERNAL_SYSCALL.
+	Use assert_perror to check its return value.
+	(__gai_create_helper_thread): Likewise.
+
+	* inet/if_index.c (__if_freenameindex): Add libc_hidden_def.
+
+	* malloc/malloc.c (alloc_perturb, free_perturb): Remove inline keyword.
+
+2014-12-17  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #17725]
+	* sysdeps/generic/profil-counter.h (profil_counter): Rename to
+	__profil_counter.
+	* sysdeps/unix/sysv/linux/hppa/profil-counter.h (profil_counter):
+	Likewise.
+	* sysdeps/unix/sysv/linux/i386/profil-counter.h (profil_counter):
+	Likewise.
+	* sysdeps/unix/sysv/linux/ia64/profil-counter.h (profil_counter):
+	Likewise.
+	* sysdeps/unix/sysv/linux/s390/s390-32/profil-counter.h
+	(profil_counter): Likewise.
+	* sysdeps/unix/sysv/linux/s390/s390-64/profil-counter.h
+	(profil_counter): Likewise.
+	* sysdeps/unix/sysv/linux/sh/profil-counter.h (profil_counter):
+	Likewise.
+	* sysdeps/unix/sysv/linux/tile/profil-counter.h (profil_counter):
+	Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/profil-counter.h
+	(profil_counter): Likewise.
+	* sysdeps/unix/sysv/linux/arm/profil-counter.h (profil_counter):
+	Likewise.
+	[!__profil_counter] (profil_counter): Define as weak alias of
+	__profil_counter.
+	* sysdeps/unix/sysv/linux/sparc/sparc32/profil-counter.h
+	(profil_counter): Rename to __profil_counter.
+	[!__profil_counter] (profil_counter): Define as weak alias of
+	__profil_counter.
+	* sysdeps/unix/sysv/linux/sparc/sparc64/profil-counter.h
+	(profil_counter): Rename to __profil_counter.
+	[!__profil_counter] (profil_counter): Define as weak alias of
+	__profil_counter.
+	* sysdeps/posix/profil.c: Update comment referring to
+	profil_counter.
+	(__profil): Use __profil_counter instead of profil_counter.
+	* sysdeps/posix/sprofil.c (profil_counter): Rename to
+	__profil_counter.  Use __profil_counter_ushort and
+	__profil_counter_uint in definitions.
+	(__sprofil): Use __profil_counter_uint and __profil_counter_ushort
+	instead of profil_counter_uint and profil_counter_ushort.
+
+	[BZ #17722]
+	* inet/inet_mkadr.c (inet_makeaddr): Rename to __inet_makeaddr and
+	define as weak alias of __inet_makeaddr.
+	* resolv/inet_addr.c (inet_addr): Rename to __inet_addr and define
+	as weak alias of __inet_addr.
+	* resolv/inet_pton.c (inet_pton): Rename to __inet_pton and define
+	as weak alias of __inet_pton.  Use libc_hidden_weak.
+	* include/arpa/inet.h (__inet_pton): Declare.  Use
+	libc_hidden_proto.
+	(inet_makeaddr): Don't use libc_hidden_proto.
+	(__inet_makeaddr): Declare.  Use libc_hidden_proto.
+	* resolv/res_init.c (__res_vinit): Use __inet_pton instead of
+	inet_pton.  Use __inet_makeaddr instead of inet_makeaddr.
+	* conform/Makefile (test-xfail-POSIX/pthread.h/linknamespace):
+	Remove variable.
+	(test-xfail-POSIX/sched.h/linknamespace): Likewise.
+	(test-xfail-POSIX/time.h/linknamespace): Likewise.
+
+2014-12-17  Steve Ellcey  <sellcey@imgtec.com>
+
+	* inet/getnetgrent_r.c: Move while loop to be inside if statement.
+
+2014-12-17  Stefan Liebler  <stli@linux.vnet.ibm.com>
+
+	* stdio-common/bug-vfprintf-nargs.c (do_test):
+	Cast value to intptr_t to avoid format warning
+	for usage with PRIdPTR printing macro.
+
+2014-12-17  Stefan Liebler  <stli@linux.vnet.ibm.com>
+
+	* libio/tst-widetext.c (do_test):
+	Use format type %td instead of %Zd for ptrdiff_t
+	in order to avoid format warning.
+
+2014-12-17  Andreas Schwab  <schwab@suse.de>
+
+	* nscd/mem.c (gc): Add size_t cast to match printf format.
+
+2014-12-16  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/gnu/unwind-resume.c: #include <sysdep.h>.
+	(init): Apply PTR_MANGLE to pointers before storing them.
+	(_Unwind_Resume, __gcc_personality_v0): Apply PTR_DEMANGLE to pointers
+	before using them.
+
+2014-12-16  Joseph Myers  <joseph@codesourcery.com>
+
+	[BZ #17719]
+	* sysdeps/x86_64/memrchr.S (memrchr): Rename to __memrchr and
+	define as weak alias of __memrchr.
+	(__memrchr): Do not define as strong alias of memrchr.
+	* conform/Makefile (test-xfail-XPG4/libgen.h/linknamespace):
+	Remove variable.
+	(test-xfail-UNIX98/libgen.h/linknamespace): Likewise.
+	(test-xfail-XOPEN2K/libgen.h/linknamespace): Likewise.
+	(test-xfail-XOPEN2K8/libgen.h/linknamespace): Likewise.
+
+	[BZ #17717]
+	* inet/if_index.c (if_nametoindex): Rename to __if_nametoindex and
+	define as weak alias of __if_nametoindex.  Use libc_hidden_weak.
+	(if_indextoname): Rename to __if_indextoname and define as weak
+	alias of __if_indextoname.  Use libc_hidden_weak.
+	(if_freenameindex): Rename to __if_freenameindex and define as
+	weak alias of __if_freenameindex.
+	(if_nameindex): Rename to __if_nameindex and define as weak alias
+	of __if_nameindex.
+	* sysdeps/mach/hurd/if_index.c (if_nametoindex): Rename to
+	__if_nametoindex and define as weak alias of __if_nametoindex.
+	Use libc_hidden_weak.
+	(if_freenameindex): Rename to __if_freenameindex and define as
+	weak alias of __if_freenameindex.
+	(if_nameindex): Rename to __if_nameindex and define as weak alias
+	of __if_nameindex.
+	(if_indextoname): Rename to __if_indextoname and define as weak
+	alias of __if_indextoname.  Use libc_hidden_weak.
+	* sysdeps/unix/sysv/linux/if_index.c (if_nametoindex): Rename to
+	__if_nametoindex and define as weak alias of __if_nametoindex.
+	Use libc_hidden_weak.
+	(if_freenameindex): Rename to __if_freenameindex and define as
+	weak alias of __if_freenameindex.  Use libc_hidden_weak.
+	(if_nameindex_netlink): Use __if_freenameindex instead of
+	if_freenameindex.
+	(if_nameindex): Rename to __if_nameindex and define as weak alias
+	of __if_nameindex.  Use libc_hidden_weak.
+	(if_indextoname): Rename to __if_indextoname and define as weak
+	alias of __if_indextoname.  Use libc_hidden_weak.
+	* include/net/if.h [!_ISOMAC] (__if_nametoindex): Declare and use
+	libc_hidden_proto.
+	[!_ISOMAC] (__if_freenameindex): Likewise.
+	* resolv/res_init.c (__res_vinit): Use __if_nametoindex instead of
+	if_nametoindex.
+	* conform/Makefile (test-xfail-XPG4/grp.h/linknamespace): Remove
+	variable.
+	(test-xfail-XPG4/pwd.h/linknamespace): Likewise.
+	(test-xfail-UNIX98/aio.h/linknamespace): Likewise.
+	(test-xfail-UNIX98/grp.h/linknamespace): Likewise.
+	(test-xfail-UNIX98/pthread.h/linknamespace): Likewise.
+	(test-xfail-UNIX98/pwd.h/linknamespace): Likewise.
+	(test-xfail-UNIX98/sched.h/linknamespace): Likewise.
+	(test-xfail-UNIX98/time.h/linknamespace): Likewise.
+
+	* conform/Makefile (test-xfail-UNIX98/semaphore.h/linknamespace):
+	Remove variable.
+	(test-xfail-XOPEN2K/semaphore.h/linknamespace): Likewise.
+	(test-xfail-XOPEN2K8/semaphore.h/linknamespace): Likewise.
+
+2014-12-16  Siddhesh Poyarekar  <siddhesh@redhat.com>
+
+	* resolv/res_send.c (__libc_res_nsend): Disable warning 'array
+	subscript above bounds'
+
+	* resolv/res_send.c (__libc_res_nsend): Fix check for nsmap
+	bounds.
+
+2014-12-16  Arjun Shankar  <arjun.is@lostca.se>
+
+	* libio/tst-fopenloc.c: Use test-skeleton.c.
+
+	* stdlib/tst-bsearch.c: Use test-skeleton.c.
+	(entry): Rename to ITEM.
+	(do_test, comp): Adjust.
+
+	* stdio-common/tst-fseek.c: Use test-skeleton.c.
+
+2014-12-16  Torvald Riegel  <triegel@redhat.com>
+
+	* string/tester.c: Include <libc-internal.h>.
+	(test_memset): Ignore -Wmemset-transposed-args.
+
+2014-12-16  Torvald Riegel  <triegel@redhat.com>
+
+	* misc/tst-mntent2.c (do_test): Fix warning.
+
+2014-12-16  Torvald Riegel  <triegel@redhat.com>
+
+	* elf/tst-unique4lib.cc(a): Mark as used.
+
+2014-12-16  Florian Weimer  <fweimer@redhat.com>
+
+	[BZ #17630]
+	* resolv/nss_dns/dns-network.c (getanswer_r): Iterate over alias
+	names.
+
+2014-12-16  Allan McRae  <allan@archlinux.org>
+
+	* stdio-common/Makefile (tests): Re-add bug26.
+
+2014-12-15  Ondřej Bílka  <neleai@seznam.cz>
+
+	[BZ #17657]
+	* locale/programs/ld-ctype.c (find_translit2, read_widestring): Return
+	static array.
+
+2014-12-15  Bernard Ogden  <bernie.ogden@linaro.org>
+
+	* nptl/lowlevellock.c (__lll_lock_wait_private): Add comments.
+	(__lll_lock_wait): Likewise.
+	(__lll_timedlock_wait): Likewise.
+	(__lll_timedwait_tid): Likewise.
+	* nptl/lowlevelrobustlock.c (__lll_robust_lock_wait): Likewise.
+	(__lll_robust_timedlock_wait): Likewise.
+	* sysdeps/nptl/lowlevellock.h (lll_trylock): Likewise.
+	(lll_cond_trylock): Likewise.
+	(__lll_lock): Likewise.
+	(__lll_robust_lock): Likewise.
+	(__lll_cond_lock): Likewise.
+	(lll_robust_cond_lock): Likewise.
+	(__lll_timedlock): Likewise.
+	(__lll_robust_timedlock): Likewise.
+	(__lll_unlock): Likewise.
+	(__lll_robust_unlock): Likewise.
+	(lll_wait_tid): Likewise.
+	(lll_timedwait_tid): Likewise.
+
+2014-12-15  Torvald Riegel  <triegel@redhat.com>
+
+	* nptl/tst-sem4.c (do_test): Start with a fresh semaphore state.
+
+2014-12-15  Torvald Riegel  <triegel@redhat.com>
+
+	* nptl/tst-mutex5.c (do_test): Do not skip tests if elision is enabled.
+
+2014-12-15  Adhemerval Zanella  <Azanella@linux.vnet.ibm.com>
+
+	* stdio-common/test-vfprintf.c: Include <libc-internal.h>.
+	* stdio-common/tst-sprintf.c: Likewise.
+
+2014-12-15  Torvald Riegel  <triegel@redhat.com>
+
+	* sysdeps/unix/sysv/linux/s390/pthread_once.c: Remove file.
+
+2014-12-15  Jeff Law  <law@redhat.com>
+
+	[BZ #16617]
+	* stdio-common/vfprintf.c (vfprintf): Allocate large specs array
+	on the heap.  (CVE-2012-3406)
+	* stdio-common/bug23-2.c, stdio-common/bug23-3.c: New file.
+	* stdio-common/bug23-4.c: New file.  Test case by Joseph Myers.
+	* stdio-common/Makefile (tests): Add bug23-2, bug23-3, bug23-4.
+
+2014-12-15  Will Newton  <will.newton@linaro.org>
+
+	* manual/install.texi: Bump required version of texinfo
+	to 4.7 from 4.5.
+	* INSTALL: Regenerated.
+	* configure.ac: Check for makeinfo version 4.7 and above.
+	* configure: Regenerated.
+
+2014-12-12  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/posix/shm-directory.h (SHM_GET_NAME): Take new argument
+	PREFIX, string constant to insert between directory and name.
+	* sysdeps/posix/shm_open.c: Update caller.
+	* sysdeps/posix/shm_unlink.c: Likewise.
+	* nptl/semaphoreP.h (struct mountpoint_info): Type removed.
+	(__where_is_shmfs, mountpoint, __namedsem_once): Declarations removed.
+	(SEM_SHM_PREFIX): New macro.
+	* sysdeps/posix/Makefile (librt-routines): Add shm-directory only if
+	[$(have-thread-library) = no].
+	* nptl/Makefile (libpthread-routines): Add shm-directory.
+	* nptl/Versions (GLIBC_PRIVATE): Add __shm_directory.
+	* sysdeps/nptl/shm-directory.h: New file.
+	* sysdeps/posix/shm-directory.c
+	[IS_IN (libpthread)] (__shm_directory): Add hidden_def.
+	* sysdeps/unix/sysv/linux/shm-directory.c: Likewise.
+	* nptl/sem_open.c (check_add_mapping): Use munmap function rather than
+	INTERNAL_SYSCALL.
+	(__where_is_shmfs): Function removed.
+	(mountpoint, defaultmount, defaultdir, __namedsem_once):
+	Variables removed.
+	(sem_open): Use __libc_close function rather than INTERNAL_SYSCALL.
+	Use SHM_GET_NAME.
+	* nptl/sem_unlink.c: Prototypify.  Use SHM_GET_NAME.
+
+	* sysdeps/nptl/bits/libc-lockP.h [IS_IN (libpthread)]
+	(PTFAVAIL, __libc_ptf_call, __libc_ptf_call_always): Define as
+	unconditional for use inside libpthread.
+	[IS_IN (libpthread)]: Include <nptl/pthreadP.h>.
+
+2014-12-12  Roland McGrath  <roland@hack.frob.com>
+
+	* nptl/pthread_getaffinity.c: New file.
+	* nptl/pthread_setaffinity.c: New file.
+	* nptl/pthread_getname.c: New file.
+	* nptl/pthread_setname.c: New file.
+
+	* nptl/pthread_create.c (START_THREAD_DEFN)
+	[! __ASSUME_SET_ROBUST_LIST]: Add missing & in lll_futex_wake argument.
+
+2014-12-12  Stefan Liebler  <stli@linux.vnet.ibm.com>
+	    Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* resolv/res_send.c (send_vc): Disable warning resplen may
+	be used uninitialized.
+
+2014-12-12  Stefan Liebler  <stli@linux.vnet.ibm.com>
+
+	* nptl/tst-mutex6.c
+	(ATTR_NULL): New define checks ATTR against NULL.
+	(do_test): Use !ATTR_NULL instead of ATTR != NULL.
+	* nptl/tst-mutexpp6.c (ATTR_NULL): New define.
+
+2014-12-11  James Lemke  <jwlemke@codesourcery.com>
+
+	[BZ #17581]
+	* malloc/hooks.c
+	(mem2mem_check): Revert my previous change.
+	(malloc_check_get_size): Revert my previous change.
+	(mem2chunk_check): Revert my previous change.
+
+2014-12-11  Roland McGrath  <roland@hack.frob.com>
+
+	* sysdeps/posix/shm-directory.c: New file.
+	* sysdeps/posix/shm-directory.h: New file.
+	* sysdeps/posix/Makefile [($(subdir) = rt] (librt-routines): Add it.
+	* sysdeps/posix/shm_open.c: Use SHM_GET_NAME.
+	Use O_NOFOLLOW and O_CLOEXEC if available.  Transmute EISDIR to EINVAL.
+	* sysdeps/posix/shm_unlink.c: Use SHM_GET_NAME.
+	Transmute EPERM to EACCES.
+	* sysdeps/unix/sysv/linux/shm-directory.c: New file, most code taken
+	from ...
+	* sysdeps/unix/sysv/linux/shm_open.c: ... here.  File removed.
+	* sysdeps/unix/sysv/linux/shm_unlink.c: File removed.
+
+2014-12-11  Kaz Kojima  <kkojima@rr.iij4u.or.jp>
+
+	* sysdeps/sh/jmpbuf_unwind.h (_jmpbuf_sp): Declare SP as void
+	pointer and cast to uintptr_t.
+	* sysdeps/sh/nptl/tls.h (TLS_INIT_TP): Use NULL instead of 0.
+	* sysdeps/unix/sysv/linux/sh/lowlevellock.h (lll_futex_timed_wait):
+	Add cast to avoid warning.
+	* sysdeps/unix/sysv/linux/sh/register-dump.h: Use 0 instead of NULL.
+
+2014-12-11  Joseph Myers  <joseph@codesourcery.com>
+
+	* nptl/semaphore.h: Move to ...
+	* sysdeps/pthread/semaphore.h: ... here.
+	* Makefile (installed-headers): Change nptl/semaphore.h to
+	sysdeps/pthread/semaphore.h.
+
+2014-12-11  Roland McGrath  <roland@hack.frob.com>
+
+	* misc/tst-error1.c (do_test): Ignore -Wformat-security for
+	generated error format strings.
+
+	* stdio-common/tstdiomisc.c (t2): Ignore -Wformat and
+	-Wformat-extra-args warnings for scanf formats.
+	* stdio-common/scanf4.c (main): Ignore -Wformat-zero-length around
+	test of zero-length format (duh).
+	* stdio-common/scanf7.c (main): Ignore -Wformat warnings for
+	corner-case scanf format test.
+	* stdio-common/test-vfprintf.c (do_test): Ignore -Wformat-security for
+	generated fprintf format string.
+	* stdio-common/tst-sprintf.c (do_test): Ignore -Wformat warnings for
+	corner-case sprintf format tests.
+	* stdio-common/tst-printf.c: Ignore -Wformat throughout.
+	* stdio-common/tst-printfsz.c (main): Ignore -Wformat and
+	-Wformat-extra-args warnings throughout.
+	* stdio-common/Makefile (CFLAGS-tstdiomisc.c): Variable removed.
+	(CFLAGS-scanf4.c): Likewise.
+	(CFLAGS-scanf7.c): Likewise.
+	(CFLAGS-tst-sprintf.c): Likewise.
+	(CFLAGS-tst-printf.c): Likewise.
+	(CFLAGS-tst-printfsz.c): Likewise.
+
+2014-12-11  Joseph Myers  <joseph@codesourcery.com>
+
+	* include/cpio.h: New file.
+	* include/fmtmsg.h: Likewise.
+
+	* tst-mbswcs1.c (show): Use %zu format instead of %Zd.  Cast
+	corresponding format argument to size_t.
+	* tst-mbswcs2.c (show): Likewise.  Use %td format for ptrdiff_t
+	arguments.
+	* tst-mbswcs3.c (show): Use %zu format instead of %Zd.  Cast
+	corresponding format argument to size_t.
+	* tst-mbswcs4.c (show): Likewise.  Use %td format for ptrdiff_t
+	arguments.
+	* tst-mbswcs5.c (show): Use %zu format instead of %Zd.  Cast
+	corresponding format argument to size_t.
+	* tst-trans.c (do_test): Use %lc format for wint_t arguments.
+	* Makefile (CFLAGS-tst-mbswcs1.c): Remove variable.
+	(CFLAGS-tst-mbswcs2.c): Likewise.
+	(CFLAGS-tst-mbswcs3.c): Likewise.
+	(CFLAGS-tst-mbswcs4.c): Likewise.
+	(CFLAGS-tst-mbswcs5.c): Likewise.
+	(CFLAGS-tst-trans.c): Likewise
+
+2014-12-11  Roland McGrath  <roland@hack.frob.com>
+
+	* posix/regexbug1.c (main): Use "%s" format with regerror results,
+	rather than assuming they won't contain any '%'s.
+
+2014-12-11  Chris Metcalf  <cmetcalf@ezchip.com>
+
+	* sysdeps/tile/tilegx/memset.c (__memcpy): Add
+	inhibit_loop_to_libcall to avoid recursive calls.
+	* sysdeps/tile/tilegx/memcpy.c (__memcpy): Likewise.
+	* sysdeps/tile/tilepro/memcpy.c (__memcpy): Likewise.
+
+2014-12-11  Adhemerval Zanella  <Azanella@linux.vnet.ibm.com>
+
+	* include/sys/socket.h (__sendmmsg): Add __USE_GNU guards on function
+	prototype.
+
+2014-12-11  Steve Ellcey  <sellcey@imgtec.com>
+
+	* sysdeps/mips/dl-trampoline.c: Modify switch expression to have
+	integer value instead of boolean.
+
+2014-12-11  Steve Ellcey  <sellcey@imgtec.com>
+
+	* malloc/malloc.c: Fix powerof2 check.
+
+2014-12-11  Stefan Liebler  <stli@linux.vnet.ibm.com>
+
+	* locale/programs/locfile.h (maybe_swap_uint32):
+	Remove inline and add unused attribute.
+
+2014-12-11  Stefan Liebler  <stli@linux.vnet.ibm.com>
+
+	* sysdeps/s390/s390-32/dl-machine.h (elf_machine_load_address):
+	Truncating assembler expression to a .long expression.
+
+2014-12-11  Andreas Schwab  <schwab@suse.de>
+
+	* elf/rtld.c (struct map_args): Constify str member.
+	(do_preload): Constify fname argument.
+
+2014-12-11  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	* sysdeps/ieee754/ldbl-128/e_lgammal_r.c: Remove overflow warnings for
+	constants definition.
+
+2014-12-11  Andreas Schwab  <schwab@suse.de>
+
+	[BZ #16657]
+	* nptl/pthread_mutex_trylock.c (__pthread_mutex_trylock): Use
+	FORCE_ELISION instead of DO_ELISION.
+	* sysdeps/unix/sysv/linux/x86/force-elision.h (DO_ELISION):
+	Remove.
+	* sysdeps/unix/sysv/linux/s390/force-elision.h (DO_ELISION):
+	Likewise.
+
+	* iconvdata/gconv-modules: Remove duplicate entry.
+
+2014-12-11  Will Newton  <will.newton@linaro.org>
+
+	Merge gettext 0.19.3 into intl/.
+
+	This involves a number of cosmetic changes to comments
+	and ANSI function definitions and prototypes throughout
+	all the files. The gettext copyright header is used but
+	with the date ranges taken from the glibc copy.
+
+	* NEWS: Add gettext merge to 2.21.
+	* intl/bindtextdom.c: Switch to gettext copyright.
+	Use ANSI definitions and prototypes.
+	Use gl_* locking primitives rather than __libc_* ones.
+	Use __builtin_expect rather than __glibc_likely/unlikely.
+	* intl/dcgettext.c: Switch to gettext copyright.
+	Use ANSI definitions and prototypes.
+	* intl/dcigettext.c: Switch to gettext copyright.
+	Use ANSI definitions and prototypes.
+	(INTDIV0_RAISES_SIGFPE): New define.
+	Use gl_* locking primitives rather than __libc_* ones.
+	Include eval-plural.h instead of plural-eval.c.
+	Use __builtin_expect rather than __glibc_likely/unlikely.
+	* intl/dcngettext.c: Switch to gettext copyright.
+	Use ANSI definitions and prototypes.
+	* intl/dgettext.c: Likewise.
+	* intl/dngettext.c: Likewise.
+	* intl/plural-eval.c: Renamed to...
+	* intl/eval-plural.h: ...this.
+	* intl/explodename.c: Switch to gettext copyright.
+	Use ANSI definitions and prototypes.
+	(_nl_explode_name): Use strchr instead of __rawmemchr.
+	* intl/finddomain.c: Switch to gettext copyright.
+	Use ANSI definitions and prototypes.
+	Use gl_* locking primitives rather than __libc_* ones.
+	(_nl_find_domain): Use malloc rather than alloca for
+	allocation of temporary locale name.
+	* intl/gettext.c: Switch to gettext copyright.
+	Use ANSI definitions and prototypes.
+	* intl/gettextP.h: Switch to gettext copyright.
+	Use ANSI definitions and prototypes.
+	Use gl_* locking primitives rather than __libc_* ones.
+	* intl/gmo.h: Switch to gettext copyright.
+	(struct sysdep_string): Move struct segment_pair outside of
+	struct definition.
+	* intl/hash-string.c: Use ANSI definitions and prototypes.
+	* intl/hash-string.h: Switch to gettext copyright.
+	Use ANSI definitions and prototypes.
+	* intl/l10nflist.c: Switch to gettext copyright.
+	Use ANSI definitions and prototypes.
+	(_nl_normalize_codeset): Avoid integer overflow.
+	* intl/loadinfo.h: Switch to gettext copyright.
+	Use ANSI definitions and prototypes.
+	(LIBINTL_DLL_EXPORTED): New define.
+	(PATH_SEPARATOR): New define.
+	* intl/loadmsgcat.c: Switch to gettext copyright.
+	* intl/localealias.c: Switch to gettext copyright.
+	Use ANSI definitions and prototypes.
+	(_nl_expand_alias): Use PATH_SEPARATOR.
+	* intl/ngettext.c: Switch to gettext copyright.
+	Use ANSI definitions and prototypes.
+	* intl/plural-exp.c: Likewise.
+	* intl/plural-exp.h: Switch to gettext copyright.
+	Use ANSI definitions and prototypes.
+	(struct expression): Move definition of enum operator outside
+	of struct definition.
+	* intl/plural.c: Regenerate.
+	* intl/plural.y: Switch to gettext copyright.
+	Use ANSI definitions and prototypes.
+	Port to bison 3.0.
+	* intl/textdomain.c: Switch to gettext copyright.
+	Use ANSI definitions and prototypes.
+	Use gl_* locking primitives rather than __libc_* ones.
+
+2014-12-10  Steve Ellcey  <sellcey@imgtec.com>
+
+	* debug/warning-nop.c: Add used atrribute.
+
+2014-12-10  Joseph Myers  <joseph@codesourcery.com>
+
+	* sysdeps/unix/sysv/linux/mips/mips32/waitid.c: New file.
+
+	* sysdeps/unix/sysv/linux/mips/mips64/Makefile
+	[$(subdir) == signal] (CFLAGS-sigaction.c): New variable.
+	[$(subdir) == nptl] (CFLAGS-sigaction.c): Likewise.
+
+2014-12-10  Joseph Myers  <joseph@codesourcery.com>
+	    Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
+
+	[BZ #17634]
+	* wcsmbs/wcschr.c [!WCSCHR] (wcschr): Define as __wcschr.
+	Undefine after defining function.  Define as weak alias of
+	__wcschr.  Use libc_hidden_weak.
+	* include/wchar.h (__wcschr): Declare.  Use libc_hidden_proto.
+	* sysdeps/i386/i686/multiarch/wcschr-c.c [IS_IN (libc) && SHARED]
+	(libc_hidden_def): Also define __GI___wcschr alias.
+	* sysdeps/i386/i686/multiarch/wcschr.S (wcschr): Rename to
+	__wcschr and define as weak alias of __wcschr.
+	* sysdeps/powerpc/power6/wcschr.c [!WCSCHR] (WCSCHR): Define as
+	__wcschr.
+	[!WCSCHR] (DEFAULT_WCSCHR): Define.
+	[DEFAULT_WCSCHR] (__wcschr): Use libc_hidden_def.
+	[DEFAULT_WCSCHR] (wcschr): Define as weak alias of __wcschr.  Use
+	libc_hidden_weak.  Do not use libc_hidden_def.
+	* sysdeps/powerpc/powerpc32/power4/multiarch/wcschr-ppc32.c
+	[IS_IN (libc) && SHARED] (libc_hidden_def): Also define
+	__GI___wcschr alias.
+	* sysdeps/powerpc/powerpc32/power4/multiarch/wcschr.c
+	[IS_IN (libc)] (wcschr): Define as macro expanding to
+	__redirect_wcschr.
+	[IS_IN (libc)] (__wcschr_ppc): Use __redirect_wcschr in typeof.
+	[IS_IN (libc)] (__wcschr_power6): Likewise.
+	[IS_IN (libc)] (__wcschr_power7): Likewise.
+	[IS_IN (libc)] (__libc_wcschr): New.  Define with libc_ifunc
+	instead of wcschr.
+	[IS_IN (libc)] (wcschr): Undefine and define as weak alias of
+	__libc_wcschr.
+	[!IS_IN (libc)] (libc_hidden_def): Do not undefine and redefine.
+	* sysdeps/powerpc/powerpc64/multiarch/wcschr.c (wcschr): Rename to
+	__wcschr and define as weak alias of __wcschr.  Use
+	libc_hidden_builtin_def.
+	* sysdeps/x86_64/wcschr.S (wcschr): Rename to __wcschr and define
+	as weak alias of __wcschr.  Use libc_hidden_weak.
+	* time/alt_digit.c (_nl_get_walt_digit): Use __wcschr instead of
+	wcschr.
+	* time/era.c (_nl_init_era_entries): Likewise.
+	* conform/Makefile (test-xfail-ISO/time.h/linknamespace): Remove
+	variable.
+	(test-xfail-XPG3/time.h/linknamespace): Likewise.
+	(test-xfail-XPG4/time.h/linknamespace): Likewise.
+
+2014-12-10  Joseph Myers  <joseph@codesourcery.com>
+
+	* libio/tst-ftell-active-handler.c (do_ftruncate_test): Use %ld
+	format for long int variable.
+
+2014-12-10  Anders Kaseorg  <andersk@MIT.EDU>
+
+	[BZ #10672]
+	* manual/search.texi: (Array Sort Function): Remove claim how to make
+	qsort stable.
+
+2014-12-10  Andreas Schwab  <schwab@suse.de>
+
+	[BZ #12847]
+	* sysdeps/nptl/fork.c (fresetlockfiles): Skip files with
+	user-controlled locks.
+
+2014-12-10  Richard Earnshaw  <rearnsha@arm.com>
+
+	* sysdeps/aarch64/strchrnul.S (vrepmask): Use a call-clobbered
+	register.
+
+2014-12-10  Joseph Myers  <joseph@codesourcery.com>
+
+	* configure.ac (--disable-werror): New configure option.
+	(enable_werror): New AC_SUBST.
+	* configure: Regenerated.
+	* config.make.in (enable-werror): New variable.
+	* Makeconfig [$(enable-werror) = yes] (+gccwarn): Add -Werror
+	-Wno-error=undef.
+	(+gccwarn-c): Do not use -Werror=implicit-function-declaration.
+	* manual/install.texi (Configuring and compiling): Document
+	--disable-werror.
+	* INSTALL: Regenerated.
+	* debug/Makefile (CFLAGS-tst-chk1.c): Add -Wno-error.
+	(CFLAGS-tst-chk2.c): Likewise.
+	(CFLAGS-tst-chk3.c): Likewise.
+	(CFLAGS-tst-chk4.cc): Likewise.
+	(CFLAGS-tst-chk5.cc): Likewise.
+	(CFLAGS-tst-chk6.cc): Likewise.
+	(CFLAGS-tst-lfschk1.c): Likewise.
+	(CFLAGS-tst-lfschk2.c): Likewise.
+	(CFLAGS-tst-lfschk3.c): Likewise.
+	(CFLAGS-tst-lfschk4.cc): Likewise.
+	(CFLAGS-tst-lfschk5.cc): Likewise.
+	(CFLAGS-tst-lfschk6.cc): Likewise.
+
+	* stdio-common/tst-printfsz.c: Include <libc-internal.h>.
+	(main): Disable -Wdeprecated-declarations around calls to
+	register_printf_function.
+
+	* stdio-common/tst-unlockedio.c: Include <libc-internal.h>.
+	(do_test): Disable -Wdiv-by-zero around some calls to
+	fwrite_unlocked and fread_unlocked.
+
+	* include/libc-internal.h (DIAG_PUSH_NEEDS_COMMENT): New macro.
+	(DIAG_POP_NEEDS_COMMENT): Likewise.
+	(_DIAG_STR1): Likewise.
+	(_DIAG_STR): Likewise.
+	(DIAG_IGNORE_NEEDS_COMMENT): Likewise.
+	* stdio-common/bug21.c: Include <libc-internal.h>.
+	(do_test): Disable -Wformat around call to sscanf.
+	* stdio-common/scanf14.c: Include <libc-internal.h>.
+	(main): Disable -Wformat around some calls to scanf functions.
+
+2014-12-09  Torvald Riegel  <triegel@redhat.com>
+
+	* sysdeps/unix/sysv/linux/sh/pthread_once.S: Remove file.
+
 2014-12-08  Adhemerval Zanella  <azanella@linux.vnet.ibm.com>
 
 	* libio/tst-ftell-active-handler.c (do_ftell_test): Fix wide-character

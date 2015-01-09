@@ -1,4 +1,4 @@
-# Copyright (C) 2002-2014 Free Software Foundation, Inc.
+# Copyright (C) 2002-2015 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -96,6 +96,7 @@ libpthread-routines = nptl-init vars events version \
 		      old_pthread_atfork pthread_atfork \
 		      pthread_getcpuclockid \
 		      pthread_clock_gettime pthread_clock_settime \
+		      shm-directory \
 		      sem_init sem_destroy \
 		      sem_open sem_close sem_unlink \
 		      sem_getvalue \
@@ -618,6 +619,7 @@ tst-exec4-ARGS = $(host-test-program-cmd)
 $(objpfx)tst-execstack: $(libdl)
 $(objpfx)tst-execstack.out: $(objpfx)tst-execstack-mod.so
 LDFLAGS-tst-execstack = -Wl,-z,noexecstack
+CFLAGS-tst-execstack-mod.c += -Wno-trampolines
 
 $(objpfx)tst-fini1mod.so: $(shared-thread-library)
 
