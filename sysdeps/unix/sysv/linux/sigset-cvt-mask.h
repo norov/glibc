@@ -21,7 +21,7 @@
 static inline int __attribute__ ((unused))
 sigset_set_old_mask (sigset_t *set, int mask)
 {
-  unsigned long int *ptr;
+  __sigset_inner_t *ptr;
   int cnt;
 
   ptr = &set->__val[0];
