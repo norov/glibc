@@ -85,6 +85,11 @@
 	   boundary.  */
 
 ENTRY_ALIGN (strlen, 6)
+#ifdef __ILP32__
+	/* Zero extend the pointers that is passed in w0 and w1. */
+	mov	w0, w0
+	mov	w1, w1
+#endif
 	and	tmp1, srcin, MIN_PAGE_SIZE - 1
 	mov	zeroones, REP8_01
 	cmp	tmp1, MIN_PAGE_SIZE - 16

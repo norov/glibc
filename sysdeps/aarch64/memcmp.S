@@ -47,6 +47,13 @@
 #define mask		x13
 
 ENTRY_ALIGN (memcmp, 6)
+#ifdef __ILP32__
+	/* Zero extend the pointers that is passed in w0 and w1. */
+	/* Zero extend the size_t that was passed in w2 */
+	mov	w0, w0
+	mov	w1, w1
+	mov	w2, w2
+#endif
 	cbz	limit, L(ret0)
 	eor	tmp1, src1, src2
 	tst	tmp1, #7
