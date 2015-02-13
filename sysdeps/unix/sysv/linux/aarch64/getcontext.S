@@ -30,6 +30,10 @@
 	.text
 
 ENTRY(__getcontext)
+#ifdef __ILP32__
+	/* Zero extend the pointers that is passed in w0. */
+	mov	w0, w0
+#endif
 	/* The saved context will return to the getcontext() call point
 	   with a return value of 0 */
 	str	xzr,	  [x0, oX0 +  0 * SZREG]

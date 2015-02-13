@@ -74,6 +74,10 @@
 	cfi_startproc
 	.align 2
 _dl_tlsdesc_return:
+#ifdef __ILP32__
+	/* Need to zero extend the pointer */
+	mov	w0, w0
+#endif
 	ldr	PTR_REG (0), [x0, #PTR_SIZE]
 	RET
 	cfi_endproc
@@ -96,6 +100,10 @@ _dl_tlsdesc_return:
 _dl_tlsdesc_undefweak:
 	str	x1, [sp, #-16]!
 	cfi_adjust_cfa_offset(16)
+#ifdef __ILP32__
+	/* Need to zero extend the pointer */
+	mov	w0, w0
+#endif
 	ldr	PTR_REG (0), [x0, #PTR_SIZE]
 	mrs	x1, tpidr_el0
 	sub	PTR_REG (0), PTR_REG (0), PTR_REG (1)
@@ -144,6 +152,10 @@ _dl_tlsdesc_dynamic:
 	stp	x29, x30, [sp,#-(32+16*NSAVEXREGPAIRS)]!
 	cfi_adjust_cfa_offset (32+16*NSAVEXREGPAIRS)
 	mov	x29, sp
+#ifdef __ILP32__
+	/* Need to zero extend the pointer */
+	mov	w0, w0
+#endif
 
 	/* Save just enough registers to support fast path, if we fall
 	   into slow path we will save additional registers.  */
@@ -242,12 +254,20 @@ _dl_tlsdesc_resolve_rela:
 
 	SAVE_Q_REGISTERS
 
+#ifdef __ILP32__
+	/* Need to zero extend the pointer */
+	mov	w3, w3
+#endif
 	ldr	PTR_REG (1), [x3, #PTR_SIZE]
 	bl	_dl_tlsdesc_resolve_rela_fixup
 
 	RESTORE_Q_REGISTERS
 
 	ldr	x0, [sp, #32+16*8]
+#ifdef __ilp32__
+	/* need to zero extend the pointer */
+	mov	w0, w0
+#endif
 	ldr	PTR_REG (1), [x0]
 	blr	x1
 
@@ -309,6 +329,10 @@ _dl_tlsdesc_resolve_hold:
 	RESTORE_Q_REGISTERS
 
 	ldr	x0, [sp, #32+16*9]
+#ifdef __ilp32__
+	/* need to zero extend the pointer */
+	mov	w0, w0
+#endif
 	ldr	PTR_REG (1), [x0]
 	blr	x1
 

@@ -34,6 +34,10 @@
 	.text
 
 ENTRY (__setcontext)
+#ifdef __ILP32__
+	/* Zero extend the pointers that is passed in w0. */
+	mov	w0, w0
+#endif
 	/* Save a copy of UCP.  */
 	mov	x9, x0
 

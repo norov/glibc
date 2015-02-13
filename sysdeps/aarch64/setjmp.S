@@ -33,6 +33,10 @@ END (_setjmp)
 libc_hidden_def (_setjmp)
 
 ENTRY (__sigsetjmp)
+#ifdef __ILP32__
+	/* Zero extend the pointer that is passed in w0. */
+	mov	w0, w0
+#endif
 
 1:
 	stp	x19, x20, [x0, #JB_X19<<3]
