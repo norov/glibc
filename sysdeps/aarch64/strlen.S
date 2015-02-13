@@ -47,6 +47,11 @@
 
 	/* Start of critial section -- keep to one 64Byte cache line.  */
 ENTRY_ALIGN (strlen, 6)
+#ifdef __ILP32__
+	/* Zero extend the pointers that is passed in w0 and w1. */
+	mov	w0, w0
+	mov	w1, w1
+#endif
 	mov	zeroones, #REP8_01
 	bic	src, srcin, #15
 	ands	tmp1, srcin, #15

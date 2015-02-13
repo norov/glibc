@@ -27,6 +27,10 @@
 
 	.text
 ENTRY(__swapcontext)
+#ifdef __ILP32__
+	/* Zero extend the pointers that is passed in w0. */
+	mov	w0, w0
+#endif
 	/* Set the value returned when swapcontext() returns in this context. */
 	str	xzr,      [x0, oX0 +  0 * SZREG]
 

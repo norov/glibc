@@ -68,6 +68,10 @@
    identify exactly which byte is causing the termination, and why.  */
 
 ENTRY(strrchr)
+#ifdef __ILP32__
+	/* Zero extend the pointers that is passed in w0. */
+	mov	w0, w0
+#endif
 	cbz	x1, L(null_search)
 	/* Magic constant 0x40100401 to allow us to identify which lane
 	   matches the requested byte.  Magic constant 0x80200802 used

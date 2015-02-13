@@ -50,6 +50,13 @@
 #define REP8_80 0x8080808080808080
 
 ENTRY_ALIGN_AND_PAD (__strnlen, 6, 9)
+#ifdef __ILP32__
+	/* Zero extend the pointers that is passed in w0 and w1. */
+	/* Zero extend the size_t that is passed in w2 */
+	mov	w0, w0
+	mov	w1, w1
+	mov	w2, w2
+#endif
 	cbz	limit, L(hit_limit)
 	mov	zeroones, #REP8_01
 	bic	src, srcin, #15

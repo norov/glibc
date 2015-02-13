@@ -62,6 +62,10 @@
    identify exactly which byte is causing the termination.  */
 
 ENTRY (__strchrnul)
+#ifdef __ILP32__
+	/* Zero extend the pointer that is passed in w0. */
+	mov	w0, w0
+#endif
 	/* Magic constant 0x40100401 to allow us to identify which lane
 	   matches the termination condition.  */
 	mov	wtmp2, #0x0401

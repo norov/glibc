@@ -49,6 +49,11 @@
 	/* Start of performance-critical section  -- one 64B cache line.  */
 ENTRY_ALIGN(strcmp, 6)
 
+#ifdef __ILP32__
+	/* Zero extend the pointers that is passed in w0 and w1. */
+	mov	w0, w0
+	mov	w1, w1
+#endif
 	eor	tmp1, src1, src2
 	mov	zeroones, #REP8_01
 	tst	tmp1, #7

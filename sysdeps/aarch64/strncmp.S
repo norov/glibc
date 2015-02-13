@@ -51,6 +51,13 @@
 #define endloop		x15
 
 ENTRY_ALIGN_AND_PAD (strncmp, 6, 7)
+#ifdef __ILP32__
+	/* Zero extend the pointers that is passed in w0 and w1. */
+	/* Zero extend the size_t that is passed in w2 */
+	mov	w0, w0
+	mov	w1, w1
+	mov	w2, w2
+#endif
 	cbz	limit, L(ret0)
 	eor	tmp1, src1, src2
 	mov	zeroones, #REP8_01

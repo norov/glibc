@@ -64,6 +64,10 @@
 /* Locals and temporaries.  */
 
 ENTRY (strchr)
+#ifdef __ILP32__
+	/* Zero extend the pointer that is passed in w0. */
+	mov	w0, w0
+#endif
 	mov	wtmp2, #0x0401
 	movk	wtmp2, #0x4010, lsl #16
 	dup	vrepchr.16b, chrin

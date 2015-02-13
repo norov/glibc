@@ -53,6 +53,12 @@
 
 ENTRY_ALIGN (__memset, 6)
 
+#ifdef __ILP32__
+	/* Zero extend the pointer that is passed in w0. */
+	/* Zero extend the size_t that was passed in w2 */
+	mov	w0, w0
+	mov	w2, w2
+#endif
 	mov	dst, dstin		/* Preserve return value.  */
 	ands	A_lw, val, #255
 #ifndef DONT_USE_DC

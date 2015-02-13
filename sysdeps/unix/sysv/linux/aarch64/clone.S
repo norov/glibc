@@ -39,6 +39,15 @@
  */
         .text
 ENTRY(__clone)
+#ifdef __ILP32__
+	/* Zero extend the pointers that is passed in w0, w1, w3, w4, w5, w6. */
+	mov	w0, w0
+	mov	w1, w1
+	mov	w3, w3
+	mov	w4, w4
+	mov	w5, w5
+	mov	w6, w6
+#endif
 	/* Save args for the child.  */
 	mov	x10, x0
 	mov	x11, x2

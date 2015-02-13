@@ -46,7 +46,13 @@
 #include <sysdep.h>
 
 ENTRY_ALIGN (memcpy, 6)
-
+#ifdef __ILP32__
+	/* Zero extend the pointers that is passed in w0 and w1. */
+	/* Zero extend the size_t that was passed in w2 */
+	mov	w0, w0
+	mov	w1, w1
+	mov	w2, w2
+#endif
 	mov	dst, dstin
 	cmp	count, #64
 	b.ge	L(cpy_not_short)
