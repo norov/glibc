@@ -1,3 +1,9 @@
+2015-02-24  Andrew Pinski  <apinski@cavium.com>
+
+	* sysdeps/aarch64/nptl/bits/semaphore.h (sem_t):
+	Change type of __align to long long so
+	that ILP32 is aligned to 64bits.
+
 2015-02-12  Andrew Pinski  <apinski@cavium.com>
 
 	* sysdeps/aarch64/__longjmp.S (__longjmp):
