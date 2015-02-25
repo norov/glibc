@@ -82,28 +82,31 @@ enum
 #endif
 
 
-/* Mutex initializers.  */
 #ifdef __PTHREAD_MUTEX_HAVE_PREV
 # define PTHREAD_MUTEX_INITIALIZER \
-  { { 0, 0, 0, 0, 0, 0, { 0, 0 } } }
+  { { 0, 0, 0, 0, 0, __PTHREAD_SPINS, { 0, 0 } } }
 # ifdef __USE_GNU
 #  define PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP \
-  { { 0, 0, 0, 0, PTHREAD_MUTEX_RECURSIVE_NP, 0, { 0, 0 } } }
+  { { 0, 0, 0, 0, PTHREAD_MUTEX_RECURSIVE_NP, __PTHREAD_SPINS, { 0, 0 } } }
 #  define PTHREAD_ERRORCHECK_MUTEX_INITIALIZER_NP \
-  { { 0, 0, 0, 0, PTHREAD_MUTEX_ERRORCHECK_NP, 0, { 0, 0 } } }
+  { { 0, 0, 0, 0, PTHREAD_MUTEX_ERRORCHECK_NP, __PTHREAD_SPINS, { 0, 0 } } }
 #  define PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP \
-  { { 0, 0, 0, 0, PTHREAD_MUTEX_ADAPTIVE_NP, 0, { 0, 0 } } }
+  { { 0, 0, 0, 0, PTHREAD_MUTEX_ADAPTIVE_NP, __PTHREAD_SPINS, { 0, 0 } } }
+#  define PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP \
+  { { 0, 0, 0, 0, PTHREAD_MUTEX_ADAPTIVE_NP, __PTHREAD_SPINS, { 0, 0 } } }
+
 # endif
 #else
 # define PTHREAD_MUTEX_INITIALIZER \
-  { { 0, 0, 0, 0, 0, { 0 } } }
+  { { 0, 0, 0, 0, 0, { __PTHREAD_SPINS } } }
 # ifdef __USE_GNU
 #  define PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP \
-  { { 0, 0, 0, PTHREAD_MUTEX_RECURSIVE_NP, 0, { 0 } } }
+  { { 0, 0, 0, PTHREAD_MUTEX_RECURSIVE_NP, 0, { __PTHREAD_SPINS } } }
 #  define PTHREAD_ERRORCHECK_MUTEX_INITIALIZER_NP \
-  { { 0, 0, 0, PTHREAD_MUTEX_ERRORCHECK_NP, 0, { 0 } } }
+  { { 0, 0, 0, PTHREAD_MUTEX_ERRORCHECK_NP, 0, { __PTHREAD_SPINS } } }
 #  define PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP \
-  { { 0, 0, 0, PTHREAD_MUTEX_ADAPTIVE_NP, 0, { 0 } } }
+  { { 0, 0, 0, PTHREAD_MUTEX_ADAPTIVE_NP, 0, { __PTHREAD_SPINS } } }
+
 # endif
 #endif
 
@@ -129,17 +132,17 @@ enum
 
 /* Read-write lock initializers.  */
 # define PTHREAD_RWLOCK_INITIALIZER \
-  { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
+  { { 0, 0, 0, 0, 0, 0, 0, 0, __PTHREAD_RWLOCK_ELISION_EXTRA, 0, 0 } }
 # ifdef __USE_GNU
 #  ifdef __PTHREAD_RWLOCK_INT_FLAGS_SHARED
 #   define PTHREAD_RWLOCK_WRITER_NONRECURSIVE_INITIALIZER_NP \
-  { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,					      \
+  { { 0, 0, 0, 0, 0, 0, 0, 0, __PTHREAD_RWLOCK_ELISION_EXTRA, 0,					      \
 	PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP } }
 #  else
 #   if __BYTE_ORDER == __LITTLE_ENDIAN
 #    define PTHREAD_RWLOCK_WRITER_NONRECURSIVE_INITIALIZER_NP \
   { { 0, 0, 0, 0, 0, 0, PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP, \
-      0, 0, 0, 0 } }
+      0, __PTHREAD_RWLOCK_ELISION_EXTRA, 0, 0 } }
 #   else
 #    define PTHREAD_RWLOCK_WRITER_NONRECURSIVE_INITIALIZER_NP \
   { { 0, 0, 0, 0, 0, 0, 0, 0, 0, PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP,\
@@ -404,6 +407,14 @@ extern int pthread_attr_getaffinity_np (const pthread_attr_t *__attr,
 					cpu_set_t *__cpuset)
      __THROW __nonnull ((1, 3));
 
+/* Get the default attributes used by pthread_create in this process.  */
+extern int pthread_getattr_default_np (pthread_attr_t *__attr)
+     __THROW __nonnull ((1));
+
+/* Set the default attributes to be used by pthread_create in this
+   process.  */
+extern int pthread_setattr_default_np (const pthread_attr_t *__attr)
+     __THROW __nonnull ((1));
 
 /* Initialize thread attribute *ATTR with attributes corresponding to the
    already running thread TH.  It shall be called on uninitialized ATTR

@@ -104,7 +104,7 @@ The @code{struct timeval} structure represents an elapsed time.  It is
 declared in @file{sys/time.h} and has the following members:
 
 @table @code
-@item long int tv_sec
+@item time_t tv_sec
 This represents the number of whole seconds of elapsed time.
 
 @item long int tv_usec
@@ -123,7 +123,7 @@ The @code{struct timespec} structure represents an elapsed time.  It is
 declared in @file{time.h} and has the following members:
 
 @table @code
-@item long int tv_sec
+@item time_t tv_sec
 This represents the number of whole seconds of elapsed time.
 
 @item long int tv_nsec
@@ -2509,18 +2509,19 @@ rule for choosing the default time zone, so there is little we can say
 about them.
 
 @cindex time zone database
-@pindex /share/lib/zoneinfo
+@pindex /usr/share/zoneinfo
 @pindex zoneinfo
 If @var{characters} begins with a slash, it is an absolute file name;
 otherwise the library looks for the file
-@w{@file{/share/lib/zoneinfo/@var{characters}}}.  The @file{zoneinfo}
+@w{@file{/usr/share/zoneinfo/@var{characters}}}.  The @file{zoneinfo}
 directory contains data files describing local time zones in many
 different parts of the world.  The names represent major cities, with
 subdirectories for geographical areas; for example,
 @file{America/New_York}, @file{Europe/London}, @file{Asia/Hong_Kong}.
 These data files are installed by the system administrator, who also
 sets @file{/etc/localtime} to point to the data file for the local time
-zone.  @Theglibc{} comes with a large database of time zone
+zone.  The files typically come from the @url{http://www.iana.org/time-zones,
+Time Zone Database} of time zone and daylight saving time
 information for most regions of the world, which is maintained by a
 community of volunteers and put in the public domain.
 

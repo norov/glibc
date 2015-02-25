@@ -331,23 +331,18 @@ getanswer (const querybuf *answer, int anslen, const char *qname, int qtype)
 			buflen -= n;
 			continue;
 		}
-		if ((type == T_SIG) || (type == T_KEY) || (type == T_NXT)) {
-			/* We don't support DNSSEC yet.  For now, ignore
-			 * the record and send a low priority message
-			 * to syslog.
-			 */
-			syslog(LOG_DEBUG|LOG_AUTH,
-	       "gethostby*.getanswer: asked for \"%s %s %s\", got type \"%s\"",
-			       qname, p_class(C_IN), p_type(qtype),
-			       p_type(type));
-			cp += n;
-			continue;
-		}
 		if (type != qtype) {
-			syslog(LOG_NOTICE|LOG_AUTH,
+			/* Log a low priority message if we get an unexpected
+			 * record, but skip it if we are using DNSSEC since it
+			 * uses many different types in responses that do not
+			 * match QTYPE.
+			 */
+			if ((_res.options & RES_USE_DNSSEC) == 0) {
+				syslog(LOG_NOTICE|LOG_AUTH,
 	       "gethostby*.getanswer: asked for \"%s %s %s\", got type \"%s\"",
-			       qname, p_class(C_IN), p_type(qtype),
-			       p_type(type));
+					qname, p_class(C_IN), p_type(qtype),
+					p_type(type));
+			}
 			cp += n;
 			continue;		/* XXX - had_error++ ? */
 		}
@@ -672,8 +667,8 @@ gethostbyaddr(addr, len, af)
 		return (NULL);
 	}
 	if (af == AF_INET6 && len == IN6ADDRSZ &&
-	    (!bcmp(uaddr, mapped, sizeof mapped) ||
-	     !bcmp(uaddr, tunnelled, sizeof tunnelled))) {
+	    (!memcmp(uaddr, mapped, sizeof mapped) ||
+	     !memcmp(uaddr, tunnelled, sizeof tunnelled))) {
 		/* Unmap. */
 		addr += sizeof mapped;
 		uaddr += sizeof mapped;
@@ -922,7 +917,7 @@ _gethtbyaddr(addr, len, af)
 
 	_sethtent(0);
 	while ((p = _gethtent()))
-		if (p->h_addrtype == af && !bcmp(p->h_addr, addr, len))
+		if (p->h_addrtype == af && !memcmp(p->h_addr, addr, len))
 			break;
 	_endhtent();
 	return (p);

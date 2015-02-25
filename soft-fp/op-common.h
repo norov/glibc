@@ -414,6 +414,7 @@
       if (X##_s == Y##_s)						\
 	{								\
 	  /* Addition.  */						\
+	  __label__ add1, add2, add3, add_done;				\
 	  R##_s = X##_s;						\
 	  int _FP_ADD_INTERNAL_ediff = X##_e - Y##_e;			\
 	  if (_FP_ADD_INTERNAL_ediff > 0)				\
@@ -599,6 +600,7 @@
       else								\
 	{								\
 	  /* Subtraction.  */						\
+	  __label__ sub1, sub2, sub3, norm, sub_done;			\
 	  int _FP_ADD_INTERNAL_ediff = X##_e - Y##_e;			\
 	  if (_FP_ADD_INTERNAL_ediff > 0)				\
 	    {								\
@@ -933,6 +935,7 @@
 #define _FP_FMA(fs, wc, dwc, R, X, Y, Z)				\
   do									\
     {									\
+      __label__ done_fma;						\
       FP_DECL_##fs (_FP_FMA_T);						\
       _FP_FMA_T##_s = X##_s ^ Y##_s;					\
       _FP_FMA_T##_e = X##_e + Y##_e + 1;				\
@@ -1113,6 +1116,7 @@
 	  R##_s = Z##_s;						\
 	  _FP_FRAC_COPY_##wc (R, Z);					\
 	  R##_c = Z##_c;						\
+	  R##_e = Z##_e;						\
 	  break;							\
 									\
 	case _FP_CLS_COMBINE (FP_CLS_INF, FP_CLS_INF):			\
@@ -1248,6 +1252,46 @@
     }									\
   while (0)
 
+/* Helper for comparisons.  If denormal operands would raise an
+   exception, check for them, and flush to zero as appropriate
+   (otherwise, we need only check and flush to zero if it might affect
+   the result, which is done later with _FP_CMP_CHECK_FLUSH_ZERO).  */
+#define _FP_CMP_CHECK_DENORM(fs, wc, X, Y)				\
+  do									\
+    {									\
+      if (FP_EX_DENORM != 0)						\
+	{								\
+	  /* We must ensure the correct exceptions are raised for	\
+	     denormal operands, even though this may not affect the	\
+	     result of the comparison.  */				\
+	  if (FP_DENORM_ZERO)						\
+	    {								\
+	      _FP_CHECK_FLUSH_ZERO (fs, wc, X);				\
+	      _FP_CHECK_FLUSH_ZERO (fs, wc, Y);				\
+	    }								\
+	  else								\
+	    {								\
+	      if ((X##_e == 0 && !_FP_FRAC_ZEROP_##wc (X))		\
+		  || (Y##_e == 0 && !_FP_FRAC_ZEROP_##wc (Y)))		\
+		FP_SET_EXCEPTION (FP_EX_DENORM);			\
+	    }								\
+	}								\
+    }									\
+  while (0)
+
+/* Helper for comparisons.  Check for flushing denormals for zero if
+   we didn't need to check earlier for any denormal operands.  */
+#define _FP_CMP_CHECK_FLUSH_ZERO(fs, wc, X, Y)	\
+  do						\
+    {						\
+      if (FP_EX_DENORM == 0)			\
+	{					\
+	  _FP_CHECK_FLUSH_ZERO (fs, wc, X);	\
+	  _FP_CHECK_FLUSH_ZERO (fs, wc, Y);	\
+	}					\
+    }						\
+  while (0)
+
 /* Main differential comparison routine.  The inputs should be raw not
    cooked.  The return is -1, 0, 1 for normal values, UN
    otherwise.  */
@@ -1255,6 +1299,7 @@
 #define _FP_CMP(fs, wc, ret, X, Y, un, ex)				\
   do									\
     {									\
+      _FP_CMP_CHECK_DENORM (fs, wc, X, Y);				\
       /* NANs are unordered.  */					\
       if ((X##_e == _FP_EXPMAX_##fs && !_FP_FRAC_ZEROP_##wc (X))	\
 	  || (Y##_e == _FP_EXPMAX_##fs && !_FP_FRAC_ZEROP_##wc (Y)))	\
@@ -1267,8 +1312,7 @@
 	  int _FP_CMP_is_zero_x;					\
 	  int _FP_CMP_is_zero_y;					\
 									\
-	  _FP_CHECK_FLUSH_ZERO (fs, wc, X);				\
-	  _FP_CHECK_FLUSH_ZERO (fs, wc, Y);				\
+	  _FP_CMP_CHECK_FLUSH_ZERO (fs, wc, X, Y);			\
 									\
 	  _FP_CMP_is_zero_x						\
 	    = (!X##_e && _FP_FRAC_ZEROP_##wc (X)) ? 1 : 0;		\
@@ -1303,6 +1347,7 @@
 #define _FP_CMP_EQ(fs, wc, ret, X, Y, ex)				\
   do									\
     {									\
+      _FP_CMP_CHECK_DENORM (fs, wc, X, Y);				\
       /* NANs are unordered.  */					\
       if ((X##_e == _FP_EXPMAX_##fs && !_FP_FRAC_ZEROP_##wc (X))	\
 	  || (Y##_e == _FP_EXPMAX_##fs && !_FP_FRAC_ZEROP_##wc (Y)))	\
@@ -1312,8 +1357,7 @@
 	}								\
       else								\
 	{								\
-	  _FP_CHECK_FLUSH_ZERO (fs, wc, X);				\
-	  _FP_CHECK_FLUSH_ZERO (fs, wc, Y);				\
+	  _FP_CMP_CHECK_FLUSH_ZERO (fs, wc, X, Y);			\
 									\
 	  (ret) = !(X##_e == Y##_e					\
 		    && _FP_FRAC_EQ_##wc (X, Y)				\
@@ -1328,6 +1372,7 @@
 #define _FP_CMP_UNORD(fs, wc, ret, X, Y, ex)				\
   do									\
     {									\
+      _FP_CMP_CHECK_DENORM (fs, wc, X, Y);				\
       (ret) = ((X##_e == _FP_EXPMAX_##fs && !_FP_FRAC_ZEROP_##wc (X))	\
 	       || (Y##_e == _FP_EXPMAX_##fs && !_FP_FRAC_ZEROP_##wc (Y))); \
       if (ret)								\
@@ -1531,6 +1576,7 @@
 #define _FP_TO_INT_ROUND(fs, wc, r, X, rsize, rsigned)			\
   do									\
     {									\
+      __label__ _FP_TO_INT_ROUND_done;					\
       if (X##_e < _FP_EXPBIAS_##fs)					\
 	{								\
 	  int _FP_TO_INT_ROUND_rounds_away = 0;				\
@@ -1742,6 +1788,7 @@
 #define _FP_FROM_INT(fs, wc, X, r, rsize, rtype)			\
   do									\
     {									\
+      __label__ pack_semiraw;						\
       if (r)								\
 	{								\
 	  rtype _FP_FROM_INT_ur;					\
@@ -1768,7 +1815,7 @@
 			 X##_e = (_FP_EXPBIAS_##fs + 2 * _FP_W_TYPE_SIZE - 1 \
 				  - _FP_FROM_INT_lz);			\
 		       })						\
-		     : (abort (), 0)));					\
+		     : ({ abort (); 0; })));				\
 									\
 	  if ((rsize) - 1 + _FP_EXPBIAS_##fs >= _FP_EXPMAX_##fs		\
 	      && X##_e >= _FP_EXPMAX_##fs)				\
@@ -1820,8 +1867,10 @@
 
 
 /* Extend from a narrower floating-point format to a wider one.  Input
-   and output are raw.  */
-#define FP_EXTEND(dfs, sfs, dwc, swc, D, S)				\
+   and output are raw.  If CHECK_NAN, then signaling NaNs are
+   converted to quiet with the "invalid" exception raised; otherwise
+   signaling NaNs remain signaling with no exception.  */
+#define _FP_EXTEND_CNAN(dfs, sfs, dwc, swc, D, S, check_nan)		\
   do									\
     {									\
       if (_FP_FRACBITS_##dfs < _FP_FRACBITS_##sfs			\
@@ -1871,17 +1920,21 @@
 	      D##_e = _FP_EXPMAX_##dfs;					\
 	      if (!_FP_FRAC_ZEROP_##swc (S))				\
 		{							\
-		  if (_FP_FRAC_SNANP (sfs, S))				\
+		  if (check_nan && _FP_FRAC_SNANP (sfs, S))		\
 		    FP_SET_EXCEPTION (FP_EX_INVALID			\
 				      | FP_EX_INVALID_SNAN);		\
 		  _FP_FRAC_SLL_##dwc (D, (_FP_FRACBITS_##dfs		\
 					  - _FP_FRACBITS_##sfs));	\
-		  _FP_SETQNAN (dfs, dwc, D);				\
+		  if (check_nan)					\
+		    _FP_SETQNAN (dfs, dwc, D);				\
 		}							\
 	    }								\
 	}								\
     }									\
   while (0)
+
+#define FP_EXTEND(dfs, sfs, dwc, swc, D, S)		\
+    _FP_EXTEND_CNAN (dfs, sfs, dwc, swc, D, S, 1)
 
 /* Truncate from a wider floating-point format to a narrower one.
    Input and output are semi-raw.  */

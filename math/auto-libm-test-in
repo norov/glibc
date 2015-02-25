@@ -43,6 +43,37 @@ acosh 1.625
 acosh 7
 acosh 100
 acosh 1e5
+acosh 0x1p8
+acosh 0x1p9
+acosh 0x1p10
+acosh 0x1p11
+acosh 0x1p12
+acosh 0x1p13
+acosh 0x1p24
+acosh 0x1p25
+acosh 0x1p26
+acosh 0x1p27
+acosh 0x1p28
+acosh 0x1p29
+acosh 0x1p30
+acosh 0x1p31
+acosh 0x1p32
+acosh 0x1p33
+acosh 0x1p48
+acosh 0x1p49
+acosh 0x1p50
+acosh 0x1p51
+acosh 0x1p52
+acosh 0x1p53
+acosh 0x1p54
+acosh 0x1p55
+acosh 0x1p56
+acosh 0x1p57
+acosh 0x1p58
+acosh 0x1p59
+acosh 0x1p100
+acosh 0x1p500
+acosh 0x1p5000
 acosh max no-test-inline
 
 asin 0
@@ -93,14 +124,13 @@ atan 0x1p-5
 atan 2.5
 atan 10
 atan 1e6
-# Bug 15319: underflow exception may be missing.
-atan 0x1p-100 missing-underflow
-atan 0x1p-600 missing-underflow
-atan 0x1p-10000 missing-underflow
-atan min missing-underflow
-atan -min missing-underflow
-atan min_subnorm missing-underflow
-atan -min_subnorm missing-underflow
+atan 0x1p-100
+atan 0x1p-600
+atan 0x1p-10000
+atan min
+atan -min
+atan min_subnorm
+atan -min_subnorm
 
 # atan2 (0,x) == 0 for x > 0.
 atan2 0 1
@@ -156,13 +186,20 @@ atan2 min -max
 atan2 -min -max
 atan2 min_subnorm -max
 atan2 -min_subnorm -max
-# Bug 15319: underflow exception may be missing.
-atan2 1 max missing-underflow
-atan2 -1 max missing-underflow
-atan2 min max missing-underflow
-atan2 -min max missing-underflow
-atan2 min_subnorm max missing-underflow
-atan2 -min_subnorm max missing-underflow
+atan2 1 max
+atan2 -1 max
+atan2 min max
+atan2 -min max
+atan2 min_subnorm max
+atan2 -min_subnorm max
+atan2 min 1
+atan2 -min 1
+atan2 min_subnorm 1
+atan2 -min_subnorm 1
+atan2 min -1
+atan2 -min -1
+atan2 min_subnorm -1
+atan2 -min_subnorm -1
 
 atanh 0
 atanh -0
@@ -938,6 +975,24 @@ exp2 1023
 exp2 -1074
 exp2 16383
 exp2 -16400
+exp2 0x1p-10
+exp2 -0x1p-10
+exp2 0x1p-20
+exp2 -0x1p-20
+exp2 0x1p-30
+exp2 -0x1p-30
+exp2 0x1p-40
+exp2 -0x1p-40
+exp2 0x1p-50
+exp2 -0x1p-50
+exp2 0x1p-60
+exp2 -0x1p-60
+exp2 0x1p-100
+exp2 -0x1p-100
+exp2 min
+exp2 -min
+exp2 min_subnorm
+exp2 -min_subnorm
 
 expm1 0
 expm1 -0
@@ -1023,6 +1078,16 @@ fma 1.0 1.0 -1.0
 fma 1.0 -1.0 1.0
 fma -1.0 1.0 1.0
 fma -1.0 -1.0 -1.0
+
+fma 0 0 1
+fma 0 0 2
+fma 0 0 max
+fma 0 1 1
+fma 1 0 1
+fma 0 1 2
+fma 1 0 2
+fma 0 1 max
+fma 1 0 max
 
 # Bug 6801: errno setting may be missing.
 fma min min 0 missing-errno

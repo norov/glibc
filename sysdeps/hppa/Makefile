@@ -24,8 +24,8 @@ LDFLAGS-c_pic.os += -Wl,--unique=.text*
 ifeq ($(subdir),elf)
 CFLAGS-rtld.c += -mdisable-fpregs
 sysdep-dl-routines += dl-symaddr dl-fptr
-sysdep_routines += $(sysdep-dl-routines)
-sysdep-rtld-routines += $(sysdep-dl-routines)
+# dl-fptr.c needs a complete rewrite to fix ISO C aliasing violations.
+CFLAGS-dl-fptr.c = -Wno-error
 endif
 
 ifeq ($(subdir),csu)

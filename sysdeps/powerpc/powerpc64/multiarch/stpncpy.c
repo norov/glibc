@@ -23,10 +23,13 @@
 
 extern __typeof (__stpncpy) __stpncpy_ppc attribute_hidden;
 extern __typeof (__stpncpy) __stpncpy_power7 attribute_hidden;
+extern __typeof (__stpncpy) __stpncpy_power8 attribute_hidden;
 
 libc_ifunc (__stpncpy,
-            (hwcap & PPC_FEATURE_HAS_VSX)
-            ? __stpncpy_power7
+            (hwcap2 & PPC_FEATURE2_ARCH_2_07)
+            ? __stpncpy_power8 :
+              (hwcap & PPC_FEATURE_HAS_VSX)
+              ? __stpncpy_power7
             : __stpncpy_ppc);
 
 weak_alias (__stpncpy, stpncpy)

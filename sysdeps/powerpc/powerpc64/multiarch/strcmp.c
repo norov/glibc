@@ -23,9 +23,12 @@
 
 extern __typeof (strcmp) __strcmp_ppc attribute_hidden;
 extern __typeof (strcmp) __strcmp_power7 attribute_hidden;
+extern __typeof (strcmp) __strcmp_power8 attribute_hidden;
 
 libc_ifunc (strcmp,
-            (hwcap & PPC_FEATURE_HAS_VSX)
-            ? __strcmp_power7
+            (hwcap2 & PPC_FEATURE2_ARCH_2_07)
+              ? __strcmp_power8 :
+              (hwcap & PPC_FEATURE_HAS_VSX)
+              ? __strcmp_power7
             : __strcmp_ppc);
 #endif
