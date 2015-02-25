@@ -1,3 +1,8 @@
+2015-02-25  Andrew Pinski  <apinski@cavium.com>
+
+	* sysdeps/mips/nptl/tls.h: Change #if !_MIPS_ARCH_OCTEON
+	to #ifndef _MIPS_ARCH_OCTEON.
+
 2015-01-09  Andrew Pinski  <apinski@cavium.com>
 
 	* sysdeps/unix/sysv/linux/sigset-cvt-mask.h (sigset_set_old_mask):

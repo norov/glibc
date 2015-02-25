@@ -42,7 +42,7 @@ typedef union dtv
 # define READ_THREAD_POINTER() (__builtin_thread_pointer ())
 #else
 /* Note: rd must be $v1 to be ABI-conformant.  */
-# if !_MIPS_ARCH_OCTEON
+# ifndef _MIPS_ARCH_OCTEON
 # define READ_THREAD_POINTER() \
     ({ void *__result;							      \
        asm volatile (".set\tpush\n\t.set\tmips32r2\n\t"			      \
@@ -60,7 +60,7 @@ typedef union dtv
 #else /* __ASSEMBLER__ */
 # include <tcb-offsets.h>
 
-# if !_MIPS_ARCH_OCTEON
+# ifndef _MIPS_ARCH_OCTEON
 # define READ_THREAD_POINTER(rd) \
 	.set	push;							      \
 	.set	mips32r2;						      \
