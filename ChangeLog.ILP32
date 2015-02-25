@@ -1,0 +1,26 @@
+2015-02-12  Andrew Pinski  <apinski@cavium.com>
+
+	* sysdeps/aarch64/__longjmp.S (__longjmp):
+	Handle ILP32 ABI with pointers argument correctly.
+	* sysdeps/aarch64/dl-tlsdesc.S (_dl_tlsdesc_return):
+	Likewise.
+	(_dl_tlsdesc_undefweak): Likewise.
+	(_dl_tlsdesc_dynamic): Likewise.
+	(_dl_tlsdesc_resolve_rela): Likewise.
+	* sysdeps/aarch64/memcmp.S (memcmp): Likewise.
+	* sysdeps/aarch64/memcpy.S (memcpy): Likewise.
+	* sysdeps/aarch64/memmove.S (memmove): Likewise.
+	* sysdeps/aarch64/memset.S (memset): Likewise.
+	* sysdeps/aarch64/setjmp.S (__sigsetjmp): Likewise.
+	* sysdeps/aarch64/strchr.S (strchr): Likewise.
+	* sysdeps/aarch64/strchrnul.S (__strchrnul): Likewise.
+	* sysdeps/aarch64/strcmp.S (strcmp): Likewise.
+	* sysdeps/aarch64/strcpy.S (STRCPY): Likewise.
+	* sysdeps/aarch64/strlen.S (strlen): Likewise.
+	* sysdeps/aarch64/strncmp.S (strncmp): Likewise.
+	* sysdeps/aarch64/strnlen.S (__strnlen): Likewise.
+	* sysdeps/aarch64/strrchr.S (strrchr): Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/clone.S (__clone): Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/getcontext.S (__getcontext): Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/setcontext.S (__setcontext): Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/swapcontext.S (__swapcontext): Likewise.
