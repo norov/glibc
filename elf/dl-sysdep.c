@@ -307,6 +307,7 @@ _dl_show_auxv (void)
 	  [AT_SYSINFO_EHDR - 2] =	{ "SYSINFO_EHDR: 0x", hex },
 	  [AT_RANDOM - 2] =		{ "RANDOM:       0x", hex },
 	  [AT_HWCAP2 - 2] =		{ "HWCAP2:       0x", hex },
+	  [AT_ARM64_MIDR - 2] =		{ "MIDR:         0x", hex },
 	};
       unsigned int idx = (unsigned int) (av->a_type - 2);
 
