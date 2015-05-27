@@ -1,3 +1,31 @@
+2015-05-27  Andrew Pinski  <apinski@cavium.com>
+
+	* elf/elf.h (AT_ARM64_MIDR): New define.
+	* elf/dl-sysdep.c (_dl_show_auxv): Add support for
+	AT_ARM64_MIDR.
+	* sysdeps/unix/sysv/linux/aarch64/dl-auxv.h: New file.
+	* sysdeps/unix/sysv/linux/aarch64/dl-sysdep.c: New file.
+
+2015-02-25  Andrew Pinski  <apinski@cavium.com>
+
+	* sysdeps/mips/nptl/tls.h: Change #if !_MIPS_ARCH_OCTEON
+	to #ifndef _MIPS_ARCH_OCTEON.
+
+2015-01-09  Andrew Pinski  <apinski@cavium.com>
+
+	* sysdeps/unix/sysv/linux/sigset-cvt-mask.h (sigset_set_old_mask):
+	Use __sigset_inner_t instead of unsigned long.
+
+2015-01-09  Andrew Pinski  <apinski@cavium.com>
+
+	* sysdeps/unix/sysv/linux/generic/brk.c (__brk):
+	Add a cast before the cast to the pointer.
+
+2015-01-09  Andrew Pinski  <apinski@cavium.com>
+
+	* sysdeps/aarch64/jmpbuf-unwind.h (_JMPBUF_CFA_UNWINDS_ADJ): Fix ILP32 warning.
+	* sysdeps/unix/sysv/linux/aarch64/sigcontextinfo.h (GET_PC): Likewise.
+
 2014-12-22  Andrew Pinski  <apinski@cavium.com>
 
 	Bug #13670
