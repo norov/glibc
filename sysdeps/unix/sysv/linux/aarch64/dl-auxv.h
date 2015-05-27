@@ -17,7 +17,7 @@
    <http://www.gnu.org/licenses/>.  */
 
 
-extern long long __libc_arm64_midr;
+extern int __libc_arm64_midr;
 
 #define DL_PLATFORM_AUXV				\
       case AT_ARM64_MIDR:				\
