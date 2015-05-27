@@ -1058,6 +1058,9 @@ typedef struct
 #define AT_L2_CACHESHAPE	36
 #define AT_L3_CACHESHAPE	37
 
+/* AARCH64 MIDR system register. */
+#define AT_ARM64_MIDR		38
+
 /* Note section contents.  Each entry in the note section begins with
    a header of a fixed form.  */
 
