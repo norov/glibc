@@ -1,5 +1,14 @@
 2015-05-30  Andrew Pinski  <apinski@cavium.com>
 
+	* sysdeps/aarch64/multiarch/Makefile: New file.
+	* sysdeps/aarch64/multiarch/ifunc-impl-list.c: New file.
+	* sysdeps/aarch64/multiarch/init-arch.h: New file.
+	* sysdeps/aarch64/multiarch/memcpy.c: New file.
+	* sysdeps/aarch64/multiarch/memcpy_generic.S: New file.
+	* sysdeps/aarch64/multiarch/memcpy_thunderx.S: New file.
+
+2015-05-30  Andrew Pinski  <apinski@cavium.com>
+
 	* sysdeps/aarch64/memmove.S (memmove):
 	Don't do a conditional sibcall to
 	memcpy as it crashes the linker.
