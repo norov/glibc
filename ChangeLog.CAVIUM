@@ -1,5 +1,10 @@
 2015-05-30  Andrew Pinski  <apinski@cavium.com>
 
+	* sysdeps/aarch64/ilp32/multiarch/Implies: New file.
+	* sysdeps/aarch64/lp64/multiarch/Implies: New file.
+
+2015-05-30  Andrew Pinski  <apinski@cavium.com>
+
 	* sysdeps/aarch64/multiarch/Makefile: New file.
 	* sysdeps/aarch64/multiarch/ifunc-impl-list.c: New file.
 	* sysdeps/aarch64/multiarch/init-arch.h: New file.
