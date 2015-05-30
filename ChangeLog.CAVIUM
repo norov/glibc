@@ -1,3 +1,9 @@
+2015-05-30  Andrew Pinski  <apinski@cavium.com>
+
+	* sysdeps/aarch64/memmove.S (memmove):
+	Don't do a conditional sibcall to
+	memcpy as it crashes the linker.
+
 2015-05-27  Andrew Pinski  <apinski@cavium.com>
 
 	* sysdeps/unix/sysv/linux/aarch64/dl-auxv.h
