@@ -1,3 +1,10 @@
+2015-06-02  Andrew Pinski  <apinski@cavium.com>
+
+	* sysdeps/aarch64/bzero.S: Use memset rather than __memset.
+	* sysdeps/aarch64/memset.S: Don't call the function __memset.
+	If a function wants to call it directly then it should use __GI_memset
+	instead.
+
 2015-05-30  Andrew Pinski  <apinski@cavium.com>
 
 	* sysdeps/aarch64/ilp32/multiarch/Implies: New file.
