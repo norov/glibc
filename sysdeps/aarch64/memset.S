@@ -51,7 +51,7 @@
 #define dst		x8
 #define tmp3w		w9
 
-ENTRY_ALIGN (__memset, 6)
+ENTRY_ALIGN (memset, 6)
 
 #ifdef __ILP32__
 	/* Zero extend the pointer that is passed in w0. */
@@ -230,6 +230,5 @@ L(cache_clear):
 #endif
 #endif /* DONT_USE_DC */
 
-END (__memset)
-weak_alias (__memset, memset)
+END (memset)
 libc_hidden_builtin_def (memset)
