@@ -1,5 +1,12 @@
 2015-06-02  Andrew Pinski  <apinski@cavium.com>
 
+	* sysdeps/aarch64/multiarch/Makefile: Add memset_generic and memset_thunderx.
+	* sysdeps/aarch64/multiarch/memset.c: New file.
+	* sysdeps/aarch64/multiarch/memset_generic.S: New file.
+	* sysdeps/aarch64/multiarch/memset_thunderx.c: New file.
+
+2015-06-02  Andrew Pinski  <apinski@cavium.com>
+
 	* sysdeps/aarch64/bzero.S: Use memset rather than __memset.
 	* sysdeps/aarch64/memset.S: Don't call the function __memset.
 	If a function wants to call it directly then it should use __GI_memset
