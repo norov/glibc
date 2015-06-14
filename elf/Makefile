@@ -121,7 +121,8 @@ tests = tst-tls1 tst-tls2 tst-tls9 tst-leaks1 \
 	tst-auxv
 tests-static = tst-tls1-static tst-tls2-static tst-stackguard1-static \
 	       tst-leaks1-static tst-array1-static tst-array5-static \
-	       tst-ptrguard1-static tst-dl-iter-static
+	       tst-ptrguard1-static tst-dl-iter-static \
+	       tst-tlsalign-static tst-tlsalign-extern-static
 ifeq (yes,$(build-shared))
 tests-static += tst-tls9-static
 tst-tls9-static-ENV = \
@@ -130,7 +131,7 @@ endif
 tests += $(tests-static)
 ifeq (yes,$(build-shared))
 tests += loadtest restest1 preloadtest loadfail multiload origtest resolvfail \
-	 constload1 order vismain noload filter unload \
+	 constload1 order noload filter unload \
 	 reldep reldep2 reldep3 reldep4 nodelete nodelete2 \
 	 nodlopen nodlopen2 neededtest neededtest2 \
 	 neededtest3 neededtest4 unload2 lateglobal initfirst global \
@@ -144,9 +145,9 @@ tests += loadtest restest1 preloadtest loadfail multiload origtest resolvfail \
 	 unload3 unload4 unload5 unload6 unload7 unload8 tst-global1 order2 \
 	 tst-audit1 tst-audit2 tst-audit8 tst-audit9 \
 	 tst-stackguard1 tst-addr1 tst-thrlock \
-	 tst-unique1 tst-unique2 tst-unique3 tst-unique4 \
+	 tst-unique1 tst-unique2 $(if $(CXX),tst-unique3 tst-unique4) \
 	 tst-initorder tst-initorder2 tst-relsort1 tst-null-argv \
-	 tst-ptrguard1
+	 tst-ptrguard1 tst-tlsalign tst-tlsalign-extern
 #	 reldep9
 ifeq ($(build-hardcoded-path-in-tests),yes)
 tests += tst-dlopen-aout
@@ -205,19 +206,29 @@ modules-names = testobj1 testobj2 testobj3 testobj4 testobj5 testobj6 \
 		tst-unique1mod1 tst-unique1mod2 \
 		tst-unique2mod1 tst-unique2mod2 \
 		tst-auditmod9a tst-auditmod9b \
-		tst-unique3lib tst-unique3lib2 \
-		tst-unique4lib \
+		$(if $(CXX),tst-unique3lib tst-unique3lib2 tst-unique4lib) \
 		tst-initordera1 tst-initorderb1 \
 		tst-initordera2 tst-initorderb2 \
 		tst-initordera3 tst-initordera4 \
 		tst-initorder2a tst-initorder2b tst-initorder2c \
 		tst-initorder2d \
 		tst-relsort1mod1 tst-relsort1mod2 tst-array2dep \
-		tst-array5dep tst-null-argv-lib
+		tst-array5dep tst-null-argv-lib \
+		tst-tlsalign-lib
+ifeq (yes,$(have-protected-data))
+modules-names += tst-protected1moda tst-protected1modb
+tests += tst-protected1a tst-protected1b
+$(objpfx)tst-protected1a: $(addprefix $(objpfx),tst-protected1moda.so tst-protected1modb.so)
+$(objpfx)tst-protected1b: $(addprefix $(objpfx),tst-protected1modb.so tst-protected1moda.so)
+tst-protected1modb.so-no-z-defs = yes
+endif
 ifeq (yesyes,$(have-fpie)$(build-shared))
 modules-names += tst-piemod1
 tests += tst-pie1 tst-pie2
 tests-pie += tst-pie1 tst-pie2
+tests += vismain
+tests-pie += vismain
+CFLAGS-vismain.c = $(PIE-ccflag)
 endif
 modules-execstack-yes = tst-execstack-mod
 extra-test-objs += $(addsuffix .os,$(strip $(modules-names)))
@@ -354,16 +365,10 @@ $(objpfx)ld.so: $(objpfx)librtld.os $(ld-map)
 	  | $(AWK) '($$7 ~ /^UND(|EF)$$/ && $$1 != "0:" && $$4 != "REGISTER") { print; p=1 } END { exit p != 0 }'
 	mv -f $@.new $@
 
+ifeq (yes,$(build-shared))
 # interp.c exists just to get the runtime linker path into libc.so.
-$(objpfx)interp.os: $(elf-objpfx)runtime-linker.h
-
-$(elf-objpfx)runtime-linker.h: $(elf-objpfx)runtime-linker.st; @:
-$(elf-objpfx)runtime-linker.st: $(common-objpfx)config.make
-	$(name-target-directory)
-	echo '#define RUNTIME_LINKER "$(rtlddir)/$(rtld-installed-name)"' \
-		> ${@:st=T}
-	$(move-if-change) ${@:st=T} ${@:st=h}
-	touch $@
+$(objpfx)interp.os: $(common-objpfx)runtime-linker.h
+endif
 
 ifneq (ld.so,$(rtld-installed-name))
 # Make sure ld.so.1 exists in the build directory so we can link
@@ -516,6 +521,17 @@ $(objpfx)tst-initordera3.so: $(objpfx)tst-initorderb2.so $(objpfx)tst-initorderb
 $(objpfx)tst-initordera4.so: $(objpfx)tst-initordera3.so
 $(objpfx)tst-initorder: $(objpfx)tst-initordera4.so $(objpfx)tst-initordera1.so $(objpfx)tst-initorderb2.so
 $(objpfx)tst-null-argv: $(objpfx)tst-null-argv-lib.so
+$(objpfx)tst-tlsalign: $(objpfx)tst-tlsalign-lib.so
+
+# BZ#18383: broken on at least ARM (both) and i386/x86-64 (static only).
+test-xfail-tst-tlsalign = yes
+test-xfail-tst-tlsalign-static = yes
+
+$(objpfx)tst-tlsalign-extern: $(objpfx)tst-tlsalign-vars.o
+$(objpfx)tst-tlsalign-extern-static: $(objpfx)tst-tlsalign-vars.o
+
+# BZ#18383: broken on at least i386/x86-64 (static only).
+test-xfail-tst-tlsalign-extern-static = yes
 
 tst-null-argv-ENV = LD_DEBUG=all LD_DEBUG_OUTPUT=$(objpfx)tst-null-argv.debug.out
 LDFLAGS-nodel2mod3.so = $(no-as-needed)
@@ -975,6 +991,9 @@ localplt-built-dso := $(addprefix $(common-objpfx),\
 				  resolv/libresolv.so \
 				  crypt/libcrypt.so \
 		       )
+ifeq ($(build-mathvec),yes)
+localplt-built-dso += $(addprefix $(common-objpfx), mathvec/libmvec.so)
+endif
 ifeq ($(have-thread-library),yes)
 localplt-built-dso += $(filter-out %_nonshared.a, $(shared-thread-library))
 endif
@@ -1016,7 +1035,8 @@ $(objpfx)tst-dlmopen3.out: $(objpfx)tst-dlmopen1mod.so
 $(objpfx)tst-audit1.out: $(objpfx)tst-auditmod1.so
 tst-audit1-ENV = LD_AUDIT=$(objpfx)tst-auditmod1.so
 
-$(objpfx)tst-audit2.out: $(objpfx)tst-auditmod1.so
+$(objpfx)tst-audit2: $(libdl)
+$(objpfx)tst-audit2.out: $(objpfx)tst-auditmod1.so $(objpfx)tst-auditmod9b.so
 # Prevent GCC-5 from translating a malloc/memset pair into calloc
 CFLAGS-tst-audit2.c += -fno-builtin
 tst-audit2-ENV = LD_AUDIT=$(objpfx)tst-auditmod1.so

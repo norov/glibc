@@ -23,6 +23,7 @@
 #include <pthreadP.h>
 #include <sys/time.h>
 #include <kernel-features.h>
+#include <stdbool.h>
 
 
 /* Try to acquire write lock for RWLOCK or return after specfied time.	*/
@@ -32,6 +33,7 @@ pthread_rwlock_timedwrlock (rwlock, abstime)
      const struct timespec *abstime;
 {
   int result = 0;
+  bool wake_readers = false;
 
   /* Make sure we are alone.  */
   lll_lock (rwlock->__data.__lock, rwlock->__data.__shared);
@@ -136,12 +138,36 @@ pthread_rwlock_timedwrlock (rwlock, abstime)
       if (err == -ETIMEDOUT)
 	{
 	  result = ETIMEDOUT;
+	  /* If we prefer writers, it can have happened that readers blocked
+	     for us to acquire the lock first.  If we have timed out, we need
+	     to wake such readers if there are any, and if there is no writer
+	     currently (otherwise, the writer will take care of wake-up).
+	     Likewise, even if we prefer readers, we can be responsible for
+	     wake-up (see pthread_rwlock_unlock) if no reader or writer has
+	     acquired the lock.  We have timed out and thus not consumed a
+	     futex wake-up; therefore, if there is no other blocked writer
+	     that would consume the wake-up and thus take over responsibility,
+	     we need to wake blocked readers.  */
+	  if ((!PTHREAD_RWLOCK_PREFER_READER_P (rwlock)
+	       || ((rwlock->__data.__nr_readers == 0)
+		   && (rwlock->__data.__nr_writers_queued == 0)))
+	      && (rwlock->__data.__nr_readers_queued > 0)
+	      && (rwlock->__data.__writer == 0))
+	    {
+	      ++rwlock->__data.__readers_wakeup;
+	      wake_readers = true;
+	    }
 	  break;
 	}
     }
 
   /* We are done, free the lock.  */
   lll_unlock (rwlock->__data.__lock, rwlock->__data.__shared);
+
+  /* Might be required after timeouts.  */
+  if (wake_readers)
+    lll_futex_wake (&rwlock->__data.__readers_wakeup, INT_MAX,
+	rwlock->__data.__shared);
 
   return result;
 }

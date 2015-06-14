@@ -39,11 +39,10 @@ enum
 };
 
 /* Minimum stack size for a signal handler.  */
-#define MINSIGSTKSZ	2048
+#define MINSIGSTKSZ    5120
 
 /* System default stack size.  */
-#define SIGSTKSZ	8192
-
+#define SIGSTKSZ       16384
 
 /* Alternate, preferred interface.
    This structure matches the same size and layout

@@ -498,7 +498,7 @@ link-libc = $(link-libc-rpath-link) $(link-libc-before-gnulib) $(gnulib)
 link-libc-tests = $(link-libc-tests-rpath-link) \
 		  $(link-libc-before-gnulib) $(gnulib-tests)
 # This is how to find at build-time things that will be installed there.
-rpath-dirs = math elf dlfcn nss nis rt resolv crypt
+rpath-dirs = math elf dlfcn nss nis rt resolv crypt mathvec
 rpath-link = \
 $(common-objdir):$(subst $(empty) ,:,$(patsubst ../$(subdir),.,$(rpath-dirs:%=$(common-objpfx)%)))
 else
@@ -596,7 +596,6 @@ endif
 # Variants of the two previous definitions for statically linking programs.
 +prectorT = `$(CC) $(sysdep-LDFLAGS) --print-file-name=crtbeginT.o`
 +postctorT = `$(CC) $(sysdep-LDFLAGS) --print-file-name=crtend.o`
-+interp = $(addprefix $(elf-objpfx),interp.os)
 csu-objpfx = $(common-objpfx)csu/
 elf-objpfx = $(common-objpfx)elf/
 
@@ -610,6 +609,11 @@ endif
 # <variable>=<value> assignments for environment variables.
 ifndef test-wrapper-env
 test-wrapper-env = $(test-wrapper) env
+endif
+# Likewise, but the program's environment will be empty except for any
+# explicit <variable>=<value> assignments preceding the program name.
+ifndef test-wrapper-env-only
+test-wrapper-env-only = $(test-wrapper) env -i
 endif
 
 # Whether to run test programs built for the library's host system.
@@ -734,9 +738,9 @@ endif
 
 # Extra flags to pass to GCC.
 ifeq ($(all-warnings),yes)
-+gccwarn := -Wall -Wwrite-strings -Winline -Wcast-qual -Wbad-function-cast -Wmissing-noreturn -Wmissing-prototypes -Wmissing-declarations -Wcomment -Wcomments -Wtrigraphs -Wsign-compare -Wfloat-equal -Wmultichar
++gccwarn := -Wall -Wwrite-strings -Wcast-qual -Wbad-function-cast -Wmissing-noreturn -Wmissing-prototypes -Wmissing-declarations -Wcomment -Wcomments -Wtrigraphs -Wsign-compare -Wfloat-equal -Wmultichar
 else
-+gccwarn := -Wall -Wwrite-strings -Winline
++gccwarn := -Wall -Wwrite-strings
 endif
 +gccwarn += -Wundef
 ifeq ($(enable-werror),yes)
@@ -843,12 +847,6 @@ built-modules = iconvprogs iconvdata ldconfig lddlibc4 libmemusage \
 		libSegFault libpcprofile librpcsvc locale-programs \
 		memusagestat nonlib nscd extramodules libnldbl
 
-# We don't include libc-modules.h when these targets are being built.  These
-# targets don't (and will likely never need to) use the IS_IN facility.  In
-# fact, shlib-versions should not use it because that will create a circular
-# dependency as libc-modules.h is generated from shlib-versions.
-skip-module-cppflags = shlib-versions.v.i Versions.v.i
-
 in-module = $(subst -,_,$(firstword $(libof-$(basename $(@F))) \
 				    $(libof-$(<F)) \
 				    $(libof-$(@F)) \
@@ -857,10 +855,12 @@ in-module = $(subst -,_,$(firstword $(libof-$(basename $(@F))) \
 module-cppflags-real = -include $(common-objpfx)libc-modules.h \
 		       -DMODULE_NAME=$(in-module)
 
-# We don't need libc-modules.h and the MODULE_NAME definition for
-# shlib-version.v.i.
-module-cppflags = $(if $(filter $(@F),$(skip-module-cppflags)), \
-		       ,$(module-cppflags-real))
+# We don't need libc-modules.h and the MODULE_NAME definition for .v.i
+# files.  These targets don't (and will likely never need to) use the IS_IN
+# facility.  In fact, shlib-versions should not use it because that will
+# create a circular dependency as libc-modules.h is generated from
+# shlib-versions.
+module-cppflags = $(if $(filter %.v.i,$(@F)),,$(module-cppflags-real))
 
 # These are the variables that the implicit compilation rules use.
 # Note that we can't use -std=* in CPPFLAGS, because it overrides
@@ -1073,8 +1073,10 @@ endif
 
 ifeq ($(build-shared),yes)
 libm = $(common-objpfx)math/libm.so$(libm.so-version)
+libmvec = $(common-objpfx)mathvec/libmvec.so$(libmvec.so-version)
 else
 libm = $(common-objpfx)math/libm.a
+libmvec = $(common-objpfx)mathvec/libmvec.a
 endif
 
 # These are the subdirectories containing the library source.  The order
@@ -1084,7 +1086,7 @@ all-subdirs = csu assert ctype locale intl catgets math setjmp signal	    \
 	      stdlib stdio-common libio malloc string wcsmbs time dirent    \
 	      grp pwd posix io termios resource misc socket sysvipc gmon    \
 	      gnulib iconv iconvdata wctype manual shadow gshadow po argp   \
-	      crypt localedata timezone rt conform debug		    \
+	      crypt localedata timezone rt conform debug mathvec	    \
 	      $(add-on-subdirs) dlfcn elf
 
 ifndef avoid-generated

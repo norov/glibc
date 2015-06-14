@@ -76,6 +76,7 @@ extern FILE *__old_tmpfile (void);
 
 
 #  define __need_size_t
+#  define __need_wint_t
 #  include <stddef.h>
 /* Generate a unique file name (and possibly open it).  */
 extern int __path_search (char *__tmpl, size_t __tmpl_len,
@@ -158,8 +159,13 @@ libc_hidden_proto (fgets_unlocked)
 extern __typeof (fgets_unlocked) __fgets_unlocked;
 libc_hidden_proto (__fgets_unlocked)
 libc_hidden_proto (fputs_unlocked)
+extern __typeof (fputs_unlocked) __fputs_unlocked;
+libc_hidden_proto (__fputs_unlocked)
 libc_hidden_proto (fmemopen)
-libc_hidden_proto (open_memstream)
+/* The prototype needs repeating instead of using __typeof to use
+   __THROW in C++ tests.  */
+extern FILE *__open_memstream (char **, size_t *) __THROW __wur;
+libc_hidden_proto (__open_memstream)
 libc_hidden_proto (__libc_fatal)
 libc_hidden_proto (__vsprintf_chk)
 libc_hidden_proto (__vsnprintf_chk)

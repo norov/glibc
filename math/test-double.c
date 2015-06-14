@@ -17,6 +17,7 @@
    <http://www.gnu.org/licenses/>.  */
 
 #define FUNC(function) function
+#define FUNC_TEST(function) FUNC (function)
 #define FLOAT double
 #define TEST_MSG "testing double (without inline functions)\n"
 #define MATHCONST(x) x
@@ -25,6 +26,7 @@
 #define PRINTF_XEXPR "a"
 #define PRINTF_NEXPR "f"
 #define TEST_DOUBLE 1
+#define TEST_MATHVEC 0
 
 #ifndef __NO_MATH_INLINES
 # define __NO_MATH_INLINES

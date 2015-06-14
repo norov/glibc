@@ -2258,7 +2258,7 @@ on different systems.
 
 @comment libgen.h
 @comment XPG
-@deftypefun {char *} basename (const char *@var{path})
+@deftypefun {char *} basename (char *@var{path})
 @safety{@prelim{}@mtsafe{}@assafe{}@acsafe{}}
 This is the standard XPG defined @code{basename}.  It is similar in
 spirit to the GNU version, but may modify the @var{path} by removing
@@ -2786,6 +2786,14 @@ being added to @var{envz}, if @var{override} is false.
 @safety{@prelim{}@mtsafe{}@assafe{}@acsafe{}}
 The @code{envz_strip} function removes any null entries from @var{envz},
 updating @code{*@var{envz}} and @code{*@var{envz_len}}.
+@end deftypefun
+
+@comment envz.h
+@comment GNU
+@deftypefun {void} envz_remove (char **@var{envz}, size_t *@var{envz_len}, const char *@var{name})
+@safety{@prelim{}@mtsafe{}@asunsafe{@ascuheap{}}@acunsafe{@acsmem{}}}
+The @code{envz_remove} function removes an entry named @var{name} from
+@var{envz}, updating @code{*@var{envz}} and @code{*@var{envz_len}}.
 @end deftypefun
 
 @c FIXME this are undocumented:

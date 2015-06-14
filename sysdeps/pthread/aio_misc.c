@@ -536,10 +536,11 @@ handle_fildes_io (void *arg)
 						 aiocbp->aiocb64.aio_offset));
 	      else
 		aiocbp->aiocb.__return_value =
-		  TEMP_FAILURE_RETRY (pread (fildes,
-					     (void *) aiocbp->aiocb.aio_buf,
-					     aiocbp->aiocb.aio_nbytes,
-					     aiocbp->aiocb.aio_offset));
+		  TEMP_FAILURE_RETRY (__libc_pread (fildes,
+						    (void *)
+						    aiocbp->aiocb.aio_buf,
+						    aiocbp->aiocb.aio_nbytes,
+						    aiocbp->aiocb.aio_offset));
 
 	      if (aiocbp->aiocb.__return_value == -1 && errno == ESPIPE)
 		/* The Linux kernel is different from others.  It returns
@@ -592,14 +593,6 @@ handle_fildes_io (void *arg)
 
 	  /* Get the mutex.  */
 	  pthread_mutex_lock (&__aio_requests_mutex);
-
-	  /* In theory we would need here a write memory barrier since the
-	     callers test using aio_error() whether the request finished
-	     and once this value != EINPROGRESS the field __return_value
-	     must be committed to memory.
-
-	     But since the pthread_mutex_lock call involves write memory
-	     barriers as well it is not necessary.  */
 
 	  if (aiocbp->aiocb.__return_value == -1)
 	    aiocbp->aiocb.__error_code = errno;

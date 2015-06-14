@@ -23,7 +23,8 @@
 #define STRING_TYPE wchar_t
 #define USTRING_TYPE wint_t
 #define STRCOLL __wcscoll_l
-#define STRCMP wcscmp
+#define STRDIFF __wcsdiff
+#define STRCMP __wcscmp
 #define WEIGHT_H "../locale/weightwc.h"
 #define SUFFIX	WC
 #define L(arg) L##arg

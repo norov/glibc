@@ -33,7 +33,7 @@ routines = alloca_cutoff forward libc-lowlevellock libc-cancellation \
 	   register-atfork unregister-atfork
 shared-only-routines = forward
 
-libpthread-routines = nptl-init vars events version \
+libpthread-routines = nptl-init vars events version pt-interp \
 		      pthread_create pthread_exit pthread_detach \
 		      pthread_join pthread_tryjoin pthread_timedjoin \
 		      pthread_self pthread_equal pthread_yield \
@@ -106,6 +106,7 @@ libpthread-routines = nptl-init vars events version \
 		      pt-longjmp pt-cleanup\
 		      cancellation \
 		      lowlevellock lowlevelrobustlock \
+		      lll_timedlock_wait lll_timedwait_tid \
 		      pt-fork pt-vfork \
 		      ptw-write ptw-read ptw-close ptw-fcntl ptw-accept \
 		      ptw-connect ptw-recv ptw-recvfrom ptw-recvmsg ptw-send \
@@ -137,7 +138,8 @@ libpthread-routines = nptl-init vars events version \
 #		      pthread_setgid pthread_setegid pthread_setregid \
 #		      pthread_setresgid
 
-libpthread-shared-only-routines = version pt-allocrtsig unwind-forcedunwind
+libpthread-shared-only-routines = version pt-interp pt-allocrtsig \
+				  unwind-forcedunwind
 libpthread-static-only-routines = pthread_atfork
 
 # Since cancellation handling is in large parts handled using exceptions
@@ -200,6 +202,12 @@ CFLAGS-open64.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-pause.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-recv.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-send.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-accept.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-sendto.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-sendmsg.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-connect.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-recvmsg.c = -fexceptions -fasynchronous-unwind-tables
+CFLAGS-recvfrom.c = -fexceptions -fasynchronous-unwind-tables
 
 CFLAGS-pt-system.c = -fexceptions
 
@@ -224,10 +232,12 @@ tests = tst-typesizes \
 	tst-rwlock1 tst-rwlock2 tst-rwlock2a tst-rwlock3 tst-rwlock4 \
 	tst-rwlock5 tst-rwlock6 tst-rwlock7 tst-rwlock8 tst-rwlock9 \
 	tst-rwlock10 tst-rwlock11 tst-rwlock12 tst-rwlock13 tst-rwlock14 \
+	tst-rwlock15 tst-rwlock16 \
 	tst-once1 tst-once2 tst-once3 tst-once4 \
 	tst-key1 tst-key2 tst-key3 tst-key4 \
 	tst-sem1 tst-sem2 tst-sem3 tst-sem4 tst-sem5 tst-sem6 tst-sem7 \
 	tst-sem8 tst-sem9 tst-sem10 tst-sem11 tst-sem12 tst-sem13 tst-sem14 \
+	tst-sem15 \
 	tst-barrier1 tst-barrier2 tst-barrier3 tst-barrier4 \
 	tst-align tst-align3 \
 	tst-basic1 tst-basic2 tst-basic3 tst-basic4 tst-basic5 tst-basic6 \
@@ -381,6 +391,11 @@ ifeq ($(build-shared),yes)
 tests-special += $(objpfx)tst-tls6.out $(objpfx)tst-cleanup0-cmp.out \
 		 $(objpfx)tst-cancel-wrappers.out
 endif
+endif
+
+ifeq (,$(CXX))
+# These tests require a C++ compiler and runtime.
+tests-unsupported += tst-cancel24 tst-cancel24-static
 endif
 
 include ../Rules
@@ -594,6 +609,8 @@ $(objpfx)banner.h: Banner
 generated += banner.h
 # Give libpthread.so an entry point and make it directly runnable itself.
 LDFLAGS-pthread.so += -e __nptl_main
+# pt-interp.c exists just to get the runtime linker path into libpthread.so.
+$(objpfx)pt-interp.os: $(common-objpfx)runtime-linker.h
 endif
 
 ifeq ($(run-built-tests),yes)

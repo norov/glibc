@@ -211,7 +211,7 @@ dl_open_worker (void *a)
       struct link_map *l = _dl_find_dso_for_object ((ElfW(Addr)) caller_dlopen);
 
       if (l)
-        call_map = l;
+	call_map = l;
 
       if (args->nsid == __LM_ID_CALLER)
 	args->nsid = call_map->l_ns;
@@ -533,17 +533,7 @@ TLS generation counter wrapped!  Please report this."));
 	  && imap->l_tls_blocksize > 0)
 	{
 	  /* For static TLS we have to allocate the memory here and
-	     now.  This includes allocating memory in the DTV.  But we
-	     cannot change any DTV other than our own.  So, if we
-	     cannot guarantee that there is room in the DTV we don't
-	     even try it and fail the load.
-
-	     XXX We could track the minimum DTV slots allocated in
-	     all threads.  */
-	  if (! RTLD_SINGLE_THREAD_P && imap->l_tls_modid > DTV_SURPLUS)
-	    _dl_signal_error (0, "dlopen", NULL, N_("\
-cannot load any more object with static TLS"));
-
+	     now, but we can delay updating the DTV.  */
 	  imap->l_need_tls_init = 0;
 #ifdef SHARED
 	  /* Update the slot information data for at least the
@@ -629,8 +619,14 @@ no more namespaces available for dlmopen()"));
   /* Never allow loading a DSO in a namespace which is empty.  Such
      direct placements is only causing problems.  Also don't allow
      loading into a namespace used for auditing.  */
-  else if (__builtin_expect (nsid != LM_ID_BASE && nsid != __LM_ID_CALLER, 0)
-	   && (GL(dl_ns)[nsid]._ns_nloaded == 0
+  else if (__glibc_unlikely (nsid != LM_ID_BASE && nsid != __LM_ID_CALLER)
+	   && (__glibc_unlikely (nsid < 0 || nsid >= GL(dl_nns))
+	       /* This prevents the [NSID] index expressions from being
+		  evaluated, so the compiler won't think that we are
+		  accessing an invalid index here in the !SHARED case where
+		  DL_NNS is 1 and so any NSID != 0 is invalid.  */
+	       || DL_NNS == 1
+	       || GL(dl_ns)[nsid]._ns_nloaded == 0
 	       || GL(dl_ns)[nsid]._ns_loaded->l_auditing))
     _dl_signal_error (EINVAL, file, NULL,
 		      N_("invalid target namespace in dlmopen()"));
