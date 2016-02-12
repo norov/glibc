@@ -22,7 +22,7 @@ struct __kernel_stat64 {
 	uint64_t	st_rdev;
 	unsigned char   __pad3[4];
 
-	int32_t		st_size;
+	int64_t		st_size;
 	uint32_t	st_blksize;
 	uint64_t	st_blocks;	/* Number of 512-byte blocks allocated. */
 
