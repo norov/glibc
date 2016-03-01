@@ -13,10 +13,8 @@ __xstat64 (int vers, const char *name, struct stat64 *buf)
 {
       int rc = INLINE_SYSCALL (fstatat64, 4, AT_FDCWD, name, buf, 0);
       if (rc)
-        {
-          __set_errno (rc);
           return -1;
-        }
+
 	return 0;
 }
 hidden_def (__xstat64)

@@ -71,10 +71,7 @@ __fxstatat (int vers, int fd, const char *file, struct stat *st, int flag)
 
   result = INLINE_SYSCALL (fstatat64, 4, fd, file, &st64, flag);
   if (result)
-    {
-      __set_errno (result);
       return -1;
-    }
 
   return xstat_conv (&st64, st);
 }

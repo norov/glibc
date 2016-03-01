@@ -72,10 +72,7 @@ __xstat (int vers, const char *name, struct stat *buf)
     {
       int rc = INLINE_SYSCALL (fstatat64, 4, AT_FDCWD, name, &st64, 0);
       if (rc)
-        {
-          __set_errno (rc);
           return -1;
-        }
 
       return xstat_conv (&st64, buf);
     }
