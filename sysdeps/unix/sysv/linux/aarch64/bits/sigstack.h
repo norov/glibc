@@ -44,27 +44,10 @@ enum
 /* System default stack size.  */
 #define SIGSTKSZ       16384
 
-/* Alternate, preferred interface.
-   This structure matches the same size and layout
-   for both ILP32 and LP64.  */
+/* Alternate, preferred interface. */
 typedef struct sigaltstack
   {
-#if defined(__ILP32__) && defined(__AARCH64EB__)
-    int __pad_ss_sp;
-#endif
     void *ss_sp;
-#if defined(__ILP32__) && !defined(__AARCH64EB__)
-    int __pad_ss_sp;
-#endif
     int ss_flags;
-#if defined(__ILP32__)
-    int __pad_after_ss_flags;
-#endif
-#if defined(__ILP32__) && defined(__AARCH64EB__)
-    int __pad_ss_size;
-#endif
     size_t ss_size;
-#if defined(__ILP32__) && !defined(__AARCH64EB__)
-    int __pad_ss_size;
-#endif
   } stack_t;
