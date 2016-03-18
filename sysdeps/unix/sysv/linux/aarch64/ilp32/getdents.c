@@ -36,7 +36,7 @@ static size_t conv (char *buf, size_t nbytes)
 	  u->d_off = k->d_off;
 	  u->d_reclen = k->d_reclen - sizd;
 	  u->d_type = k->d_type;
-	  memmove (u->d_name, k->d_name, name_len);
+	  memcpy (u->d_name, k->d_name, name_len);
 
 	  u = (char *) u + u->d_reclen;
 	  k = nk;
