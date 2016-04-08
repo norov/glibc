@@ -1,24 +1,23 @@
-comment_char    %
-escape_char     /
+comment_char %
+escape_char /
+
+% This file is part of the GNU C Library and contains locale data.
+% The Free Software Foundation does not claim any copyright interest
+% in the locale data contained in this file.  The foregoing does not
+% affect the license of the GNU C Library as a whole.  It does not
+% exempt you from the conditions of the license if your use would
+% otherwise be governed by that license.
+
 % Tharu language locale for Nepal.
 % Contributed by Arun Kumar Pyasi <arun@chitwanix.com>
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% This file is a part of GNU C Library (glibc) and contains locale data. The
-% Free Software Foundation does not claim any copyright interest in the
-% locale data contained in this file. The foregoing does not affect the
-% license of GNU C Library (glibc) as a whole. It does not exempt you from the
-% conditions of the license if your use would otherwise be governed by
-% that license.
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 LC_IDENTIFICATION
 title      "Tharu language locale for Nepal"
 source     "Chitwanix OS Development"
 address    "Sangam Market, narayanghat, Nepal"
 contact    ""
 email      "info@chitwanix.com"
-tel        "9779845330174"
+tel        ""
 fax        ""
 language   "Chitwania Tharu"
 territory  "Nepal"
@@ -217,7 +216,7 @@ LC_TELEPHONE
 %
 tel_int_fmt "<U002B><U0025><U0063><U0020><U003B><U0025><U0061><U0020>/
 <U003B><U0025><U006C>"
-int_prefix     "<U0039><U0031>"
+int_prefix     "<U0039><U0037><U0037>"
 
 END LC_TELEPHONE
 

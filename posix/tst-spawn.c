@@ -1,5 +1,5 @@
 /* Tests for spawn.
-   Copyright (C) 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 2000-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 2000.
 
@@ -255,6 +255,10 @@ do_test (int argc, char *argv[])
    spargv[i] = NULL;
 
    if (posix_spawn (&pid, argv[1], &actions, NULL, spargv, environ) != 0)
+     error (EXIT_FAILURE, errno, "posix_spawn");
+
+   /* Same test but with a NULL pid argument.  */
+   if (posix_spawn (NULL, argv[1], &actions, NULL, spargv, environ) != 0)
      error (EXIT_FAILURE, errno, "posix_spawn");
 
    /* Cleanup.  */

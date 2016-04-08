@@ -1,4 +1,4 @@
-/* Copyright (C) 2000-2015 Free Software Foundation, Inc.
+/* Copyright (C) 2000-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -95,6 +95,8 @@ ENTRY(__clone2)
 				/* call _exit with result from fn.	*/
 	ret			/* Not reached.		*/
 PSEUDO_END(__clone2)
+
+libc_hidden_def (__clone2)
 
 /* For now we leave __clone undefined.  This is unlikely to be a	*/
 /* problem, since at least the i386 __clone in glibc always failed	*/

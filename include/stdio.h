@@ -135,6 +135,9 @@ extern int _IO_new_fgetpos (_IO_FILE *, _IO_fpos_t *);
 #  endif
 
 libc_hidden_proto (dprintf)
+extern __typeof (dprintf) __dprintf
+     __attribute__ ((__format__ (__printf__, 2, 3)));
+libc_hidden_proto (__dprintf)
 libc_hidden_proto (fprintf)
 libc_hidden_proto (vfprintf)
 libc_hidden_proto (sprintf)
@@ -152,6 +155,8 @@ extern __typeof (ftello) __ftello;
 libc_hidden_proto (__ftello)
 libc_hidden_proto (fflush)
 libc_hidden_proto (fflush_unlocked)
+extern __typeof (fflush_unlocked) __fflush_unlocked;
+libc_hidden_proto (__fflush_unlocked)
 extern __typeof (fread_unlocked) __fread_unlocked;
 libc_hidden_proto (__fread_unlocked)
 libc_hidden_proto (fwrite_unlocked)
@@ -167,6 +172,7 @@ libc_hidden_proto (fmemopen)
 extern FILE *__open_memstream (char **, size_t *) __THROW __wur;
 libc_hidden_proto (__open_memstream)
 libc_hidden_proto (__libc_fatal)
+rtld_hidden_proto (__libc_fatal)
 libc_hidden_proto (__vsprintf_chk)
 libc_hidden_proto (__vsnprintf_chk)
 libc_hidden_proto (__vfprintf_chk)
@@ -191,6 +197,9 @@ gets (char *__str)
   return __gets_warn (__str);
 }
 #  endif
+
+extern FILE * __fmemopen (void *buf, size_t len, const char *mode);
+libc_hidden_proto (__fmemopen)
 
 __END_DECLS
 # endif

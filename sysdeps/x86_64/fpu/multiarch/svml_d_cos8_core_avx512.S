@@ -1,5 +1,5 @@
 /* Function cos vectorized with AVX-512, KNL and SKX versions.
-   Copyright (C) 2014-2015 Free Software Foundation, Inc.
+   Copyright (C) 2014-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,7 +17,7 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <sysdep.h>
-#include "svml_d_cos_data.h"
+#include "svml_d_trig_data.h"
 #include "svml_d_wrapper_impl.h"
 
 	.text
@@ -45,7 +45,7 @@ WRAPPER_IMPL_AVX512 _ZGVdN4v_cos
         cfi_def_cfa_register (%rbp)
         andq      $-64, %rsp
         subq      $1280, %rsp
-        movq      __svml_dcos_data@GOTPCREL(%rip), %rax
+        movq      __svml_d_trig_data@GOTPCREL(%rip), %rax
 
 /* R = X - N*Pi1 */
         vmovaps   %zmm0, %zmm7
@@ -221,7 +221,7 @@ WRAPPER_IMPL_AVX512 _ZGVdN4v_cos
         movzbl    %r12b, %r15d
         shlq      $4, %r15
         vmovsd    1160(%rsp,%r15), %xmm0
-        call      cos@PLT
+        call      JUMPTARGET(cos)
         vmovsd    %xmm0, 1224(%rsp,%r15)
         jmp       .LBL_1_8
 
@@ -229,7 +229,7 @@ WRAPPER_IMPL_AVX512 _ZGVdN4v_cos
         movzbl    %r12b, %r15d
         shlq      $4, %r15
         vmovsd    1152(%rsp,%r15), %xmm0
-        call      cos@PLT
+        call      JUMPTARGET(cos)
         vmovsd    %xmm0, 1216(%rsp,%r15)
         jmp       .LBL_1_7
 #endif
@@ -259,7 +259,7 @@ WRAPPER_IMPL_AVX512 _ZGVdN4v_cos
         cfi_def_cfa_register (%rbp)
         andq      $-64, %rsp
         subq      $1280, %rsp
-        movq      __svml_dcos_data@GOTPCREL(%rip), %rax
+        movq      __svml_d_trig_data@GOTPCREL(%rip), %rax
 
 /* R = X - N*Pi1 */
         vmovaps   %zmm0, %zmm8
@@ -438,7 +438,7 @@ WRAPPER_IMPL_AVX512 _ZGVdN4v_cos
         vzeroupper
         vmovsd    1160(%rsp,%r15), %xmm0
 
-        call      cos@PLT
+        call      JUMPTARGET(cos)
 
         vmovsd    %xmm0, 1224(%rsp,%r15)
         jmp       .LBL_2_8
@@ -450,7 +450,7 @@ WRAPPER_IMPL_AVX512 _ZGVdN4v_cos
         vzeroupper
         vmovsd    1152(%rsp,%r15), %xmm0
 
-        call      cos@PLT
+        call      JUMPTARGET(cos)
 
         vmovsd    %xmm0, 1216(%rsp,%r15)
         jmp       .LBL_2_7

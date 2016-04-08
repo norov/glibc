@@ -1,6 +1,12 @@
-comment_char    %
-escape_char     /
+comment_char %
+escape_char /
 
+% This file is part of the GNU C Library and contains locale data.
+% The Free Software Foundation does not claim any copyright interest
+% in the locale data contained in this file.  The foregoing does not
+% affect the license of the GNU C Library as a whole.  It does not
+% exempt you from the conditions of the license if your use would
+% otherwise be governed by that license.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -9,7 +15,7 @@ escape_char     /
 % Charset: ISO-8859-1
 %
 % Somali terms provided by Mohamed Diriye Abdullahi <diriyeam@magellan.umontreal.ca>
-% Department of Linguistics and Translation, Université de Montréal, Montreal.
+% Department of Linguistics and Translation, UniversitÃ© de MontrÃ©al, Montreal.
 % Prepared and contributed to glibc by Daniel Yacob <locales@geez.org>.
 %
 % This locale data has been developed under the Yeha Project:
@@ -221,4 +227,3 @@ date_fmt    "<U0025><U0041><U002C><U0020><U0025><U0042><U0020><U0025><U0065><U00
 <U0020><U0025><U0072><U0020><U0025><U005A><U0020><U0025><U0059>"
 %
 END LC_TIME
-%

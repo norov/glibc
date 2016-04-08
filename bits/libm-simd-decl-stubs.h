@@ -1,5 +1,5 @@
 /* Empty definitions required for __MATHCALL_VEC unfolding in mathcalls.h.
-   Copyright (C) 2014-2015 Free Software Foundation, Inc.
+   Copyright (C) 2014-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -41,4 +41,19 @@
 #define __DECL_SIMD_sinf
 #define __DECL_SIMD_sinl
 
+#define __DECL_SIMD_sincos
+#define __DECL_SIMD_sincosf
+#define __DECL_SIMD_sincosl
+
+#define __DECL_SIMD_log
+#define __DECL_SIMD_logf
+#define __DECL_SIMD_logl
+
+#define __DECL_SIMD_exp
+#define __DECL_SIMD_expf
+#define __DECL_SIMD_expl
+
+#define __DECL_SIMD_pow
+#define __DECL_SIMD_powf
+#define __DECL_SIMD_powl
 #endif

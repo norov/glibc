@@ -59,6 +59,7 @@
  */
 
 #include <errno.h>
+#include <float.h>
 #include <math.h>
 #include <math_private.h>
 
@@ -124,8 +125,14 @@ __ieee754_j1 (double x)
     }
   if (__glibc_unlikely (ix < 0x3e400000))                  /* |x|<2**-27 */
     {
-      if (huge + x > one)
-	return 0.5 * x;                 /* inexact if x!=0 necessary */
+      if (huge + x > one)                 /* inexact if x!=0 necessary */
+	{
+	  double ret = math_narrow_eval (0.5 * x);
+	  math_check_force_underflow (ret);
+	  if (ret == 0 && x != 0)
+	    __set_errno (ERANGE);
+	  return ret;
+	}
     }
   z = x * x;
   r1 = z * R[0]; z2 = z * z;

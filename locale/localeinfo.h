@@ -1,5 +1,5 @@
 /* Declarations for internal libc locale interfaces
-   Copyright (C) 1995-2015 Free Software Foundation, Inc.
+   Copyright (C) 1995-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -110,14 +110,6 @@ enum coll_sort_rule
   sort_mask
 };
 
-/* Collation encoding type.  */
-enum collation_encoding_type
-{
-  __cet_other,
-  __cet_8bit,
-  __cet_utf8
-};
-
 /* We can map the types of the entries into a few categories.  */
 enum value_type
 {
@@ -223,7 +215,7 @@ extern struct __locale_struct _nl_global_locale attribute_hidden;
 /* This fetches the thread-local locale_t pointer, either one set with
    uselocale or &_nl_global_locale.  */
 #define _NL_CURRENT_LOCALE	(__libc_tsd_get (__locale_t, LOCALE))
-#include <bits/libc-tsd.h>
+#include <libc-tsd.h>
 __libc_tsd_define (extern, __locale_t, LOCALE)
 
 
@@ -307,6 +299,27 @@ extern __thread struct __locale_data *const *_nl_current_##category \
 
 #endif
 
+/* Extract CATEGORY locale's string for ITEM.  */
+static inline const char *
+_nl_lookup (locale_t l, int category, int item)
+{
+  return l->__locales[category]->values[_NL_ITEM_INDEX (item)].string;
+}
+
+/* Extract CATEGORY locale's wide string for ITEM.  */
+static inline const wchar_t *
+_nl_lookup_wstr (locale_t l, int category, int item)
+{
+  return (wchar_t *) l->__locales[category]
+    ->values[_NL_ITEM_INDEX (item)].wstr;
+}
+
+/* Extract the CATEGORY locale's word for ITEM.  */
+static inline uint32_t
+_nl_lookup_word (locale_t l, int category, int item)
+{
+  return l->__locales[category]->values[_NL_ITEM_INDEX (item)].word;
+}
 
 /* Default search path if no LOCPATH environment variable.  */
 extern const char _nl_default_locale_path[] attribute_hidden;

@@ -1,4 +1,4 @@
-/* Copyright (C) 2011-2015 Free Software Foundation, Inc.
+/* Copyright (C) 2011-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Chris Metcalf <cmetcalf@tilera.com>, 2011.
 
@@ -16,15 +16,6 @@
    License along with the GNU C Library.  If not, see
    <http://www.gnu.org/licenses/>.  */
 
-
-/* TILE glibc support starts with 2.6.36, guaranteeing many kernel features. */
-#define __ASSUME_ACCEPT4_SYSCALL	1
-#define __ASSUME_RECVMMSG_SYSCALL	1
-
-/* Support for the sendmmsg syscall was added in 3.0.  */
-#if __LINUX_KERNEL_VERSION >= 0x030000
-# define __ASSUME_SENDMMSG_SYSCALL	1
-#endif
 
 #include_next <kernel-features.h>
 

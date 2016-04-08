@@ -1,5 +1,5 @@
 /* Measure memmove functions.
-   Copyright (C) 2013-2015 Free Software Foundation, Inc.
+   Copyright (C) 2013-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -174,6 +174,14 @@ test_main (void)
       do_test (32, 0, 16 * i);
       do_test (0, i, 16 * i);
       do_test (i, 0, 16 * i);
+    }
+
+  for (i = 32; i < 64; ++i)
+    {
+      do_test (0, 0, 32 * i);
+      do_test (i, 0, 32 * i);
+      do_test (0, i, 32 * i);
+      do_test (i, i, 32 * i);
     }
 
   return ret;

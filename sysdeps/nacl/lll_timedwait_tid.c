@@ -1,5 +1,5 @@
 /* Timed waiting for thread death.  NaCl version.
-   Copyright (C) 2015 Free Software Foundation, Inc.
+   Copyright (C) 2015-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -40,7 +40,7 @@ __lll_timedwait_tid (int *tidp, const struct timespec *abstime)
 	   finish quick enough that the timeout doesn't matter.  If any
 	   thread ever stays in this state for long, there is something
 	   catastrophically wrong.  */
-	BUSY_WAIT_NOP;
+	atomic_spin_nop ();
       else
 	{
 	  assert (tid > 0);

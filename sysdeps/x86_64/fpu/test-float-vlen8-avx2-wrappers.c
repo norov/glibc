@@ -1,5 +1,5 @@
 /* Wrapper part of tests for AVX2 ISA versions of vector math functions.
-   Copyright (C) 2014-2015 Free Software Foundation, Inc.
+   Copyright (C) 2014-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,7 +17,6 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include "test-float-vlen8.h"
-#include "test-vec-loop.h"
 #include <immintrin.h>
 
 #undef VEC_SUFF
@@ -26,3 +25,8 @@
 #define VEC_TYPE __m256
 
 VECTOR_WRAPPER (WRAPPER_NAME (cosf), _ZGVdN8v_cosf)
+VECTOR_WRAPPER (WRAPPER_NAME (sinf), _ZGVdN8v_sinf)
+VECTOR_WRAPPER_fFF (WRAPPER_NAME (sincosf), _ZGVdN8vvv_sincosf)
+VECTOR_WRAPPER (WRAPPER_NAME (logf), _ZGVdN8v_logf)
+VECTOR_WRAPPER (WRAPPER_NAME (expf), _ZGVdN8v_expf)
+VECTOR_WRAPPER_ff (WRAPPER_NAME (powf), _ZGVdN8vv_powf)

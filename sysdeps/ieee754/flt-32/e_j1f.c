@@ -14,6 +14,7 @@
  */
 
 #include <errno.h>
+#include <float.h>
 #include <math.h>
 #include <math_private.h>
 
@@ -69,7 +70,13 @@ __ieee754_j1f(float x)
 		else	 return  z;
 	}
 	if(__builtin_expect(ix<0x32000000, 0)) {	/* |x|<2**-27 */
-	    if(huge+x>one) return (float)0.5*x;/* inexact if x!=0 necessary */
+	    if(huge+x>one) {		/* inexact if x!=0 necessary */
+		float ret = math_narrow_eval ((float) 0.5 * x);
+		math_check_force_underflow (ret);
+		if (ret == 0 && x != 0)
+		  __set_errno (ERANGE);
+		return ret;
+	    }
 	}
 	z = x*x;
 	r =  z*(r00+z*(r01+z*(r02+z*r03)));

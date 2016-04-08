@@ -1,4 +1,4 @@
-# Copyright (C) 1995-2015 Free Software Foundation, Inc.
+# Copyright (C) 1995-2016 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -105,7 +105,7 @@ $(objpfx)sotruss-lib.so: $(common-objpfx)libc.so $(objpfx)ld.so \
 $(objpfx)sotruss: sotruss.sh $(common-objpfx)config.make
 	sed -e 's%@BASH@%$(BASH)%g' \
 	    -e 's%@VERSION@%$(version)%g' \
-	    -e 's%@TEXTDOMAINDIR@%$(msgcatdir)%g' \
+	    -e 's%@TEXTDOMAINDIR@%$(localedir)%g' \
 	    -e 's%@PREFIX@%$(prefix)%g' \
 	    -e 's|@PKGVERSION@|$(PKGVERSION)|g' \
 	    -e 's|@REPORT_BUGS_TO@|$(REPORT_BUGS_TO)|g' \
@@ -145,12 +145,15 @@ tests += loadtest restest1 preloadtest loadfail multiload origtest resolvfail \
 	 unload3 unload4 unload5 unload6 unload7 unload8 tst-global1 order2 \
 	 tst-audit1 tst-audit2 tst-audit8 tst-audit9 \
 	 tst-stackguard1 tst-addr1 tst-thrlock \
-	 tst-unique1 tst-unique2 $(if $(CXX),tst-unique3 tst-unique4) \
+	 tst-unique1 tst-unique2 $(if $(CXX),tst-unique3 tst-unique4 \
+	 tst-nodelete) \
 	 tst-initorder tst-initorder2 tst-relsort1 tst-null-argv \
-	 tst-ptrguard1 tst-tlsalign tst-tlsalign-extern
+	 tst-ptrguard1 tst-tlsalign tst-tlsalign-extern tst-nodelete-opened \
+	 tst-nodelete2 tst-audit11 tst-audit12 tst-dlsym-error
 #	 reldep9
 ifeq ($(build-hardcoded-path-in-tests),yes)
 tests += tst-dlopen-aout
+LDFLAGS-tst-dlopen-aout = $(no-pie-ldflag)
 endif
 test-srcs = tst-pathopt
 selinux-enabled := $(shell cat /selinux/enforce 2> /dev/null)
@@ -160,7 +163,8 @@ endif
 endif
 ifeq ($(run-built-tests),yes)
 tests-special += $(objpfx)tst-leaks1-mem.out \
-		 $(objpfx)tst-leaks1-static-mem.out $(objpfx)noload-mem.out
+		 $(objpfx)tst-leaks1-static-mem.out $(objpfx)noload-mem.out \
+		 $(objpfx)tst-ldconfig-X.out
 endif
 tlsmod17a-suffixes = 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
 tlsmod18a-suffixes = 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
@@ -206,7 +210,9 @@ modules-names = testobj1 testobj2 testobj3 testobj4 testobj5 testobj6 \
 		tst-unique1mod1 tst-unique1mod2 \
 		tst-unique2mod1 tst-unique2mod2 \
 		tst-auditmod9a tst-auditmod9b \
-		$(if $(CXX),tst-unique3lib tst-unique3lib2 tst-unique4lib) \
+		$(if $(CXX),tst-unique3lib tst-unique3lib2 tst-unique4lib \
+		  tst-nodelete-uniquemod tst-nodelete-rtldmod \
+		  tst-nodelete-zmod) \
 		tst-initordera1 tst-initorderb1 \
 		tst-initordera2 tst-initorderb2 \
 		tst-initordera3 tst-initordera4 \
@@ -214,13 +220,22 @@ modules-names = testobj1 testobj2 testobj3 testobj4 testobj5 testobj6 \
 		tst-initorder2d \
 		tst-relsort1mod1 tst-relsort1mod2 tst-array2dep \
 		tst-array5dep tst-null-argv-lib \
-		tst-tlsalign-lib
+		tst-tlsalign-lib tst-nodelete-opened-lib tst-nodelete2mod \
+		tst-audit11mod1 tst-audit11mod2 tst-auditmod11 \
+		tst-audit12mod1 tst-audit12mod2 tst-audit12mod3 tst-auditmod12
 ifeq (yes,$(have-protected-data))
 modules-names += tst-protected1moda tst-protected1modb
 tests += tst-protected1a tst-protected1b
 $(objpfx)tst-protected1a: $(addprefix $(objpfx),tst-protected1moda.so tst-protected1modb.so)
 $(objpfx)tst-protected1b: $(addprefix $(objpfx),tst-protected1modb.so tst-protected1moda.so)
 tst-protected1modb.so-no-z-defs = yes
+# These tests fail with GCC versions prior to 5.1 and with some versions
+# of binutils.  See https://sourceware.org/bugzilla/show_bug.cgi?id=17709
+# and https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65248 for details.
+# Perhaps in future we can make these XFAILs conditional on some detection
+# of compiler/linker behavior/version.
+test-xfail-tst-protected1a = yes
+test-xfail-tst-protected1b = yes
 endif
 ifeq (yesyes,$(have-fpie)$(build-shared))
 modules-names += tst-piemod1
@@ -287,6 +302,14 @@ endif
 check-abi: $(objpfx)check-abi-ld.out
 tests-special += $(objpfx)check-abi-ld.out
 update-abi: update-abi-ld
+update-all-abi: update-all-abi-ld
+
+ifeq ($(have-glob-dat-reloc),yes)
+tests += tst-prelink
+ifeq ($(run-built-tests),yes)
+tests-special += $(objpfx)tst-prelink-cmp.out
+endif
+endif
 
 include ../Rules
 
@@ -374,8 +397,7 @@ ifneq (ld.so,$(rtld-installed-name))
 # Make sure ld.so.1 exists in the build directory so we can link
 # against it.
 $(objpfx)$(rtld-installed-name): $(objpfx)ld.so
-	rm -f $@
-	ln -s $(<F) $@
+	$(make-link)
 generated += $(rtld-installed-name)
 endif
 
@@ -415,7 +437,7 @@ ldd-rewrite = -e 's%@RTLD@%$(rtlddir)/$(rtld-installed-name)%g' \
 	      -e 's|@PKGVERSION@|$(PKGVERSION)|g' \
 	      -e 's|@REPORT_BUGS_TO@|$(REPORT_BUGS_TO)|g' \
 	      -e 's%@BASH@%$(BASH)%g' \
-	      -e 's%@TEXTDOMAINDIR@%$(msgcatdir)%g'
+	      -e 's%@TEXTDOMAINDIR@%$(localedir)%g'
 
 ifeq ($(ldd-rewrite-script),no)
 define gen-ldd
@@ -522,16 +544,11 @@ $(objpfx)tst-initordera4.so: $(objpfx)tst-initordera3.so
 $(objpfx)tst-initorder: $(objpfx)tst-initordera4.so $(objpfx)tst-initordera1.so $(objpfx)tst-initorderb2.so
 $(objpfx)tst-null-argv: $(objpfx)tst-null-argv-lib.so
 $(objpfx)tst-tlsalign: $(objpfx)tst-tlsalign-lib.so
-
-# BZ#18383: broken on at least ARM (both) and i386/x86-64 (static only).
-test-xfail-tst-tlsalign = yes
-test-xfail-tst-tlsalign-static = yes
+$(objpfx)tst-nodelete-opened.out: $(objpfx)tst-nodelete-opened-lib.so
+$(objpfx)tst-nodelete-opened: $(libdl)
 
 $(objpfx)tst-tlsalign-extern: $(objpfx)tst-tlsalign-vars.o
 $(objpfx)tst-tlsalign-extern-static: $(objpfx)tst-tlsalign-vars.o
-
-# BZ#18383: broken on at least i386/x86-64 (static only).
-test-xfail-tst-tlsalign-extern-static = yes
 
 tst-null-argv-ENV = LD_DEBUG=all LD_DEBUG_OUTPUT=$(objpfx)tst-null-argv.debug.out
 LDFLAGS-nodel2mod3.so = $(no-as-needed)
@@ -593,6 +610,10 @@ ifuncmod5.so-no-z-defs = yes
 ifuncmod6.so-no-z-defs = yes
 tst-auditmod9a.so-no-z-defs = yes
 tst-auditmod9b.so-no-z-defs = yes
+tst-nodelete-uniquemod.so-no-z-defs = yes
+tst-nodelete-rtldmod.so-no-z-defs = yes
+tst-nodelete-zmod.so-no-z-defs = yes
+tst-nodelete2mod.so-no-z-defs = yes
 
 ifeq ($(build-shared),yes)
 # Build all the modules even when not actually running test programs.
@@ -871,6 +892,7 @@ endif
 ifeq ($(have-z-execstack),yes)
 $(objpfx)tst-execstack: $(libdl)
 $(objpfx)tst-execstack.out: $(objpfx)tst-execstack-mod.so
+CPPFLAGS-tst-execstack.c = -DUSE_PTHREADS=0
 LDFLAGS-tst-execstack = -Wl,-z,noexecstack
 LDFLAGS-tst-execstack-mod = -Wl,-z,execstack
 
@@ -1155,6 +1177,19 @@ $(objpfx)tst-unique3.out: $(objpfx)tst-unique3lib2.so
 
 $(objpfx)tst-unique4: $(objpfx)tst-unique4lib.so
 
+$(objpfx)tst-nodelete: $(libdl)
+$(objpfx)tst-nodelete.out: $(objpfx)tst-nodelete-uniquemod.so \
+			   $(objpfx)tst-nodelete-rtldmod.so \
+			   $(objpfx)tst-nodelete-zmod.so
+
+LDFLAGS-tst-nodelete = -rdynamic
+LDFLAGS-tst-nodelete-zmod.so = -Wl,--enable-new-dtags,-z,nodelete
+
+$(objpfx)tst-nodelete2: $(libdl)
+$(objpfx)tst-nodelete2.out: $(objpfx)tst-nodelete2mod.so
+
+LDFLAGS-tst-nodelete2 = -rdynamic
+
 $(objpfx)tst-initorder-cmp.out: tst-initorder.exp $(objpfx)tst-initorder.out
 	cmp $^ > $@; \
 	$(evaluate-test)
@@ -1196,3 +1231,31 @@ $(objpfx)tst-unused-dep.out: $(objpfx)testobj1.so
 $(objpfx)tst-unused-dep-cmp.out: $(objpfx)tst-unused-dep.out
 	cmp $< /dev/null > $@; \
 	$(evaluate-test)
+
+$(objpfx)tst-audit11.out: $(objpfx)tst-auditmod11.so $(objpfx)tst-audit11mod1.so
+$(objpfx)tst-audit11: $(libdl)
+tst-audit11-ENV = LD_AUDIT=$(objpfx)tst-auditmod11.so
+$(objpfx)tst-audit11mod1.so: $(objpfx)tst-audit11mod2.so
+LDFLAGS-tst-audit11mod2.so = -Wl,--version-script=tst-audit11mod2.map,-soname,tst-audit11mod2.so
+
+$(objpfx)tst-audit12.out: $(objpfx)tst-auditmod12.so $(objpfx)tst-audit12mod1.so $(objpfx)tst-audit12mod3.so
+$(objpfx)tst-audit12: $(libdl)
+tst-audit12-ENV = LD_AUDIT=$(objpfx)tst-auditmod12.so
+$(objpfx)tst-audit12mod1.so: $(objpfx)tst-audit12mod2.so
+LDFLAGS-tst-audit12mod2.so = -Wl,--version-script=tst-audit12mod2.map
+
+tst-prelink-ENV = LD_TRACE_PRELINKING=1
+
+$(objpfx)tst-prelink-conflict.out: $(objpfx)tst-prelink.out
+	grep stdout $< | grep conflict | $(AWK) '{ print $$10, $$11 }' > $@
+
+$(objpfx)tst-prelink-cmp.out: tst-prelink.exp \
+			      $(objpfx)tst-prelink-conflict.out
+	cmp $^ > $@; \
+	$(evaluate-test)
+
+$(objpfx)tst-ldconfig-X.out : tst-ldconfig-X.sh $(objpfx)ldconfig
+	$(SHELL) $< '$(common-objpfx)' '$(test-wrapper)' '$(test-wrapper-env)' > $@; \
+	$(evaluate-test)
+
+$(objpfx)tst-dlsym-error: $(libdl)

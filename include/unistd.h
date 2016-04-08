@@ -5,6 +5,7 @@
 __BEGIN_DECLS
 
 libc_hidden_proto (_exit, __noreturn__)
+rtld_hidden_proto (_exit, __noreturn__)
 libc_hidden_proto (alarm)
 libc_hidden_proto (confstr)
 libc_hidden_proto (execl)
@@ -80,6 +81,7 @@ char *__canonicalize_directory_name_internal (const char *__thisdir,
 					      size_t __size) attribute_hidden;
 
 extern int __dup (int __fd);
+libc_hidden_proto (__dup)
 extern int __dup2 (int __fd, int __fd2);
 libc_hidden_proto (__dup2)
 extern int __dup3 (int __fd, int __fd2, int flags);
@@ -157,7 +159,7 @@ rtld_hidden_proto (__libc_enable_secure)
 
 
 /* Various internal function.  */
-extern void __libc_check_standard_fds (void);
+extern void __libc_check_standard_fds (void) attribute_hidden;
 
 
 /* Internal name for fork function.  */
@@ -169,12 +171,15 @@ extern int __libc_pause (void);
 /* Not cancelable variant.  */
 extern int __pause_nocancel (void) attribute_hidden;
 
-extern int __have_sock_cloexec attribute_hidden;
 extern int __have_pipe2 attribute_hidden;
 extern int __have_dup3 attribute_hidden;
 
 extern int __getlogin_r_loginuid (char *name, size_t namesize)
      attribute_hidden;
+
+#  if IS_IN (rtld)
+#   include <dl-unistd.h>
+#  endif
 
 __END_DECLS
 # endif

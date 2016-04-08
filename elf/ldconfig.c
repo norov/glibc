@@ -1,4 +1,4 @@
-/* Copyright (C) 1999-2015 Free Software Foundation, Inc.
+/* Copyright (C) 1999-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Andreas Jaeger <aj@suse.de>, 1999.
 
@@ -100,7 +100,8 @@ int opt_format = 1;
 /* Build cache.  */
 static int opt_build_cache = 1;
 
-/* Generate links.  */
+/* Enable symbolic link processing.  If set, create or update symbolic
+   links, and remove stale symbolic links.  */
 static int opt_link = 1;
 
 /* Only process directories specified on the command line.  */
@@ -141,7 +142,7 @@ static const struct argp_option options[] =
   { "print-cache", 'p', NULL, 0, N_("Print cache"), 0},
   { "verbose", 'v', NULL, 0, N_("Generate verbose messages"), 0},
   { NULL, 'N', NULL, 0, N_("Don't build cache"), 0},
-  { NULL, 'X', NULL, 0, N_("Don't generate links"), 0},
+  { NULL, 'X', NULL, 0, N_("Don't update symbolic links"), 0},
   { NULL, 'r', N_("ROOT"), 0, N_("Change to and use ROOT as root directory"), 0},
   { NULL, 'C', N_("CACHE"), 0, N_("Use CACHE as cache file"), 0},
   { NULL, 'f', N_("CONF"), 0, N_("Use CONF as configuration file"), 0},
@@ -324,7 +325,7 @@ print_version (FILE *stream, struct argp_state *state)
 Copyright (C) %s Free Software Foundation, Inc.\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\
-"), "2015");
+"), "2016");
   fprintf (stream, gettext ("Written by %s.\n"),
 	   "Andreas Jaeger");
 }
@@ -800,7 +801,7 @@ search_dir (const struct dir_entry *entry)
 		error (0, errno, _("Cannot stat %s"), file_name);
 
 	      /* Remove stale symlinks.  */
-	      if (strstr (direntry->d_name, ".so."))
+	      if (opt_link && strstr (direntry->d_name, ".so."))
 		unlink (real_file_name);
 	      continue;
 	    }

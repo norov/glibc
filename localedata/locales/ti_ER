@@ -1,6 +1,12 @@
-comment_char    %
-escape_char     /
+comment_char %
+escape_char /
 
+% This file is part of the GNU C Library and contains locale data.
+% The Free Software Foundation does not claim any copyright interest
+% in the locale data contained in this file.  The foregoing does not
+% affect the license of the GNU C Library as a whole.  It does not
+% exempt you from the conditions of the license if your use would
+% otherwise be governed by that license.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -269,4 +275,3 @@ date_fmt    "<U0025><U0041><U1361><U0020><U0025><U0042><U0020><U0025><U0065>/
 <U0020><U12D3><U002F><U121D>"
 %
 END LC_TIME
-%

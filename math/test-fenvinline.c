@@ -1,5 +1,5 @@
 /* Test for fenv inline implementations.
-   Copyright (C) 2015 Free Software Foundation, Inc.
+   Copyright (C) 2015-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -200,11 +200,11 @@ test_fesetround (void)
 #endif
 }
 
+#if FE_ALL_EXCEPT
 /* Tests for feenableexcept/fedisableexcept.  */
 static void
 feenable_test (const char *flag_name, fexcept_t fe_exc)
 {
-#if FE_ALL_EXCEPT
   int fe_exci = fe_exc;
   double fe_excd = fe_exc;
   int excepts;
@@ -287,8 +287,8 @@ feenable_test (const char *flag_name, fexcept_t fe_exc)
               flag_name, (unsigned int)fe_exc, excepts);
       ++count_errors;
     }
-#endif
 }
+#endif
 
 static void
 test_feenabledisable (void)

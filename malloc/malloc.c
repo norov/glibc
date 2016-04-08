@@ -1,5 +1,5 @@
 /* Malloc implementation for multiple threads without lock contention.
-   Copyright (C) 1996-2015 Free Software Foundation, Inc.
+   Copyright (C) 1996-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Wolfram Gloger <wg@malloc.de>
    and Doug Lea <dl@cs.oswego.edu>, 2001.
@@ -241,7 +241,7 @@
 /* For MIN, MAX, powerof2.  */
 #include <sys/param.h>
 
-/* For ALIGN_UP.  */
+/* For ALIGN_UP et. al.  */
 #include <libc-internal.h>
 
 
@@ -283,7 +283,7 @@
 # define assert(expr) \
   ((expr)								      \
    ? ((void) 0)								      \
-   : __malloc_assert (__STRING (expr), __FILE__, __LINE__, __func__))
+   : __malloc_assert (#expr, __FILE__, __LINE__, __func__))
 
 extern const char *__progname;
 
@@ -649,8 +649,7 @@ libc_hidden_proto (__libc_mallopt)
 	       have been freed but not use resused or consolidated)
   hblks:     current number of mmapped regions
   hblkhd:    total bytes held in mmapped regions
-  usmblks:   the maximum total allocated space. This will be greater
-		than current total if trimming has occurred.
+  usmblks:   always 0
   fsmblks:   total bytes held in fastbin blocks
   uordblks:  current total allocated space (normal or mmapped)
   fordblks:  total free space
@@ -1074,10 +1073,8 @@ static void*   realloc_check(void* oldmem, size_t bytes,
 			       const void *caller);
 static void*   memalign_check(size_t alignment, size_t bytes,
 				const void *caller);
-#ifndef NO_THREADS
 static void*   malloc_atfork(size_t sz, const void *caller);
 static void      free_atfork(void* mem, const void *caller);
-#endif
 
 /* ------------------ MMAP support ------------------  */
 
@@ -1709,8 +1706,14 @@ struct malloc_state
   /* Linked list */
   struct malloc_state *next;
 
-  /* Linked list for free arenas.  */
+  /* Linked list for free arenas.  Access to this field is serialized
+     by free_list_lock in arena.c.  */
   struct malloc_state *next_free;
+
+  /* Number of threads attached to this arena.  0 if the arena is on
+     the free list.  Access to this field is serialized by
+     free_list_lock in arena.c.  */
+  INTERNAL_SIZE_T attached_threads;
 
   /* Memory allocated from the system in this arena.  */
   INTERNAL_SIZE_T system_mem;
@@ -1737,10 +1740,7 @@ struct malloc_par
 
   /* Statistics */
   INTERNAL_SIZE_T mmapped_mem;
-  /*INTERNAL_SIZE_T  sbrked_mem;*/
-  /*INTERNAL_SIZE_T  max_sbrked_mem;*/
   INTERNAL_SIZE_T max_mmapped_mem;
-  INTERNAL_SIZE_T max_total_mem;  /* only kept for NO_THREADS */
 
   /* First address handed out by MORECORE/sbrk.  */
   char *sbrk_base;
@@ -1754,8 +1754,9 @@ struct malloc_par
 
 static struct malloc_state main_arena =
 {
-  .mutex = MUTEX_INITIALIZER,
-  .next = &main_arena
+  .mutex = _LIBC_LOCK_INITIALIZER,
+  .next = &main_arena,
+  .attached_threads = 1
 };
 
 /* There is only one instance of the malloc parameters.  */
@@ -2403,7 +2404,6 @@ sysmalloc (INTERNAL_SIZE_T nb, mstate av)
           && grow_heap (old_heap, MINSIZE + nb - old_size) == 0)
         {
           av->system_mem += old_heap->size - old_heap_size;
-          arena_mem += old_heap->size - old_heap_size;
           set_head (old_top, (((char *) old_heap + old_heap->size) - (char *) old_top)
                     | PREV_INUSE);
         }
@@ -2413,7 +2413,6 @@ sysmalloc (INTERNAL_SIZE_T nb, mstate av)
           heap->ar_ptr = av;
           heap->prev = old_heap;
           av->system_mem += heap->size;
-          arena_mem += heap->size;
           /* Set up the new top.  */
           top (av) = chunk_at_offset (heap, sizeof (*heap));
           set_head (top (av), (heap->size - sizeof (*heap)) | PREV_INUSE);
@@ -2767,8 +2766,8 @@ systrim (size_t pad, mstate av)
   if (top_area <= pad)
     return 0;
 
-  /* Release in pagesize units, keeping at least one page */
-  extra = (top_area - pad) & ~(pagesize - 1);
+  /* Release in pagesize units and round down to the nearest page.  */
+  extra = ALIGN_DOWN(top_area - pad, pagesize);
 
   if (extra == 0)
     return 0;
@@ -4152,7 +4151,7 @@ static void malloc_consolidate(mstate av)
     maxfb = &fastbin (av, NFASTBINS - 1);
     fb = &fastbin (av, 0);
     do {
-      p = malloc_exchange_acq (fb, 0);
+      p = atomic_exchange_acq (fb, NULL);
       if (p != 0) {
 	do {
 	  check_inuse_chunk(av, p);
@@ -4661,14 +4660,14 @@ int_mallinfo (mstate av, struct mallinfo *m)
     {
       m->hblks = mp_.n_mmaps;
       m->hblkhd = mp_.mmapped_mem;
-      m->usmblks = mp_.max_total_mem;
+      m->usmblks = 0;
       m->keepcost = chunksize (av->top);
     }
 }
 
 
 struct mallinfo
-__libc_mallinfo ()
+__libc_mallinfo (void)
 {
   struct mallinfo m;
   mstate ar_ptr;

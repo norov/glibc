@@ -1,5 +1,5 @@
 /* clone() implementation for Nios II.
-   Copyright (C) 2008-2015 Free Software Foundation, Inc.
+   Copyright (C) 2008-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Andrew Jenner <andrew@codesourcery.com>, 2008.
 
@@ -104,4 +104,5 @@ thread_start:
 
 	cfi_startproc
 PSEUDO_END (__clone)
+libc_hidden_def (__clone)
 weak_alias (__clone, clone)

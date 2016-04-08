@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015 Free Software Foundation, Inc.
+/* Copyright (C) 2009-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2009.
 
@@ -76,11 +76,7 @@ ENTRY(__pthread_enable_asynccancel)
 	lock
 	orl	$TCB_EXITING_BITMASK, %fs:CANCELHANDLING
 	mov	%fs:CLEANUP_JMP_BUF, %RDI_LP
-#ifdef SHARED
-	call	__pthread_unwind@PLT
-#else
-	call	__pthread_unwind
-#endif
+	call	JUMPTARGET(__pthread_unwind)
 	hlt
 END(__pthread_enable_asynccancel)
 

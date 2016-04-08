@@ -1,4 +1,4 @@
-# Copyright (C) 1995-2015 Free Software Foundation, Inc.
+# Copyright (C) 1995-2016 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -45,7 +45,7 @@ include ../Rules
 # On systems where `profil' is not a system call, the same
 # problem exists for the internal functions in profil.c.
 
-noprof := mcount
+noprof := mcount $(sysdep_noprof)
 ifeq (,$(filter profil,$(unix-syscalls)))
 noprof += profil sprofil
 endif

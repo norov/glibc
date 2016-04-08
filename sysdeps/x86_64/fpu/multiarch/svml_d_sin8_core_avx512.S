@@ -1,5 +1,5 @@
 /* Function sin vectorized with AVX-512, KNL and SKX versions.
-   Copyright (C) 2014-2015 Free Software Foundation, Inc.
+   Copyright (C) 2014-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,7 +17,7 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <sysdep.h>
-#include "svml_d_sin_data.h"
+#include "svml_d_trig_data.h"
 #include "svml_d_wrapper_impl.h"
 
 	.text
@@ -45,18 +45,18 @@ WRAPPER_IMPL_AVX512 _ZGVdN4v_sin
         cfi_def_cfa_register (%rbp)
         andq      $-64, %rsp
         subq      $1280, %rsp
-        movq      __svml_dsin_data@GOTPCREL(%rip), %rax
+        movq      __svml_d_trig_data@GOTPCREL(%rip), %rax
         movq      $-1, %rdx
         vmovups __dAbsMask(%rax), %zmm6
         vmovups __dInvPI(%rax), %zmm1
 
 /*
- * ARGUMENT RANGE REDUCTION:
- * X' = |X|
+   ARGUMENT RANGE REDUCTION:
+   X' = |X|
  */
         vpandq    %zmm6, %zmm0, %zmm12
         vmovups __dPI1_FMA(%rax), %zmm2
-        vmovups __dC7(%rax), %zmm7
+        vmovups __dC7_sin(%rax), %zmm7
 
 /* SignX - sign bit of X */
         vpandnq   %zmm0, %zmm6, %zmm11
@@ -86,31 +86,31 @@ WRAPPER_IMPL_AVX512 _ZGVdN4v_sin
         vfnmadd132pd __dPI3_FMA(%rax), %zmm3, %zmm4
 
 /*
- * POLYNOMIAL APPROXIMATION:
- * R2 = R*R
+  POLYNOMIAL APPROXIMATION:
+  R2 = R*R
  */
         vmulpd    %zmm4, %zmm4, %zmm8
 
 /* R = R^SignRes : update sign of reduced argument */
         vpxorq    %zmm5, %zmm4, %zmm9
-        vfmadd213pd __dC6(%rax), %zmm8, %zmm7
-        vfmadd213pd __dC5(%rax), %zmm8, %zmm7
-        vfmadd213pd __dC4(%rax), %zmm8, %zmm7
+        vfmadd213pd __dC6_sin(%rax), %zmm8, %zmm7
+        vfmadd213pd __dC5_sin(%rax), %zmm8, %zmm7
+        vfmadd213pd __dC4_sin(%rax), %zmm8, %zmm7
 
 /* Poly = C3+R2*(C4+R2*(C5+R2*(C6+R2*C7))) */
-        vfmadd213pd __dC3(%rax), %zmm8, %zmm7
+        vfmadd213pd __dC3_sin(%rax), %zmm8, %zmm7
 
 /* Poly = R2*(C1+R2*(C2+R2*Poly)) */
-        vfmadd213pd __dC2(%rax), %zmm8, %zmm7
-        vfmadd213pd __dC1(%rax), %zmm8, %zmm7
+        vfmadd213pd __dC2_sin(%rax), %zmm8, %zmm7
+        vfmadd213pd __dC1_sin(%rax), %zmm8, %zmm7
         vmulpd    %zmm8, %zmm7, %zmm10
 
 /* Poly = Poly*R + R */
         vfmadd213pd %zmm9, %zmm9, %zmm10
 
 /*
- * RECONSTRUCTION:
- * Final sign setting: Res = Poly^SignX
+   RECONSTRUCTION:
+   Final sign setting: Res = Poly^SignX
  */
         vpxorq    %zmm11, %zmm10, %zmm1
         testl     %ecx, %ecx
@@ -222,7 +222,7 @@ WRAPPER_IMPL_AVX512 _ZGVdN4v_sin
         movzbl    %r12b, %r15d
         shlq      $4, %r15
         vmovsd    1160(%rsp,%r15), %xmm0
-        call      sin@PLT
+        call      JUMPTARGET(sin)
         vmovsd    %xmm0, 1224(%rsp,%r15)
         jmp       .LBL_1_8
 
@@ -230,7 +230,7 @@ WRAPPER_IMPL_AVX512 _ZGVdN4v_sin
         movzbl    %r12b, %r15d
         shlq      $4, %r15
         vmovsd    1152(%rsp,%r15), %xmm0
-        call      sin@PLT
+        call      JUMPTARGET(sin)
         vmovsd    %xmm0, 1216(%rsp,%r15)
         jmp       .LBL_1_7
 #endif
@@ -260,13 +260,13 @@ WRAPPER_IMPL_AVX512 _ZGVdN4v_sin
         cfi_def_cfa_register (%rbp)
         andq      $-64, %rsp
         subq      $1280, %rsp
-        movq      __svml_dsin_data@GOTPCREL(%rip), %rax
+        movq      __svml_d_trig_data@GOTPCREL(%rip), %rax
         vpbroadcastq .L_2il0floatpacket.14(%rip), %zmm14
         vmovups __dAbsMask(%rax), %zmm7
         vmovups __dInvPI(%rax), %zmm2
         vmovups __dRShifter(%rax), %zmm1
         vmovups __dPI1_FMA(%rax), %zmm3
-        vmovups __dC7(%rax), %zmm8
+        vmovups __dC7_sin(%rax), %zmm8
 
 /*
   ARGUMENT RANGE REDUCTION:
@@ -305,16 +305,16 @@ WRAPPER_IMPL_AVX512 _ZGVdN4v_sin
 
 /* R = R^SignRes : update sign of reduced argument */
         vxorpd    %zmm6, %zmm5, %zmm10
-        vfmadd213pd __dC6(%rax), %zmm9, %zmm8
-        vfmadd213pd __dC5(%rax), %zmm9, %zmm8
-        vfmadd213pd __dC4(%rax), %zmm9, %zmm8
+        vfmadd213pd __dC6_sin(%rax), %zmm9, %zmm8
+        vfmadd213pd __dC5_sin(%rax), %zmm9, %zmm8
+        vfmadd213pd __dC4_sin(%rax), %zmm9, %zmm8
 
 /* Poly = C3+R2*(C4+R2*(C5+R2*(C6+R2*C7))) */
-        vfmadd213pd __dC3(%rax), %zmm9, %zmm8
+        vfmadd213pd __dC3_sin(%rax), %zmm9, %zmm8
 
 /* Poly = R2*(C1+R2*(C2+R2*Poly)) */
-        vfmadd213pd __dC2(%rax), %zmm9, %zmm8
-        vfmadd213pd __dC1(%rax), %zmm9, %zmm8
+        vfmadd213pd __dC2_sin(%rax), %zmm9, %zmm8
+        vfmadd213pd __dC1_sin(%rax), %zmm9, %zmm8
         vmulpd    %zmm9, %zmm8, %zmm11
 
 /* Poly = Poly*R + R */
@@ -440,7 +440,7 @@ WRAPPER_IMPL_AVX512 _ZGVdN4v_sin
         vzeroupper
         vmovsd    1160(%rsp,%r15), %xmm0
 
-        call      sin@PLT
+        call      JUMPTARGET(sin)
 
         vmovsd    %xmm0, 1224(%rsp,%r15)
         jmp       .LBL_2_8
@@ -452,7 +452,7 @@ WRAPPER_IMPL_AVX512 _ZGVdN4v_sin
         vzeroupper
         vmovsd    1152(%rsp,%r15), %xmm0
 
-        call      sin@PLT
+        call      JUMPTARGET(sin)
 
         vmovsd    %xmm0, 1216(%rsp,%r15)
         jmp       .LBL_2_7

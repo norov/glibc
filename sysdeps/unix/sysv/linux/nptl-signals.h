@@ -1,5 +1,5 @@
 /* Special use of signals in NPTL internals.  Linux version.
-   Copyright (C) 2014-2015 Free Software Foundation, Inc.
+   Copyright (C) 2014-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,6 +16,8 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
+#include <signal.h>
+
 /* The signal used for asynchronous cancelation.  */
 #define SIGCANCEL       __SIGRTMIN
 
@@ -28,6 +30,14 @@
 
 /* Signal used to implement the setuid et.al. functions.  */
 #define SIGSETXID       (__SIGRTMIN + 1)
+
+
+/* Return is sig is used internally.  */
+static inline int
+__nptl_is_internal_signal (int sig)
+{
+  return (sig == SIGCANCEL) || (sig == SIGTIMER) || (sig == SIGSETXID);
+}
 
 /* Used to communicate with signal handler.  */
 extern struct xid_command *__xidcmd attribute_hidden;

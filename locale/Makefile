@@ -1,4 +1,4 @@
-# Copyright (C) 1991-2015 Free Software Foundation, Inc.
+# Copyright (C) 1991-2016 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -76,13 +76,16 @@ C-translit.h: C-translit.h.in gen-translit.pl
 	$(PERL) gen-translit.pl < $< > $@.tmp
 	mv -f $@.tmp $@
 
-localepath = "$(localedir):$(i18ndir)"
+# The path to the compiled binary locale archive or compiled locales,
+# along with the parent path to the source locales and source
+# charmaps.
+localepath = "$(complocaledir):$(i18ndir)"
 
 # -Iprograms doesn't really belong here, but this gets it at the head
 # of the list instead of the tail, where CPPFLAGS-$(lib) gets added.
 # We need it before the standard -I's to see programs/config.h first.
-locale-CPPFLAGS = -DLOCALEDIR='"$(localedir)"' \
-		  -DLOCALE_ALIAS_PATH='"$(msgcatdir)"' \
+locale-CPPFLAGS = -DCOMPLOCALEDIR='"$(complocaledir)"' \
+		  -DLOCALE_ALIAS_PATH='"$(localedir)"' \
 		  -Iprograms
 
 CPPFLAGS-locale-programs = -DLOCALE_PATH='$(localepath)' \

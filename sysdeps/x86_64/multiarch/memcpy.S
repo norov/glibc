@@ -1,6 +1,6 @@
 /* Multiple versions of memcpy
    All versions must be listed in ifunc-impl-list.c.
-   Copyright (C) 2010-2015 Free Software Foundation, Inc.
+   Copyright (C) 2010-2016 Free Software Foundation, Inc.
    Contributed by Intel Corporation.
    This file is part of the GNU C Library.
 
@@ -29,22 +29,29 @@
 	.text
 ENTRY(__new_memcpy)
 	.type	__new_memcpy, @gnu_indirect_function
-	cmpl	$0, KIND_OFFSET+__cpu_features(%rip)
-	jne	1f
-	call	__init_cpu_features
-1:	leaq	__memcpy_avx_unaligned(%rip), %rax
-	testl	$bit_AVX_Fast_Unaligned_Load, __cpu_features+FEATURE_OFFSET+index_AVX_Fast_Unaligned_Load(%rip)
-	jz 1f
+	LOAD_RTLD_GLOBAL_RO_RDX
+#ifdef HAVE_AVX512_ASM_SUPPORT
+	HAS_ARCH_FEATURE (AVX512F_Usable)
+	jz	1f
+	HAS_ARCH_FEATURE (Prefer_No_VZEROUPPER)
+	jz	1f
+	lea    __memcpy_avx512_no_vzeroupper(%rip), %RAX_LP
 	ret
-1:	leaq	__memcpy_sse2(%rip), %rax
-	testl	$bit_Slow_BSF, __cpu_features+FEATURE_OFFSET+index_Slow_BSF(%rip)
+#endif
+1:	lea	__memcpy_avx_unaligned(%rip), %RAX_LP
+	HAS_ARCH_FEATURE (AVX_Fast_Unaligned_Load)
 	jnz	2f
-	leaq	__memcpy_sse2_unaligned(%rip), %rax
-	ret
-2:	testl   $bit_SSSE3, __cpu_features+CPUID_OFFSET+index_SSSE3(%rip)
-	jz 3f
-	leaq    __memcpy_ssse3(%rip), %rax
-3:	ret
+	lea	__memcpy_sse2_unaligned(%rip), %RAX_LP
+	HAS_ARCH_FEATURE (Fast_Unaligned_Copy)
+	jnz	2f
+	lea	__memcpy_sse2(%rip), %RAX_LP
+	HAS_CPU_FEATURE (SSSE3)
+	jz	2f
+	lea    __memcpy_ssse3_back(%rip), %RAX_LP
+	HAS_ARCH_FEATURE (Fast_Copy_Backward)
+	jnz	2f
+	lea	__memcpy_ssse3(%rip), %RAX_LP
+2:	ret
 END(__new_memcpy)
 
 # undef ENTRY

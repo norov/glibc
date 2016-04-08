@@ -1,5 +1,5 @@
 /* Function cosf vectorized with SSE4.
-   Copyright (C) 2014-2015 Free Software Foundation, Inc.
+   Copyright (C) 2014-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,7 +17,7 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <sysdep.h>
-#include "svml_s_cosf_data.h"
+#include "svml_s_trig_data.h"
 
 	.text
 ENTRY (_ZGVbN4v_cosf_sse4)
@@ -51,7 +51,7 @@ ENTRY (_ZGVbN4v_cosf_sse4)
         andq      $-64, %rsp
         subq      $320, %rsp
         movaps    %xmm0, %xmm4
-        movq      __svml_scos_data@GOTPCREL(%rip), %rax
+        movq      __svml_s_trig_data@GOTPCREL(%rip), %rax
         movups __sHalfPI(%rax), %xmm1
         movups __sRShifter(%rax), %xmm5
 
@@ -211,7 +211,7 @@ ENTRY (_ZGVbN4v_cosf_sse4)
         movzbl    %r12b, %r15d
         movss     196(%rsp,%r15,8), %xmm0
 
-        call      cosf@PLT
+        call      JUMPTARGET(cosf)
 
         movss     %xmm0, 260(%rsp,%r15,8)
         jmp       .LBL_1_8
@@ -220,7 +220,7 @@ ENTRY (_ZGVbN4v_cosf_sse4)
         movzbl    %r12b, %r15d
         movss     192(%rsp,%r15,8), %xmm0
 
-        call      cosf@PLT
+        call      JUMPTARGET(cosf)
 
         movss     %xmm0, 256(%rsp,%r15,8)
         jmp       .LBL_1_7

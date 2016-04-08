@@ -1,4 +1,4 @@
-/* Copyright (C) 2000-2015 Free Software Foundation, Inc.
+/* Copyright (C) 2000-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Martin Schwidefsky (schwidefsky@de.ibm.com).
 
@@ -70,4 +70,6 @@ thread_start:
 	xc	0(4,%r15),0(%r15)
 	basr    %r14,%r1        /* jump to fn */
 	DO_CALL (exit, 1)
+
+libc_hidden_def (__clone)
 weak_alias (__clone, clone)

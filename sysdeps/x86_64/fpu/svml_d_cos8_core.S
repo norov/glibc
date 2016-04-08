@@ -1,5 +1,5 @@
 /* Function cos vectorized with AVX-512, wrapper to AVX2.
-   Copyright (C) 2014-2015 Free Software Foundation, Inc.
+   Copyright (C) 2014-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,7 +17,6 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <sysdep.h>
-#include "svml_d_cos_data.h"
 #include "svml_d_wrapper_impl.h"
 
 	.text

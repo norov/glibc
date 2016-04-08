@@ -1,5 +1,12 @@
 comment_char %
-escape_char  /
+escape_char /
+
+% This file is part of the GNU C Library and contains locale data.
+% The Free Software Foundation does not claim any copyright interest
+% in the locale data contained in this file.  The foregoing does not
+% affect the license of the GNU C Library as a whole.  It does not
+% exempt you from the conditions of the license if your use would
+% otherwise be governed by that license.
 
 % Bhutanese(Bhutan) locale
 %
@@ -620,10 +627,10 @@ noexpr  "<U005E><U005B><U0F58><U004E><U006E><U005D><U002E><U002A>"
 END LC_MESSAGES
 
 LC_TELEPHONE
- tel_int_fmt    "<U002B><U0025><U0063><U0020><U0025><U0061><U0020><U0025><U006C>"
+tel_int_fmt    "<U002B><U0025><U0063><U0020><U0025><U0061><U0020><U0025><U006C>"
 % tel_dom_fmt    "<U0030><U002D><U0025><U0061><U0025><U006C>"
 % int_select     "<U0030><U0030><U0031>"
-% int_prefix     "<U0036><U0036>"
+int_prefix     "<U0039><U0037><U0035>"
 END LC_TELEPHONE
 
 LC_PAPER

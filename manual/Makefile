@@ -1,4 +1,4 @@
-# Copyright (C) 1992-2015 Free Software Foundation, Inc.
+# Copyright (C) 1992-2016 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -172,12 +172,15 @@ include ../Rules
 
 .PHONY: install subdir_install install-data
 install-data subdir_install: install
+# libm-err.texi generation requires perl.
+ifneq ($(PERL),no)
 ifneq ($(strip $(MAKEINFO)),:)
 install: $(inst_infodir)/libc.info
 	@if $(SHELL) -c '$(INSTALL_INFO) --version' >/dev/null 2>&1; then \
 	 test -f $(inst_infodir)/dir || $(INSTALL_DATA) dir $(inst_infodir);\
 	 $(INSTALL_INFO) --info-dir=$(inst_infodir) $(inst_infodir)/libc.info;\
 	else : ; fi
+endif
 endif
 # Catchall implicit rule for other installation targets from the parent.
 install-%: ;

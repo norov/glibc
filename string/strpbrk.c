@@ -1,4 +1,4 @@
-/* Copyright (C) 1991-2015 Free Software Foundation, Inc.
+/* Copyright (C) 1991-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -27,15 +27,7 @@
 char *
 STRPBRK (const char *s, const char *accept)
 {
-  while (*s != '\0')
-    {
-      const char *a = accept;
-      while (*a != '\0')
-	if (*a++ == *s)
-	  return (char *) s;
-      ++s;
-    }
-
-  return NULL;
+  s += strcspn (s, accept);
+  return *s ? (char *)s : NULL;
 }
 libc_hidden_builtin_def (strpbrk)

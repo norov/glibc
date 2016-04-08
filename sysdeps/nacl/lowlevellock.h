@@ -1,5 +1,5 @@
 /* Low-level lock implementation.  NaCl version.
-   Copyright (C) 2015 Free Software Foundation, Inc.
+   Copyright (C) 2015-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -21,10 +21,6 @@
 /* Everything except the exit handling is the same as the generic code.  */
 # include <sysdeps/nptl/lowlevellock.h>
 
-# ifndef BUSY_WAIT_NOP
-#  define BUSY_WAIT_NOP		__sync_synchronize ()
-# endif
-
 /* See exit-thread.h for details.  */
 # define NACL_EXITING_TID	1
 
@@ -36,7 +32,7 @@
     while ((__tid = atomic_load_relaxed (__tidp)) != 0) \
       {							\
 	if (__tid == NACL_EXITING_TID)			\
-	  BUSY_WAIT_NOP;				\
+	  atomic_spin_nop ();				\
 	else						\
 	  lll_futex_wait (__tidp, __tid, LLL_PRIVATE);	\
       }							\

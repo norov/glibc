@@ -1,5 +1,12 @@
-escape_char  /
-comment_char  %
+comment_char %
+escape_char /
+
+% This file is part of the GNU C Library and contains locale data.
+% The Free Software Foundation does not claim any copyright interest
+% in the locale data contained in this file.  The foregoing does not
+% affect the license of the GNU C Library as a whole.  It does not
+% exempt you from the conditions of the license if your use would
+% otherwise be governed by that license.
 
 % Charset: ISO-8859-1
 
@@ -39,8 +46,8 @@ source     "Zuza Software Foundation (Translate.org.za)"
 address    "Box 28364, Sunnyside, 0132, South Africa"
 contact    "Dwayne Bailey"
 email      "dwayne@translate.org.za"
-tel        "+27 12 460 1095"
-fax        "+27 12 460 1095"
+tel        ""
+fax        ""
 language   "Afrikaans"
 territory  "South Africa"
 revision   "1.2.1"

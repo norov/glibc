@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 
 # Usage: make-syscalls.sh ../sysdeps/unix/common
 # Expects $sysdirs in environment.
@@ -81,12 +81,9 @@ emit_weak_aliases()
 
   # We use the <shlib-compat.h> macros to generate the versioned aliases
   # so that the version sets can be mapped to the configuration's
-  # minimum version set as per shlib-versions DEFAULT lines.  But note
-  # we don't generate any "#if SHLIB_COMPAT (...)" conditionals.  To do
-  # that we'd need to change the syscalls.list format so that it can
-  # list the "obsoleted" version set too.  If it ever arises that we
-  # have a syscall entry point that is obsoleted by a newer version set,
-  # we'll have to revamp all this.
+  # minimum version set as per shlib-versions DEFAULT lines.  If an
+  # entry point is specified in the form NAME@VERSION:OBSOLETED, a
+  # SHLIB_COMPAT conditional is generated.
   if [ $any_versioned = t ]; then
     echo "	 echo '#include <shlib-compat.h>'; \\"
   fi
@@ -113,7 +110,17 @@ emit_weak_aliases()
       *@*)
 	base=`echo $name | sed 's/@.*//'`
 	ver=`echo $name | sed 's/.*@//;s/\./_/g'`
-	echo "	 echo '#if defined SHARED && IS_IN (libc)'; \\"
+	case $ver in
+	  *:*)
+	    compat_ver=${ver#*:}
+	    ver=${ver%%:*}
+	    compat_cond=" && SHLIB_COMPAT (libc, $ver, $compat_ver)"
+	    ;;
+	  *)
+	    compat_cond=
+	    ;;
+	esac
+	echo "	 echo '#if defined SHARED && IS_IN (libc)$compat_cond'; \\"
 	if test -z "$vcount" ; then
 	  source=$strong
 	  vcount=1
@@ -128,11 +135,11 @@ emit_weak_aliases()
       !*)
 	name=`echo $name | sed 's/.//'`
 	echo "	 echo 'strong_alias ($strong, $name)'; \\"
-	echo "	 echo 'libc_hidden_def ($name)'; \\"
+	echo "	 echo 'hidden_def ($name)'; \\"
 	;;
       *)
 	echo "	 echo 'weak_alias ($strong, $name)'; \\"
-	echo "	 echo 'libc_hidden_weak ($name)'; \\"
+	echo "	 echo 'hidden_weak ($name)'; \\"
 	;;
     esac
   done
@@ -287,7 +294,7 @@ while read file srcfile caller syscall args strong weak; do
 	 echo '}'; \\
 	 echo 'asm (".type ${strong}, %gnu_indirect_function");'; \\
 EOF
-    # This is doing "libc_hidden_def (${strong})", but the compiler
+    # This is doing "hidden_def (${strong})", but the compiler
     # doesn't know that we've defined ${strong} in the same file, so
     # we can't do it the normal way.
     cat <<EOF

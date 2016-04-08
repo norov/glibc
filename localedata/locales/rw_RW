@@ -1,5 +1,13 @@
-escape_char /
 comment_char %
+escape_char /
+
+% This file is part of the GNU C Library and contains locale data.
+% The Free Software Foundation does not claim any copyright interest
+% in the locale data contained in this file.  The foregoing does not
+% affect the license of the GNU C Library as a whole.  It does not
+% exempt you from the conditions of the license if your use would
+% otherwise be governed by that license.
+
 % Locale for Kinyarwanda locale in Rwanda
 % Contributed by Steve Murphy <murf@e-tools.com>, 2004
 % with help from:
@@ -11,8 +19,8 @@ source     "Rwanda"
 address    "Rwanda, Africa"
 contact    "Steve Murphy"
 email      "murf@e-tools.com"
-tel        "1-307-754-5675"
-fax        "1-307-754-5675"
+tel        ""
+fax        ""
 language   "Kinyarwanda"
 territory  "Rwanda"
 revision   "1.0"

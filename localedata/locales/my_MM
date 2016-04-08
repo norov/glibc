@@ -1,5 +1,13 @@
-escape_char     /
-comment_char    %
+comment_char %
+escape_char /
+
+% This file is part of the GNU C Library and contains locale data.
+% The Free Software Foundation does not claim any copyright interest
+% in the locale data contained in this file.  The foregoing does not
+% affect the license of the GNU C Library as a whole.  It does not
+% exempt you from the conditions of the license if your use would
+% otherwise be governed by that license.
+
 % This is the locale definition file for Myanmar Burmese
 % It is derived from the locale by Ngwe Tun <ngwestar@etrademyanmar.com> and
 % Members of the Solveware Solution Team. http://www.myazedi.com
@@ -156,9 +164,6 @@ d_fmt       "<U0025><U004F><U0043><U0025><U004F><U0079><U0020><U0025><U0062><U00
 t_fmt       "<U0025><U004F><U0049><U003A><U0025><U004F><U004D><U003A><U0025><U004F><U0053><U0020><U0025><U0070>"
 % %OI:%OM:%OS %p
 t_fmt_ampm  "<U0025><U004F><U0049><U003A><U0025><U004F><U004D><U003A><U0025><U004F><U0053><U0020><U0025><U0070>"
-
-% MMT-6.5MMT-6.5
-timezone "<U004D><U004D><U0054><U002D><U0036><U002E><U0035><U004D><U004D><U0054><U002D><U0036><U002E><U0035>"
 
 alt_digits  "<U1040><U1040>";/
 		"<U1040><U1041>";/
@@ -317,6 +322,8 @@ country_ab2     "<U004D><U004D>"
 country_car  "<U0042><U0041>"
 lang_ab         "<U006D><U0079>"
 lang_name       "<U1017><U1019><U102C>"
+% mya
 lang_term   "<U006D><U0079><U0061>"
-lang_lib    "<U006D><U0079><U0061>"
+% bur
+lang_lib    "<U0062><U0075><U0072>"
 END LC_ADDRESS

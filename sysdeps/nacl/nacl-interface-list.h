@@ -1,5 +1,5 @@
 /* List of NaCl interface tables used in libraries.
-   Copyright (C) 2015 Free Software Foundation, Inc.
+   Copyright (C) 2015-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -21,8 +21,6 @@ NACL_MANDATORY_INTERFACE (rtld,
 NACL_MANDATORY_INTERFACE (rtld,
 			  NACL_IRT_FDIO_v0_1, nacl_irt_fdio)
 NACL_MANDATORY_INTERFACE (rtld,
-			  NACL_IRT_FILENAME_v0_1, nacl_irt_filename)
-NACL_MANDATORY_INTERFACE (rtld,
 			  NACL_IRT_MEMORY_v0_3, nacl_irt_memory)
 NACL_MANDATORY_INTERFACE (libc,
 			  NACL_IRT_THREAD_v0_1, nacl_irt_thread)
@@ -30,7 +28,7 @@ NACL_MANDATORY_INTERFACE (rtld,
 			  NACL_IRT_FUTEX_v0_1, nacl_irt_futex)
 NACL_MANDATORY_INTERFACE (rtld,
 			  NACL_IRT_TLS_v0_1, nacl_irt_tls)
-NACL_MANDATORY_INTERFACE (libc,
+NACL_MANDATORY_INTERFACE (rtld,
 			  NACL_IRT_RESOURCE_OPEN_v0_1, nacl_irt_resource_open)
 NACL_MANDATORY_INTERFACE (rtld,
 			  NACL_IRT_CODE_DATA_ALLOC_v0_1,

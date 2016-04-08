@@ -1,4 +1,4 @@
-/* Copyright (C) 2001-2015 Free Software Foundation, Inc.
+/* Copyright (C) 2001-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -29,4 +29,5 @@ __libc_recv (int fd, void *buf, size_t n, int flags)
 }
 
 weak_alias (__libc_recv, __recv)
+libc_hidden_weak (__recv)
 weak_alias (__recv, recv)

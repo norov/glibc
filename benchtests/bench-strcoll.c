@@ -1,5 +1,5 @@
 /* Measure strcoll execution time in different locales.
-   Copyright (C) 2015 Free Software Foundation, Inc.
+   Copyright (C) 2015-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -24,6 +24,7 @@
 #include <unistd.h>
 #include "json-lib.h"
 #include "bench-timing.h"
+#include <string.h>
 
 /* Many thanks to http://generator.lorem-ipsum.info/  */
 #define INPUT_PREFIX "strcoll-inputs/"
@@ -234,9 +235,6 @@ bench_file (json_ctx_t *json_ctx, const char *testname, const char *filename,
 int
 main (void)
 {
-  timing_t res;
-  TIMING_INIT (res);
-
   json_ctx_t *json_ctx = malloc (sizeof (json_ctx_t));
   assert (json_ctx != NULL);
   json_init (json_ctx, 2, stdout);

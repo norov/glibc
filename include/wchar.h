@@ -52,6 +52,9 @@ extern unsigned long long int __wcstoull_internal (const wchar_t *
 						   __restrict __endptr,
 						   int __base,
 						   int __group) __THROW;
+extern unsigned long long int ____wcstoull_l_internal (const wchar_t *,
+						       wchar_t **, int, int,
+						       __locale_t);
 libc_hidden_proto (__wcstof_internal)
 libc_hidden_proto (__wcstod_internal)
 libc_hidden_proto (__wcstold_internal)
@@ -197,7 +200,11 @@ extern int __isoc99_vwscanf (const wchar_t *__restrict __format,
 extern int __isoc99_vswscanf (const wchar_t *__restrict __s,
 			      const wchar_t *__restrict __format,
 			      __gnuc_va_list __arg) __THROW;
+extern int __vswscanf (const wchar_t *__restrict __s,
+		       const wchar_t *__restrict __format,
+		       __gnuc_va_list __arg) __THROW;
 libc_hidden_proto (__isoc99_vswscanf)
+libc_hidden_proto (__vswscanf)
 libc_hidden_proto (__isoc99_vfwscanf)
 
 /* Internal functions.  */

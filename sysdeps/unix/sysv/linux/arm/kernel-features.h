@@ -1,6 +1,6 @@
 /* Set flags signalling availability of kernel features based on given
    kernel version number.
-   Copyright (C) 2006-2015 Free Software Foundation, Inc.
+   Copyright (C) 2006-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,21 +16,6 @@
    You should have received a copy of the GNU Lesser General Public
    License along with the GNU C Library.  If not, see
    <http://www.gnu.org/licenses/>.  */
-
-/* Support for the recvmmsg syscall was added in 2.6.33.  */
-#if __LINUX_KERNEL_VERSION >= 0x020621
-# define __ASSUME_RECVMMSG_SYSCALL	1
-#endif
-
-/* Support for the accept4 syscall was added in 2.6.36.  */
-#if __LINUX_KERNEL_VERSION >= 0x020624
-# define __ASSUME_ACCEPT4_SYSCALL	1
-#endif
-
-/* Support for the sendmmsg syscall was added in 3.0.  */
-#if __LINUX_KERNEL_VERSION >= 0x030000
-# define __ASSUME_SENDMMSG_SYSCALL	1
-#endif
 
 #include_next <kernel-features.h>
 

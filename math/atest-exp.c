@@ -1,4 +1,4 @@
-/* Copyright (C) 1997-2015 Free Software Foundation, Inc.
+/* Copyright (C) 1997-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Geoffrey Keating <Geoff.Keating@anu.edu.au>, 1997.
 
@@ -61,7 +61,7 @@ exp_mpn (mp1 ex, mp1 x)
    unsigned n;
    mp1 xp;
    mp2 tmp;
-   mp_limb_t chk;
+   mp_limb_t chk __attribute__ ((unused));
    mp1 tol;
 
    memset (xp, 0, sizeof (mp1));

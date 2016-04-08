@@ -1,5 +1,5 @@
 /* Measure string and memory functions.
-   Copyright (C) 2013-2015 Free Software Foundation, Inc.
+   Copyright (C) 2013-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -56,7 +56,9 @@ extern impl_t __start_impls[], __stop_impls[];
 
 
 # define TEST_FUNCTION test_main ()
-# define TIMEOUT (4 * 60)
+# ifndef TIMEOUT
+#  define TIMEOUT (4 * 60)
+# endif
 # define OPT_ITERATIONS 10000
 # define OPT_RANDOM 10001
 # define OPT_SEED 10002

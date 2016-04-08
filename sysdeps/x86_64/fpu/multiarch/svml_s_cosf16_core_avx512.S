@@ -1,5 +1,5 @@
 /* Function cosf vectorized with AVX-512. KNL and SKX versions.
-   Copyright (C) 2014-2015 Free Software Foundation, Inc.
+   Copyright (C) 2014-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,7 +17,7 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <sysdep.h>
-#include "svml_s_cosf_data.h"
+#include "svml_s_trig_data.h"
 #include "svml_s_wrapper_impl.h"
 
 	.text
@@ -54,7 +54,7 @@ WRAPPER_IMPL_AVX512 _ZGVdN8v_cosf
         cfi_def_cfa_register (%rbp)
         andq      $-64, %rsp
         subq      $1280, %rsp
-        movq      __svml_scos_data@GOTPCREL(%rip), %rdx
+        movq      __svml_s_trig_data@GOTPCREL(%rip), %rdx
 
 /*
   h) Subtract Y*PI from X argument, where PI divided to 4 parts:
@@ -225,14 +225,14 @@ WRAPPER_IMPL_AVX512 _ZGVdN8v_cosf
         cfi_restore_state
         movzbl    %r12b, %r15d
         vmovss    1156(%rsp,%r15,8), %xmm0
-        call      cosf@PLT
+        call      JUMPTARGET(cosf)
         vmovss    %xmm0, 1220(%rsp,%r15,8)
         jmp       .LBL_1_8
 
 .LBL_1_12:
         movzbl    %r12b, %r15d
         vmovss    1152(%rsp,%r15,8), %xmm0
-        call      cosf@PLT
+        call      JUMPTARGET(cosf)
         vmovss    %xmm0, 1216(%rsp,%r15,8)
         jmp       .LBL_1_7
 #endif
@@ -271,7 +271,7 @@ WRAPPER_IMPL_AVX512 _ZGVdN8v_cosf
         cfi_def_cfa_register (%rbp)
         andq      $-64, %rsp
         subq      $1280, %rsp
-        movq      __svml_scos_data@GOTPCREL(%rip), %rax
+        movq      __svml_s_trig_data@GOTPCREL(%rip), %rax
 
 /*
   h) Subtract Y*PI from X argument, where PI divided to 4 parts:
@@ -440,7 +440,7 @@ WRAPPER_IMPL_AVX512 _ZGVdN8v_cosf
         vmovss    1156(%rsp,%r15,8), %xmm0
         vzeroupper
         vmovss    1156(%rsp,%r15,8), %xmm0
-        call      cosf@PLT
+        call      JUMPTARGET(cosf)
         vmovss    %xmm0, 1220(%rsp,%r15,8)
         jmp       .LBL_2_8
 .LBL_2_12:
@@ -448,7 +448,7 @@ WRAPPER_IMPL_AVX512 _ZGVdN8v_cosf
         vmovss    1152(%rsp,%r15,8), %xmm0
         vzeroupper
         vmovss    1152(%rsp,%r15,8), %xmm0
-        call      cosf@PLT
+        call      JUMPTARGET(cosf)
         vmovss    %xmm0, 1216(%rsp,%r15,8)
         jmp       .LBL_2_7
 #endif

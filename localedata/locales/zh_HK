@@ -1,5 +1,13 @@
-comment_char    %
-escape_char     /
+comment_char %
+escape_char /
+
+% This file is part of the GNU C Library and contains locale data.
+% The Free Software Foundation does not claim any copyright interest
+% in the locale data contained in this file.  The foregoing does not
+% affect the license of the GNU C Library as a whole.  It does not
+% exempt you from the conditions of the license if your use would
+% otherwise be governed by that license.
+
 % Chinese language locale for Hong Kong.
 % Contributed by Kentaroh Noji <knoji@jp.ibm.com> and
 % Tetsuji Orita <orita@jp.ibm.com>.
@@ -123,12 +131,12 @@ d_t_fmt     "<U0025><U0059><U5E74><U0025><U006D><U6708><U0025><U0064><U65E5>/
 %
 % Appropriate date representation
 % Changed %b to %m, by Anthony Fok <anthony@thizlinux.com>, Feb 2002
-% %Y”N%mŒŽ%d“ú %A
+% %Yå¹´%mæœˆ%dæ—¥ %A
 d_fmt       "<U0025><U0059><U5E74><U0025><U006D><U6708><U0025><U0064>/
 <U65E5><U0020><U0025><U0041>"
 %
 % Appropriate time representation
-% %IŽž%M•ª%S•b %Z
+% %Iæ™‚%Måˆ†%Sç§’ %Z
 t_fmt       "<U0025><U0049><U6642><U0025><U004D><U5206><U0025><U0053>/
 <U79D2><U0020><U0025><U005A>"
 %

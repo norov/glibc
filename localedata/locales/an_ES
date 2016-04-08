@@ -1,10 +1,17 @@
 comment_char %
-escape_char  /
-%
+escape_char /
+
+% This file is part of the GNU C Library and contains locale data.
+% The Free Software Foundation does not claim any copyright interest
+% in the locale data contained in this file.  The foregoing does not
+% affect the license of the GNU C Library as a whole.  It does not
+% exempt you from the conditions of the license if your use would
+% otherwise be governed by that license.
+
 % Aragonese Language Locale for Spain
 % Source:
 % Address:
-% Contact: Jordi Mallach Pérez
+% Contact: Jordi Mallach PÃ©rez
 % Email: jordi@gnu.org
 % Language: an
 % Territory: ES
@@ -22,7 +29,7 @@ LC_IDENTIFICATION
 title      "Aragonese locale for Spain"
 source     ""
 address    ""
-contact    "Jordi Mallach Pérez"
+contact    "Jordi Mallach PÃ©rez"
 email      "bug-glibc-locales@gnu.org"
 tel        ""
 fax        ""
@@ -134,8 +141,9 @@ postal_fmt    "<U0025><U0066><U0025><U004E><U0025><U0061><U0025><U004E>/
 country_ab2   "<U0045><U0053>"
 country_ab3   "<U0045><U0053><U0050>"
 country_num   724
+lang_ab       "<U0061><U006E>"
 % E
 country_car    "<U0045>"
-% aragonés
+% aragonÃ©s
 lang_name    "<U0061><U0072><U0061><U0067><U006F><U006E><U00E9><U0073>"
 END LC_ADDRESS

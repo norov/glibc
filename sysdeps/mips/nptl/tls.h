@@ -1,5 +1,5 @@
 /* Definition for thread-local data handling.  NPTL/MIPS version.
-   Copyright (C) 2005-2015 Free Software Foundation, Inc.
+   Copyright (C) 2005-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -25,6 +25,8 @@
 # include <stdbool.h>
 # include <stddef.h>
 # include <stdint.h>
+/* Get system call information.  */
+# include <sysdep.h>
 
 /* Type for the dtv.  */
 typedef union dtv
@@ -42,40 +44,36 @@ typedef union dtv
 # define READ_THREAD_POINTER() (__builtin_thread_pointer ())
 #else
 /* Note: rd must be $v1 to be ABI-conformant.  */
-# ifndef _MIPS_ARCH_OCTEON
-# define READ_THREAD_POINTER() \
-    ({ void *__result;							      \
-       asm volatile (".set\tpush\n\t.set\tmips32r2\n\t"			      \
-		     "rdhwr\t%0, $29\n\t.set\tpop" : "=v" (__result));	      \
-       __result; })
-# else /* OCTEON */
-/* The Kernel stores the value of "rdhwr v1,$29" in k0 ($26) register. And
-   it is the Kernel's responsibility to always have the correct value in
-   k0.  Replacing rdhwr instruction with k0, as this instruction needs to
-   be emulated by the Kernel.  */
-# define READ_THREAD_POINTER() ( { register void *__result asm ("$26"); __result; } )
-# endif /* OCTEON */
+# if __mips_isa_rev >= 2
+#  define READ_THREAD_POINTER() \
+     ({ void *__result;							      \
+        asm volatile ("rdhwr\t%0, $29" : "=v" (__result));	      	      \
+        __result; })
+# else
+#  define READ_THREAD_POINTER() \
+     ({ void *__result;							      \
+        asm volatile (".set\tpush\n\t.set\tmips32r2\n\t"			      \
+		      "rdhwr\t%0, $29\n\t.set\tpop" : "=v" (__result));	      \
+        __result; })
+# endif
 #endif
 
 #else /* __ASSEMBLER__ */
 # include <tcb-offsets.h>
 
-# ifndef _MIPS_ARCH_OCTEON
-# define READ_THREAD_POINTER(rd) \
-	.set	push;							      \
-	.set	mips32r2;						      \
-	rdhwr	rd, $29;						      \
-	.set	pop
-# else /* OCTEON */
-# define READ_THREAD_POINTER(rd) move rd, $26
-# endif /* OCTEON */
+# if __mips_isa_rev >= 2
+#  define READ_THREAD_POINTER(rd) rdhwr	rd, $29
+# else
+#  define READ_THREAD_POINTER(rd) \
+	 .set	push;							      \
+	 .set	mips32r2;						      \
+	 rdhwr	rd, $29;						      \
+	 .set	pop
+# endif
 #endif /* __ASSEMBLER__ */
 
 
 #ifndef __ASSEMBLER__
-
-/* Get system call information.  */
-# include <sysdep.h>
 
 /* The TP points to the start of the thread blocks.  */
 # define TLS_DTV_AT_TP	1

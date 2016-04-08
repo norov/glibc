@@ -1,4 +1,4 @@
-/* Copyright (C) 2002-2015 Free Software Foundation, Inc.
+/* Copyright (C) 2002-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
 
@@ -518,7 +518,7 @@ __condvar_cleanup1:
 
 8:	movq	24(%rsp), %rdi
 .LcallUR:
-	call	_Unwind_Resume@PLT
+	call	JUMPTARGET(_Unwind_Resume)
 	hlt
 .LENDCODE:
 	cfi_endproc

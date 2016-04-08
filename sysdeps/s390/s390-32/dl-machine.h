@@ -1,5 +1,5 @@
 /* Machine-dependent ELF dynamic relocation inline functions.  S390 Version.
-   Copyright (C) 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 2000-2016 Free Software Foundation, Inc.
    Contributed by Carl Pederson & Martin Schwidefsky.
    This file is part of the GNU C Library.
 
@@ -55,10 +55,10 @@ elf_machine_dynamic (void)
 {
   register Elf32_Addr *got;
 
-  asm( "        bras   %0,2f\n"
-       "1:      .long  _GLOBAL_OFFSET_TABLE_-1b\n"
-       "2:      al     %0,0(%0)"
-       : "=&a" (got) : : "0" );
+  __asm__( "        bras   %0,2f\n"
+	   "1:      .long  _GLOBAL_OFFSET_TABLE_-1b\n"
+	   "2:      al     %0,0(%0)"
+	   : "=&a" (got) : : "0" );
 
   return *got;
 }
@@ -70,14 +70,14 @@ elf_machine_load_address (void)
 {
   Elf32_Addr addr;
 
-  asm( "   bras  1,2f\n"
-       "1: .long _GLOBAL_OFFSET_TABLE_ - 1b\n"
-       "   .long (_dl_start - 1b - 0x80000000) & 0x00000000ffffffff\n"
-       "2: l     %0,4(1)\n"
-       "   ar    %0,1\n"
-       "   al    1,0(1)\n"
-       "   sl    %0,_dl_start@GOT(1)"
-       : "=&d" (addr) : : "1" );
+  __asm__( "   bras  1,2f\n"
+	   "1: .long _GLOBAL_OFFSET_TABLE_ - 1b\n"
+	   "   .long (_dl_start - 1b - 0x80000000) & 0x00000000ffffffff\n"
+	   "2: l     %0,4(1)\n"
+	   "   ar    %0,1\n"
+	   "   al    1,0(1)\n"
+	   "   sl    %0,_dl_start@GOT(1)"
+	   : "=&d" (addr) : : "1" );
   return addr;
 }
 
@@ -89,6 +89,11 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
 {
   extern void _dl_runtime_resolve (Elf32_Word);
   extern void _dl_runtime_profile (Elf32_Word);
+#if defined HAVE_S390_VX_ASM_SUPPORT
+  extern void _dl_runtime_resolve_vx (Elf32_Word);
+  extern void _dl_runtime_profile_vx (Elf32_Word);
+#endif
+
 
   if (l->l_info[DT_JMPREL] && lazy)
     {
@@ -116,7 +121,14 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
 	 end in this function.  */
       if (__glibc_unlikely (profile))
 	{
+#if defined HAVE_S390_VX_ASM_SUPPORT
+	  if (GLRO(dl_hwcap) & HWCAP_S390_VX)
+	    got[2] = (Elf32_Addr) &_dl_runtime_profile_vx;
+	  else
+	    got[2] = (Elf32_Addr) &_dl_runtime_profile;
+#else
 	  got[2] = (Elf32_Addr) &_dl_runtime_profile;
+#endif
 
 	  if (GLRO(dl_profile) != NULL
 	      && _dl_name_match_p (GLRO(dl_profile), l))
@@ -125,9 +137,18 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
 	    GL(dl_profile_map) = l;
 	}
       else
-	/* This function will get called to fix up the GOT entry indicated by
-	   the offset on the stack, and then jump to the resolved address.  */
-	got[2] = (Elf32_Addr) &_dl_runtime_resolve;
+	{
+	  /* This function will get called to fix up the GOT entry indicated by
+	     the offset on the stack, and then jump to the resolved address.  */
+#if defined HAVE_S390_VX_ASM_SUPPORT
+	  if (GLRO(dl_hwcap) & HWCAP_S390_VX)
+	    got[2] = (Elf32_Addr) &_dl_runtime_resolve_vx;
+	  else
+	    got[2] = (Elf32_Addr) &_dl_runtime_resolve;
+#else
+	  got[2] = (Elf32_Addr) &_dl_runtime_resolve;
+#endif
+	}
     }
 
   return lazy;
@@ -141,7 +162,7 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
    The C function `_dl_start' is the real entry point;
    its return value is the user program's entry point.  */
 
-#define RTLD_START asm ("\n\
+#define RTLD_START __asm__ ("\n\
 .text\n\
 .align 4\n\
 .globl _start\n\

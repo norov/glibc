@@ -1,5 +1,5 @@
 /* Function cos vectorized with AVX2.
-   Copyright (C) 2014-2015 Free Software Foundation, Inc.
+   Copyright (C) 2014-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,7 +17,7 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <sysdep.h>
-#include "svml_d_cos_data.h"
+#include "svml_d_trig_data.h"
 
 	.text
 ENTRY (_ZGVdN4v_cos_avx2)
@@ -41,7 +41,7 @@ ENTRY (_ZGVdN4v_cos_avx2)
         cfi_def_cfa_register (%rbp)
         andq      $-64, %rsp
         subq      $448, %rsp
-        movq      __svml_dcos_data@GOTPCREL(%rip), %rax
+        movq      __svml_d_trig_data@GOTPCREL(%rip), %rax
         vmovapd   %ymm0, %ymm1
         vmovupd __dInvPI(%rax), %ymm4
         vmovupd __dRShifter(%rax), %ymm5
@@ -188,7 +188,7 @@ ENTRY (_ZGVdN4v_cos_avx2)
         vmovsd    328(%rsp,%r15), %xmm0
         vzeroupper
 
-        call      cos@PLT
+        call      JUMPTARGET(cos)
 
         vmovsd    %xmm0, 392(%rsp,%r15)
         jmp       .LBL_1_8
@@ -199,7 +199,7 @@ ENTRY (_ZGVdN4v_cos_avx2)
         vmovsd    320(%rsp,%r15), %xmm0
         vzeroupper
 
-        call      cos@PLT
+        call      JUMPTARGET(cos)
 
         vmovsd    %xmm0, 384(%rsp,%r15)
         jmp       .LBL_1_7

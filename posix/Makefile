@@ -1,4 +1,4 @@
-# Copyright (C) 1991-2015 Free Software Foundation, Inc.
+# Copyright (C) 1991-2016 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -51,7 +51,7 @@ routines :=								      \
 	getaddrinfo gai_strerror wordexp				      \
 	pread pwrite pread64 pwrite64					      \
 	spawn_faction_init spawn_faction_destroy spawn_faction_addclose	      \
-	spawn_faction_addopen spawn_faction_adddup2			      \
+	spawn_faction_addopen spawn_faction_adddup2 spawn_valid_fd	      \
 	spawnattr_init spawnattr_destroy				      \
 	spawnattr_getdefault spawnattr_setdefault			      \
 	spawnattr_getflags spawnattr_setflags				      \
@@ -64,7 +64,7 @@ routines :=								      \
 aux		:= init-posix environ
 tests		:= tstgetopt testfnm runtests runptests	     \
 		   tst-preadwrite tst-preadwrite64 test-vfork regexbug1 \
-		   tst-mmap tst-getaddrinfo tst-truncate \
+		   tst-mmap tst-mmap-offset tst-getaddrinfo tst-truncate \
 		   tst-truncate64 tst-fork tst-fnmatch tst-regexloc tst-dir \
 		   tst-chmod bug-regex1 bug-regex2 bug-regex3 bug-regex4 \
 		   tst-gnuglob tst-regex bug-regex5 bug-regex6 bug-regex7 \
@@ -82,16 +82,19 @@ tests		:= tstgetopt testfnm runtests runptests	     \
 		   tst-execv1 tst-execv2 tst-execl1 tst-execl2 \
 		   tst-execve1 tst-execve2 tst-execle1 tst-execle2 \
 		   tst-execvp3 tst-execvp4 tst-rfc3484 tst-rfc3484-2 \
+		   tst-execvpe1 tst-execvpe2 tst-execvpe3 tst-execvpe4 \
+		   tst-execvpe5 tst-execvpe6 \
 		   tst-rfc3484-3 \
 		   tst-getaddrinfo3 tst-fnmatch2 tst-cpucount tst-cpuset \
 		   bug-getopt1 bug-getopt2 bug-getopt3 bug-getopt4 \
 		   bug-getopt5 tst-getopt_long1 bug-regex34 bug-regex35 \
 		   tst-pathconf tst-getaddrinfo4 tst-rxspencer-no-utf8 \
-		   tst-fnmatch3 bug-regex36 tst-getaddrinfo5
+		   tst-fnmatch3 bug-regex36 tst-getaddrinfo5 \
+		   tst-posix_spawn-fd
 xtests		:= bug-ga2
 ifeq (yes,$(build-shared))
 test-srcs	:= globtest
-tests           += wordexp-test tst-exec tst-spawn
+tests           += wordexp-test tst-exec tst-spawn tst-spawn2
 endif
 tests-static	= tst-exec-static tst-spawn-static
 tests		+= $(tests-static)
@@ -148,6 +151,36 @@ $(objpfx)wordexp-tst.out: wordexp-tst.sh $(objpfx)wordexp-test
 		 '$(run-program-env)' '$(test-program-prefix-after-env)'; \
 	$(evaluate-test)
 endif
+
+LOCALES := cs_CZ.UTF-8 da_DK.ISO-8859-1 de_DE.ISO-8859-1 de_DE.UTF-8 \
+	   en_US.UTF-8 es_US.ISO-8859-1 es_US.UTF-8 ja_JP.EUC-JP tr_TR.UTF-8
+include ../gen-locales.mk
+
+$(objpfx)bug-regex1.out: $(gen-locales)
+$(objpfx)bug-regex4.out: $(gen-locales)
+$(objpfx)bug-regex5.out: $(gen-locales)
+$(objpfx)bug-regex6.out: $(gen-locales)
+$(objpfx)bug-regex17.out: $(gen-locales)
+$(objpfx)bug-regex18.out: $(gen-locales)
+$(objpfx)bug-regex19.out: $(gen-locales)
+$(objpfx)bug-regex20.out: $(gen-locales)
+$(objpfx)bug-regex22.out: $(gen-locales)
+$(objpfx)bug-regex23.out: $(gen-locales)
+$(objpfx)bug-regex25.out: $(gen-locales)
+$(objpfx)bug-regex26.out: $(gen-locales)
+$(objpfx)bug-regex30.out: $(gen-locales)
+$(objpfx)bug-regex32.out: $(gen-locales)
+$(objpfx)bug-regex33.out: $(gen-locales)
+$(objpfx)bug-regex34.out: $(gen-locales)
+$(objpfx)bug-regex35.out: $(gen-locales)
+$(objpfx)tst-fnmatch.out: $(gen-locales)
+$(objpfx)tst-fnmatch4.out: $(gen-locales)
+$(objpfx)tst-fnmatch5.out: $(gen-locales)
+$(objpfx)tst-regex.out: $(gen-locales)
+$(objpfx)tst-regex2.out: $(gen-locales)
+$(objpfx)tst-regexloc.out: $(gen-locales)
+$(objpfx)tst-rxspencer.out: $(gen-locales)
+$(objpfx)tst-rxspencer-no-utf8.out: $(gen-locales)
 endif
 
 # If we will use the generic uname implementation, we must figure out what
@@ -159,7 +192,6 @@ $(objpfx)config-name.h: $(..)scripts/config-uname.sh $(common-objpfx)config.make
 	   '$(config-machine)-$(config-vendor)' > $@.new
 	mv -f $@.new $@
 
-CFLAGS-regex.c = -Wno-strict-prototypes
 CFLAGS-getaddrinfo.c = -DRESOLVER -fexceptions
 CFLAGS-pause.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-pread.c = -fexceptions -fasynchronous-unwind-tables
@@ -199,6 +231,7 @@ tstgetopt-ARGS = -a -b -cfoobar --required foobar --optional=bazbug \
 
 tst-exec-ARGS = -- $(host-test-program-cmd)
 tst-exec-static-ARGS = $(tst-exec-ARGS)
+tst-execvpe5-ARGS = -- $(host-test-program-cmd)
 tst-spawn-ARGS = -- $(host-test-program-cmd)
 tst-spawn-static-ARGS = $(tst-spawn-ARGS)
 tst-dir-ARGS = `pwd` `cd $(common-objdir)/$(subdir); pwd` `cd $(common-objdir); pwd` $(objpfx)tst-dir

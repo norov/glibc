@@ -1,4 +1,4 @@
-# Copyright (C) 1996-2015 Free Software Foundation, Inc.
+# Copyright (C) 1996-2016 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -39,7 +39,7 @@ endif
 domainname = libc
 
 # Pattern for where message catalog object for language % gets installed.
-mo-installed = $(inst_msgcatdir)/%/LC_MESSAGES/$(domainname).mo
+mo-installed = $(inst_localedir)/%/LC_MESSAGES/$(domainname).mo
 
 # Files to install: a $(domainname).mo file for each language.
 install-others = $(LINGUAS:%=$(mo-installed))

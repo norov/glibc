@@ -1,6 +1,6 @@
 /* Basic platform-independent macro definitions for mutexes,
    thread-specific data and parameters for malloc.
-   Copyright (C) 2003-2015 Free Software Foundation, Inc.
+   Copyright (C) 2003-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@
 #undef thread_atfork_static
 
 #include <atomic.h>
-#include <bits/libc-lock.h>
+#include <libc-lock.h>
 
 __libc_lock_define (typedef, mutex_t)
 
@@ -31,10 +31,9 @@ __libc_lock_define (typedef, mutex_t)
   (THREAD_GETMEM (THREAD_SELF, header.multiple_threads) == 0)
 
 #define mutex_init(m)		__libc_lock_init (*(m))
-#define mutex_lock(m)		({ if (__atomic_is_single_thread) { *(m) = 1; } else { __libc_lock_lock (*(m)); } })
-#define mutex_trylock(m)	({ int got_lock = 0; if (__atomic_is_single_thread) { got_lock = *(m) == 0; *(m) = 1; } else { got_lock = __libc_lock_trylock (*(m)); } got_lock; })
-#define mutex_unlock(m)		({if (__atomic_is_single_thread) { *(m) = 0; } else { __libc_lock_unlock (*(m)); } })
-#define MUTEX_INITIALIZER	LLL_LOCK_INITIALIZER
+#define mutex_lock(m)		__libc_lock_lock (*(m))
+#define mutex_trylock(m)	__libc_lock_trylock (*(m))
+#define mutex_unlock(m)		__libc_lock_unlock (*(m))
 
 #define malloc_cas_rel(mem, newval, old) ({ typeof (*mem) _rvalue;									\
 				 if (__atomic_is_single_thread) { _rvalue = *mem; if (_rvalue == (old)) { *(mem) = newval; } }	\
@@ -77,16 +76,6 @@ extern void *__dso_handle __attribute__ ((__weak__));
   atfork_mem.refcntr = 1;						      \
   __linkin_atfork (&atfork_mem)
 #endif
-
-/* thread specific data for glibc */
-
-#include <bits/libc-tsd.h>
-
-typedef int tsd_key_t[1];	/* no key data structure, libc magic does it */
-__libc_tsd_define (static, void *, MALLOC)	/* declaration/common definition */
-#define tsd_key_create(key, destr)	((void) (key))
-#define tsd_setspecific(key, data)	__libc_tsd_set (void *, MALLOC, (data))
-#define tsd_getspecific(key, vptr)	((vptr) = __libc_tsd_get (void *, MALLOC))
 
 #include <sysdeps/generic/malloc-machine.h>
 

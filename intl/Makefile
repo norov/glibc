@@ -1,4 +1,4 @@
-# Copyright (C) 1995-2015 Free Software Foundation, Inc.
+# Copyright (C) 1995-2016 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -36,7 +36,7 @@ tests = tst-ngettext
 
 before-compile += $(objpfx)msgs.h
 
-install-others = $(inst_msgcatdir)/locale.alias
+install-others = $(inst_localedir)/locale.alias
 
 generated += msgs.h mtrace-tst-gettext.out tst-gettext.mtrace
 generated-dirs += domaindir localedir
@@ -105,6 +105,19 @@ $(objpfx)tst-codeset.out: $(codeset_mo)
 $(objpfx)tst-gettext3.out: $(codeset_mo)
 $(objpfx)tst-gettext5.out: $(codeset_mo)
 endif
+
+LOCALES := de_DE.ISO-8859-1 de_DE.UTF-8 en_US.ANSI_X3.4-1968 fr_FR.ISO-8859-1 \
+	   ja_JP.UTF-8
+include ../gen-locales.mk
+
+$(objpfx)tst-codeset.out: $(gen-locales)
+$(objpfx)tst-gettext.out: $(gen-locales)
+$(objpfx)tst-gettext2.out: $(gen-locales)
+$(objpfx)tst-gettext3.out: $(gen-locales)
+$(objpfx)tst-gettext4.out: $(gen-locales)
+$(objpfx)tst-gettext5.out: $(gen-locales)
+$(objpfx)tst-gettext6.out: $(gen-locales)
+$(objpfx)tst-translit.out: $(gen-locales)
 endif
 
 $(objpfx)msgs.h: po2test.awk ../po/de.po
@@ -136,9 +149,9 @@ $(objpfx)tst-gettext4.out: $(objpfx)tst-gettext.out
 $(objpfx)tst-gettext5.out: $(objpfx)tst-gettext.out
 $(objpfx)tst-gettext6.out: $(objpfx)tst-gettext.out
 
-CPPFLAGS += -D'LOCALEDIR="$(msgcatdir)"' \
-	    -D'LOCALE_ALIAS_PATH="$(msgcatdir)"'
+CPPFLAGS += -D'LOCALEDIR="$(localedir)"' \
+	    -D'LOCALE_ALIAS_PATH="$(localedir)"'
 BISONFLAGS = --yacc --name-prefix=__gettext --output
 
-$(inst_msgcatdir)/locale.alias: locale.alias $(+force)
+$(inst_localedir)/locale.alias: locale.alias $(+force)
 	$(do-install)

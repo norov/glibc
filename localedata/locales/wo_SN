@@ -1,6 +1,13 @@
 comment_char %
-escape_char  /
-%
+escape_char /
+
+% This file is part of the GNU C Library and contains locale data.
+% The Free Software Foundation does not claim any copyright interest
+% in the locale data contained in this file.  The foregoing does not
+% affect the license of the GNU C Library as a whole.  It does not
+% exempt you from the conditions of the license if your use would
+% otherwise be governed by that license.
+
 % Wolof locale for Senegal
 % Source: The Debian Project
 % Contact: Christian Perrier/Samba Ndao Diop
@@ -12,8 +19,6 @@ escape_char  /
 % Date: 2004-09-15
 % Users: general
 % Charset: UTF-8
-% Distribution and use is free, also
-% for commercial purposes.
 
 LC_IDENTIFICATION
 title      "Wolof locale for Senegal"
@@ -61,7 +66,7 @@ END LC_COLLATE
 
 LC_MESSAGES
 % Yes=Waaw
-% No=Déet
+% No=DÃ©et
 yesexpr "<U005E><U005B><U0077><U0057><U0079><U0059><U005D><U002E><U002A>"
 noexpr  "<U005E><U005B><U0064><U0044><U006E><U004E><U005D><U002E><U002A>"
 END LC_MESSAGES
@@ -186,4 +191,3 @@ lang_term    "<U0077><U006F><U006C>"
 % wol
 lang_lib    "<U0077><U006F><U006C>"
 END LC_ADDRESS
-

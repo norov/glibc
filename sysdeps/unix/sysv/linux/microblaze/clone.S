@@ -1,4 +1,4 @@
-/* Copyright (C) 1996-2015 Free Software Foundation, Inc.
+/* Copyright (C) 1996-2016 Free Software Foundation, Inc.
 
    This file is part of the GNU C Library.
 
@@ -69,4 +69,5 @@ L(thread_start):
 	nop
 PSEUDO_END(__clone)
 
+libc_hidden_def (__clone)
 weak_alias (__clone,clone)

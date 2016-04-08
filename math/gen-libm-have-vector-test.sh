@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (C) 2014-2015 Free Software Foundation, Inc.
+# Copyright (C) 2014-2016 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 
 # The GNU C Library is free software; you can redistribute it and/or
@@ -33,7 +33,7 @@ print_defs()
   echo
 }
 
-for func in $(cat libm-test.inc | grep ALL_RM_TEST | grep -v define | grep -v RUN_TEST_LOOP_ff_f | sed -r "s/.*\(//; s/,.*//" ); do
+for func in $(cat libm-test.inc | grep ALL_RM_TEST | grep -v define | grep -v RUN_TEST_LOOP_ff_f | grep -v RUN_TEST_LOOP_fFF_11 | sed -r "s/.*\(//; s/,.*//" ); do
   print_defs ${func}
   print_defs ${func}f
   print_defs ${func}l
@@ -45,10 +45,8 @@ for func in $(cat libm-test.inc | grep ALL_RM_TEST | grep RUN_TEST_LOOP_ff_f | s
   print_defs ${func}l "_ff"
 done
 
-# When all functions will use ALL_RM_TEST instead of using START directly,
-# this code can be removed.
-for func in $(grep 'START.*;$' libm-test.inc | sed -r "s/.*\(//; s/,.*//"); do
-  print_defs ${func}
-  print_defs ${func}f
-  print_defs ${func}l
+for func in $(cat libm-test.inc | grep ALL_RM_TEST | grep RUN_TEST_LOOP_fFF_11 | sed -r "s/.*\(//; s/,.*//" ); do
+  print_defs ${func} "_fFF"
+  print_defs ${func}f "_fFF"
+  print_defs ${func}l "_fFF"
 done

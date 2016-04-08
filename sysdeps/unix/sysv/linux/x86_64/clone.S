@@ -1,4 +1,4 @@
-/* Copyright (C) 2001-2015 Free Software Foundation, Inc.
+/* Copyright (C) 2001-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -115,4 +115,5 @@ L(thread_start):
 	cfi_startproc;
 PSEUDO_END (__clone)
 
+libc_hidden_def (__clone)
 weak_alias (__clone, clone)

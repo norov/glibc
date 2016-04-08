@@ -1,4 +1,4 @@
-/* Copyright (C) 2011-2015 Free Software Foundation, Inc.
+/* Copyright (C) 2011-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Chris Metcalf <cmetcalf@tilera.com>, 2011.
 
@@ -219,4 +219,5 @@ ENTRY (__clone)
 	}
 PSEUDO_END (__clone)
 
+libc_hidden_def (__clone)
 weak_alias (__clone, clone)

@@ -1,5 +1,12 @@
-escape_char /
 comment_char %
+escape_char /
+
+% This file is part of the GNU C Library and contains locale data.
+% The Free Software Foundation does not claim any copyright interest
+% in the locale data contained in this file.  The foregoing does not
+% affect the license of the GNU C Library as a whole.  It does not
+% exempt you from the conditions of the license if your use would
+% otherwise be governed by that license.
 
 %	This is the locale defination file for Bangladeshi Bengali
 
@@ -159,7 +166,7 @@ LC_TELEPHONE
 tel_int_fmt   "<U002B><U0025><U0063><U0020><U0025><U0061><U0020><U0025><U006C>"
 tel_dom_fmt   "<U0025><U0061><U0020><U0025><U006C>"
 int_select    "<U0030><U0030>"
-int_prefix    "<U0038><U0038>"
+int_prefix    "<U0038><U0038><U0030>"
 END LC_TELEPHONE
 
 LC_NAME

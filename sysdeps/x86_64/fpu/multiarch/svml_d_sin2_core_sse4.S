@@ -1,5 +1,5 @@
 /* Function sin vectorized with SSE4.
-   Copyright (C) 2014-2015 Free Software Foundation, Inc.
+   Copyright (C) 2014-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,7 +17,7 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <sysdep.h>
-#include "svml_d_sin_data.h"
+#include "svml_d_trig_data.h"
 
 	.text
 ENTRY (_ZGVbN2v_sin_sse4)
@@ -41,11 +41,11 @@ ENTRY (_ZGVbN2v_sin_sse4)
         andq      $-64, %rsp
         subq      $320, %rsp
         movaps    %xmm0, %xmm5
-        movq      __svml_dsin_data@GOTPCREL(%rip), %rax
+        movq      __svml_d_trig_data@GOTPCREL(%rip), %rax
         movups __dAbsMask(%rax), %xmm3
 /*
- * ARGUMENT RANGE REDUCTION:
- * X' = |X|
+   ARGUMENT RANGE REDUCTION:
+   X' = |X|
  */
         movaps    %xmm3, %xmm4
 
@@ -90,31 +90,31 @@ ENTRY (_ZGVbN2v_sin_sse4)
         subpd     %xmm1, %xmm0
 
 /*
- * POLYNOMIAL APPROXIMATION:
- * R2 = R*R
+   POLYNOMIAL APPROXIMATION:
+   R2 = R*R
  */
         movaps    %xmm0, %xmm1
         mulpd     %xmm0, %xmm1
 
 /* R = R^SignRes : update sign of reduced argument */
         xorps     %xmm2, %xmm0
-        movups __dC7(%rax), %xmm2
+        movups    __dC7_sin(%rax), %xmm2
         mulpd     %xmm1, %xmm2
-        addpd __dC6(%rax), %xmm2
+        addpd     __dC6_sin(%rax), %xmm2
         mulpd     %xmm1, %xmm2
-        addpd __dC5(%rax), %xmm2
+        addpd     __dC5_sin(%rax), %xmm2
         mulpd     %xmm1, %xmm2
-        addpd __dC4(%rax), %xmm2
+        addpd     __dC4_sin(%rax), %xmm2
 
 /* Poly = C3+R2*(C4+R2*(C5+R2*(C6+R2*C7))) */
         mulpd     %xmm1, %xmm2
-        addpd __dC3(%rax), %xmm2
+        addpd     __dC3_sin(%rax), %xmm2
 
 /* Poly = R2*(C1+R2*(C2+R2*Poly)) */
         mulpd     %xmm1, %xmm2
-        addpd __dC2(%rax), %xmm2
+        addpd     __dC2_sin(%rax), %xmm2
         mulpd     %xmm1, %xmm2
-        addpd __dC1(%rax), %xmm2
+        addpd     __dC1_sin(%rax), %xmm2
         mulpd     %xmm2, %xmm1
 
 /* Poly = Poly*R + R */
@@ -122,8 +122,8 @@ ENTRY (_ZGVbN2v_sin_sse4)
         addpd     %xmm1, %xmm0
 
 /*
- * RECONSTRUCTION:
- * Final sign setting: Res = Poly^SignX
+   RECONSTRUCTION:
+   Final sign setting: Res = Poly^SignX
  */
         xorps     %xmm3, %xmm0
         testl     %ecx, %ecx
@@ -211,7 +211,7 @@ ENTRY (_ZGVbN2v_sin_sse4)
         shlq      $4, %r15
         movsd     200(%rsp,%r15), %xmm0
 
-        call      sin@PLT
+        call      JUMPTARGET(sin)
 
         movsd     %xmm0, 264(%rsp,%r15)
         jmp       .LBL_1_8
@@ -221,7 +221,7 @@ ENTRY (_ZGVbN2v_sin_sse4)
         shlq      $4, %r15
         movsd     192(%rsp,%r15), %xmm0
 
-        call      sin@PLT
+        call      JUMPTARGET(sin)
 
         movsd     %xmm0, 256(%rsp,%r15)
         jmp       .LBL_1_7

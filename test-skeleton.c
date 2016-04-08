@@ -1,5 +1,5 @@
 /* Skeleton for test programs.
-   Copyright (C) 1998-2015 Free Software Foundation, Inc.
+   Copyright (C) 1998-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1998.
 
@@ -46,8 +46,9 @@
 #endif
 
 #ifndef TIMEOUT
-  /* Default timeout is two seconds.  */
-# define TIMEOUT 2
+  /* Default timeout is twenty seconds.  Tests should normally complete faster
+     than this, but if they don't, that's abnormal (a bug) anyways.  */
+# define TIMEOUT 20
 #endif
 
 #define OPT_DIRECT 1000
@@ -250,6 +251,41 @@ set_fortify_handler (void (*handler) (int sig))
   ignore_stderr ();
 }
 
+/* Show people how to run the program.  */
+static void
+usage (void)
+{
+  size_t i;
+
+  printf ("Usage: %s [options]\n"
+	  "\n"
+	  "Environment Variables:\n"
+	  "  TIMEOUTFACTOR          An integer used to scale the timeout\n"
+	  "  TMPDIR                 Where to place temporary files\n"
+	  "\n",
+	  program_invocation_short_name);
+  printf ("Options:\n");
+  for (i = 0; options[i].name; ++i)
+    {
+      int indent;
+
+      indent = printf ("  --%s", options[i].name);
+      if (options[i].has_arg == required_argument)
+	indent += printf (" <arg>");
+      printf ("%*s", 25 - indent, "");
+      switch (options[i].val)
+	{
+	case OPT_DIRECT:
+	  printf ("Run the test directly (instead of forking & monitoring)");
+	  break;
+	case OPT_TESTDIR:
+	  printf ("Override the TMPDIR env var");
+	  break;
+	}
+      printf ("\n");
+    }
+}
+
 /* We provide the entry point here.  */
 int
 main (int argc, char *argv[])
@@ -271,6 +307,7 @@ main (int argc, char *argv[])
     switch (opt)
       {
       case '?':
+	usage ();
 	exit (1);
       case OPT_DIRECT:
 	direct = 1;
@@ -390,23 +427,6 @@ main (int argc, char *argv[])
       core_limit.rlim_cur = 0;
       core_limit.rlim_max = 0;
       setrlimit (RLIMIT_CORE, &core_limit);
-#endif
-
-#ifdef RLIMIT_DATA
-      /* Try to avoid eating all memory if a test leaks.  */
-      struct rlimit data_limit;
-      if (getrlimit (RLIMIT_DATA, &data_limit) == 0)
-	{
-	  if (TEST_DATA_LIMIT == RLIM_INFINITY)
-	    data_limit.rlim_cur = data_limit.rlim_max;
-	  else if (data_limit.rlim_cur > (rlim_t) TEST_DATA_LIMIT)
-	    data_limit.rlim_cur = MIN ((rlim_t) TEST_DATA_LIMIT,
-				       data_limit.rlim_max);
-	  if (setrlimit (RLIMIT_DATA, &data_limit) < 0)
-	    printf ("setrlimit: RLIMIT_DATA: %m\n");
-	}
-      else
-	printf ("getrlimit: RLIMIT_DATA: %m\n");
 #endif
 
       /* We put the test process in its own pgrp so that if it bogusly

@@ -1,4 +1,4 @@
-/* Copyright (C) 1996-2015 Free Software Foundation, Inc.
+/* Copyright (C) 1996-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Pat Beirne <patb@corelcomputer.com>
 
@@ -93,4 +93,5 @@ PSEUDO_END (__clone)
 
 	.fnend
 
+libc_hidden_def (__clone)
 weak_alias (__clone, clone)

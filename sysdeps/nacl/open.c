@@ -1,5 +1,5 @@
 /* Open a file by name.  NaCl version.
-   Copyright (C) 2015 Free Software Foundation, Inc.
+   Copyright (C) 2015-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -38,7 +38,7 @@ __libc_open (const char *file, int oflag, ...)
     }
 
   int fd;
-  return NACL_CALL (__nacl_irt_filename.open (file, oflag, mode, &fd), fd);
+  return NACL_CALL (__nacl_irt_dev_filename.open (file, oflag, mode, &fd), fd);
 }
 libc_hidden_def (__libc_open)
 weak_alias (__libc_open, __open)

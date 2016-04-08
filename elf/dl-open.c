@@ -1,5 +1,5 @@
 /* Load a shared object at runtime, relocate it, and run its initializer.
-   Copyright (C) 1996-2015 Free Software Foundation, Inc.
+   Copyright (C) 1996-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@
 #include <unistd.h>
 #include <sys/mman.h>		/* Check whether MAP_COPY is defined.  */
 #include <sys/param.h>
-#include <bits/libc-lock.h>
+#include <libc-lock.h>
 #include <ldsodefs.h>
 #include <caller.h>
 #include <sysdep-cancel.h>
@@ -225,6 +225,12 @@ dl_open_worker (void *a)
   struct link_map *new;
   args->map = new = _dl_map_object (call_map, file, lt_loaded, 0,
 				    mode | __RTLD_CALLMAP, args->nsid);
+
+  /* Mark the object as not deletable if the RTLD_NODELETE flags was passed.
+     Do this early so that we don't skip marking the object if it was
+     already loaded.  */
+  if (__glibc_unlikely (mode & RTLD_NODELETE))
+    new->l_flags_1 |= DF_1_NODELETE;
 
   /* If the pointer returned is NULL this means the RTLD_NOLOAD flag is
      set and the object is not already loaded.  */
@@ -564,11 +570,6 @@ TLS generation counter wrapped!  Please report this."));
       /* It failed.  */
       return;
 
-  /* Mark the object as not deletable if the RTLD_NODELETE flags was
-     passed.  */
-  if (__glibc_unlikely (mode & RTLD_NODELETE))
-    new->l_flags_1 |= DF_1_NODELETE;
-
 #ifndef SHARED
   /* We must be the static _dl_open in libc.a.  A static program that
      has loaded a dynamic object now has competition.  */
@@ -670,7 +671,7 @@ no more namespaces available for dlmopen()"));
 	  if ((mode & __RTLD_AUDIT) == 0)
 	    GL(dl_tls_dtv_gaps) = true;
 
-	  _dl_close_worker (args.map);
+	  _dl_close_worker (args.map, true);
 	}
 
       assert (_dl_debug_initialize (0, args.nsid)->r_state == RT_CONSISTENT);

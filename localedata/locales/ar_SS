@@ -1,14 +1,14 @@
-comment_char    %
-escape_char     /
+comment_char %
+escape_char /
+
+% This file is part of the GNU C Library and contains locale data.
+% The Free Software Foundation does not claim any copyright interest
+% in the locale data contained in this file.  The foregoing does not
+% affect the license of the GNU C Library as a whole.  It does not
+% exempt you from the conditions of the license if your use would
+% otherwise be governed by that license.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% This file is a part of GNU C Library (glibc) and contains locale data. The
-% Free Software Foundation does not claim any copyright interest in the
-% locale data contained in this file. The foregoing does not affect the
-% license of GNU C Library (glibc) as a whole. It does not exempt you from the
-% conditions of the license if your use would otherwise be governed by
-% that license.
 %
 % Arabic language locale for South Sudan.
 % Contributed by Kentaroh Noji <knoji@jp.ibm.com> and
@@ -216,7 +216,7 @@ LC_TELEPHONE
 %
 tel_int_fmt "<U002B><U0025><U0063><U0020><U003B><U0025><U0061><U0020>/
 <U003B><U0025><U006C>"
-int_prefix  "<U0032><U0034><U0039>"
+int_prefix  "<U0032><U0031><U0031>"
 
 END LC_TELEPHONE
 

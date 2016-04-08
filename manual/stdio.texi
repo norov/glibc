@@ -270,7 +270,7 @@ Locks}.
 @safety{@prelim{}@mtsafe{}@asunsafe{@ascuheap{} @asulock{}}@acunsafe{@acsmem{} @acsfd{} @aculock{}}}
 This function is similar to @code{fopen} but the stream it returns a
 pointer for is opened using @code{open64}.  Therefore this stream can be
-used even on files larger than @math{2^31} bytes on 32 bit machines.
+used even on files larger than @twoexp{31} bytes on 32 bit machines.
 
 Please note that the return type is still @code{FILE *}.  There is no
 special @code{FILE} type for the LFS interface.
@@ -336,7 +336,7 @@ interface replaces transparently the old interface.
 @safety{@prelim{}@mtsafe{}@asunsafe{@asucorrupt{}}@acunsafe{@acucorrupt{} @acsfd{}}}
 This function is similar to @code{freopen}.  The only difference is that
 on 32 bit machine the stream returned is able to read beyond the
-@math{2^31} bytes limits imposed by the normal interface.  It should be
+@twoexp{31} bytes limits imposed by the normal interface.  It should be
 noted that the stream pointed to by @var{stream} need not be opened
 using @code{fopen64} or @code{freopen64} since its mode is not important
 for this function.
@@ -2428,7 +2428,7 @@ the array @var{s}, not including the terminating null character.
 The behavior of this function is undefined if copying takes place
 between objects that overlap---for example, if @var{s} is also given
 as an argument to be printed under control of the @samp{%s} conversion.
-@xref{Copying and Concatenation}.
+@xref{Copying Strings and Arrays}.
 
 @strong{Warning:} The @code{sprintf} function can be @strong{dangerous}
 because it can potentially output more characters than can fit in the
@@ -2621,20 +2621,16 @@ choice, you are ready to call @code{vprintf}.  That argument and all
 subsequent arguments that were passed to your function are used by
 @code{vprintf} along with the template that you specified separately.
 
-In some other systems, the @code{va_list} pointer may become invalid
-after the call to @code{vprintf}, so you must not use @code{va_arg}
-after you call @code{vprintf}.  Instead, you should call @code{va_end}
-to retire the pointer from service.  However, you can safely call
-@code{va_start} on another pointer variable and begin fetching the
-arguments again through that pointer.  Calling @code{vprintf} does not
-destroy the argument list of your function, merely the particular
-pointer that you passed to it.
-
-GNU C does not have such restrictions.  You can safely continue to fetch
-arguments from a @code{va_list} pointer after passing it to
-@code{vprintf}, and @code{va_end} is a no-op.  (Note, however, that
-subsequent @code{va_arg} calls will fetch the same arguments which
-@code{vprintf} previously used.)
+@strong{Portability Note:} The value of the @code{va_list} pointer is
+undetermined after the call to @code{vprintf}, so you must not use
+@code{va_arg} after you call @code{vprintf}.  Instead, you should call
+@code{va_end} to retire the pointer from service.  You can call
+@code{va_start} again and begin fetching the arguments from the start of
+the variable argument list.  (Alternatively, you can use @code{va_copy}
+to make a copy of the @code{va_list} pointer before calling
+@code{vfprintf}.)  Calling @code{vprintf} does not destroy the argument
+list of your function, merely the particular pointer that you passed to
+it.
 
 Prototypes for these functions are declared in @file{stdio.h}.
 @pindex stdio.h
@@ -4412,7 +4408,7 @@ This function is similar to @code{ftello} with the only difference that
 the return value is of type @code{off64_t}.  This also requires that the
 stream @var{stream} was opened using either @code{fopen64},
 @code{freopen64}, or @code{tmpfile64} since otherwise the underlying
-file operations to position the file pointer beyond the @math{2^31}
+file operations to position the file pointer beyond the @twoexp{31}
 bytes limit might fail.
 
 If the sources are compiled with @code{_FILE_OFFSET_BITS == 64} on a 32
@@ -4473,7 +4469,7 @@ the @var{offset} parameter is of type @code{off64_t}.  This also
 requires that the stream @var{stream} was opened using either
 @code{fopen64}, @code{freopen64}, or @code{tmpfile64} since otherwise
 the underlying file operations to position the file pointer beyond the
-@math{2^31} bytes limit might fail.
+@twoexp{31} bytes limit might fail.
 
 If the sources are compiled with @code{_FILE_OFFSET_BITS == 64} on a 32
 bits machine this function is available under the name @code{fseeko}

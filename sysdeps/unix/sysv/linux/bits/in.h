@@ -1,4 +1,4 @@
-/* Copyright (C) 1991-2015 Free Software Foundation, Inc.
+/* Copyright (C) 1991-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -91,6 +91,8 @@
 
 #define IP_MINTTL       21
 #define IP_NODEFRAG     22
+#define IP_CHECKSUM     23
+#define IP_BIND_ADDRESS_NO_PORT 24
 
 /* IP_MTU_DISCOVER arguments.  */
 #define IP_PMTUDISC_DONT   0	/* Never send DF frames.  */
@@ -114,13 +116,6 @@
 #define IP_ADD_SOURCE_MEMBERSHIP	39
 #define IP_DROP_SOURCE_MEMBERSHIP	40
 #define IP_MSFILTER			41
-#define MCAST_JOIN_GROUP		42
-#define MCAST_BLOCK_SOURCE		43
-#define MCAST_UNBLOCK_SOURCE		44
-#define MCAST_LEAVE_GROUP		45
-#define MCAST_JOIN_SOURCE_GROUP		46
-#define MCAST_LEAVE_SOURCE_GROUP	47
-#define MCAST_MSFILTER			48
 #define IP_MULTICAST_ALL		49
 #define IP_UNICAST_IF			50
 
@@ -189,7 +184,9 @@ struct in_pktinfo
 #define IPV6_LEAVE_ANYCAST	28
 #define IPV6_IPSEC_POLICY	34
 #define IPV6_XFRM_POLICY	35
+#define IPV6_HDRINCL		36
 
+/* Advanced API (RFC3542) (1).  */
 #define IPV6_RECVPKTINFO	49
 #define IPV6_PKTINFO		50
 #define IPV6_RECVHOPLIMIT	51
@@ -201,7 +198,11 @@ struct in_pktinfo
 #define IPV6_RTHDR		57
 #define IPV6_RECVDSTOPTS	58
 #define IPV6_DSTOPTS		59
+#define IPV6_RECVPATHMTU	60
+#define IPV6_PATHMTU		61
+#define IPV6_DONTFRAG		62
 
+/* Advanced API (RFC3542) (2).  */
 #define IPV6_RECVTCLASS		66
 #define IPV6_TCLASS		67
 

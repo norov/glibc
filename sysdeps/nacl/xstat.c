@@ -1,5 +1,5 @@
 /* Get stat information from a file name.  NaCl version.
-   Copyright (C) 2015 Free Software Foundation, Inc.
+   Copyright (C) 2015-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -35,7 +35,7 @@ int
 __xstat (int vers, const char *file, struct stat *buf)
 {
   nacl_abi_stat_t abi_buf;
-  return NACL_CALL (__nacl_irt_filename.stat (file, &abi_buf),
+  return NACL_CALL (__nacl_irt_dev_filename.stat (file, &abi_buf),
                     __xstat_conv (vers, &abi_buf, buf));
 }
 hidden_def (__xstat)

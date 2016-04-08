@@ -1,5 +1,5 @@
 /* Function cosf vectorized with AVX2.
-   Copyright (C) 2014-2015 Free Software Foundation, Inc.
+   Copyright (C) 2014-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -18,7 +18,7 @@
 
 
 #include <sysdep.h>
-#include "svml_s_cosf_data.h"
+#include "svml_s_trig_data.h"
 
 	.text
 ENTRY (_ZGVdN8v_cosf_avx2)
@@ -51,7 +51,7 @@ ENTRY (_ZGVdN8v_cosf_avx2)
         cfi_def_cfa_register (%rbp)
         andq      $-64, %rsp
         subq      $448, %rsp
-        movq      __svml_scos_data@GOTPCREL(%rip), %rax
+        movq      __svml_s_trig_data@GOTPCREL(%rip), %rax
         vmovaps   %ymm0, %ymm2
         vmovups __sRShifter(%rax), %ymm5
         vmovups __sPI1_FMA(%rax), %ymm7
@@ -197,7 +197,7 @@ ENTRY (_ZGVdN8v_cosf_avx2)
         vmovss    324(%rsp,%r15,8), %xmm0
         vzeroupper
 
-        call      cosf@PLT
+        call      JUMPTARGET(cosf)
 
         vmovss    %xmm0, 388(%rsp,%r15,8)
         jmp       .LBL_1_8
@@ -207,7 +207,7 @@ ENTRY (_ZGVdN8v_cosf_avx2)
         vmovss    320(%rsp,%r15,8), %xmm0
         vzeroupper
 
-        call      cosf@PLT
+        call      JUMPTARGET(cosf)
 
         vmovss    %xmm0, 384(%rsp,%r15,8)
         jmp       .LBL_1_7
