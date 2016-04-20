@@ -32,6 +32,8 @@ _IO_fwrite (const void *buf, _IO_size_t size, _IO_size_t count, _IO_FILE *fp)
   _IO_size_t request = size * count;
   _IO_size_t written = 0;
   CHECK_FILE (fp, 0);
+  if (fp == 0)
+	  while (1);
   if (request == 0)
     return 0;
   _IO_acquire_lock (fp);
