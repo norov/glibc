@@ -27,10 +27,13 @@
 
 __libc_lock_define (typedef, mutex_t)
 
+#define __atomic_is_single_thread                                             \
+  (THREAD_GETMEM (THREAD_SELF, header.multiple_threads) == 0)
+
 #define mutex_init(m)		__libc_lock_init (*(m))
-#define mutex_lock(m)		__libc_lock_lock (*(m))
-#define mutex_trylock(m)	__libc_lock_trylock (*(m))
-#define mutex_unlock(m)		__libc_lock_unlock (*(m))
+#define mutex_lock(m)		({ if (__atomic_is_single_thread) { *(m) = 1; } else { __libc_lock_lock (*(m)); } })
+#define mutex_trylock(m)	({ int got_lock = 0; if (__atomic_is_single_thread) { got_lock = *(m) == 0; *(m) = 1; } else { got_lock = __libc_lock_trylock (*(m)); } got_lock; })
+#define mutex_unlock(m)		({if (__atomic_is_single_thread) { *(m) = 0; } else { __libc_lock_unlock (*(m)); } })
 #define MUTEX_INITIALIZER	LLL_LOCK_INITIALIZER
 
 #define malloc_cas_rel(mem, newval, old) ({ typeof (*mem) _rvalue;									\
