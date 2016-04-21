@@ -1,0 +1,89 @@
+2012-08-16  Andrew Pinski  <apinski@cavium.com>
+
+	* ports/sysdeps/unix/sysv/linux/mips/nptl/lowlevellock.h (__libc_lock_trylock):
+	Optimize also for Octeon2 which has instructions for atomically incrementing
+	and swapping.
+
+2012-07-26  Chandrakala Chavva  <cchavva@caviumnetworks.com>
+
+	* ports/sysdeps/unix/sysv/linux/mips/register-dump.h: Added
+	support to dump 64-bit registers.
+
+2012-07-11  Andrew Pinski  <apinski@cavium.com>
+
+	Bug #4078
+	* ports/sysdeps/mips/preconfigure (libc_commonpagesize): Set to 64k.
+
+2012-07-11  Andrew Pinski  <apinski@cavium.com>
+
+	Bug #2964
+	* ports/sysdeps/unix/sysv/linux/mips/sys/user.h (PAGE_SHIFT): Delete.
+	(PAGE_SIZE): Delete.
+	(PAGE_MASK): Delete.
+	(NBPG): Delete.
+	(HOST_STACK_END_ADDR): Delete.
+
+2012-07-11  Chandrakala Chavva   <cchavva@caviumnetworks.com>
+
+	Bug #1552
+	* ports/sysdeps/unix/sysv/linux/mips/mips64/n32/syscalls.list:
+	Removed posix_fadvise.
+	* ports/sysdeps/unix/sysv/linux/mips/mips64/n32/posix_fadvise64.c:
+	Moved to ....
+	* ports/sysdeps/unix/sysv/linux/mips/mips64/posix_fadvise64.c:
+	to ... here. Both n32 and n64 take 4 parameters to fadvise64.
+	* ports/sysdeps/unix/sysv/linux/mips/mips64/posix_fadvise.c:
+	New file, as fadvise() expects 4 parameters.
+	* ports/sysdeps/unix/sysv/linux/mips/mips64/n64/sendfile64.c:
+	New file. The NR_sendfile64 is not defined for n64, call
+	sendfile() for sendfile64().
+	* ports/sysdeps/unix/sysv/linux/mips/mips64/n64/syscalls.list:
+	New file.
+
+2012-07-11  Adam Nemet  <anemet@caviumnetworks.com>
+
+	Bug #1591
+	* ports/sysdeps/unix/sysv/linux/mips/mips64/pthread_spin_unlock.c:
+	New file.
+
+2012-07-11  Chandrakala Chavva  <cchavva@caviumnetworks.com>
+            Andrew Pinski  <apinski@cavium.com>
+
+	* ports/sysdeps/mips/tls-macros.h (TLS_IE): Use "k0" for Octeon1.
+	(TLS_LE): Likewise.
+	* ports/sysdeps/mips/nptl/tls.h (READ_THREAD_POINTER): Return
+	"k0" for Octeon1.
+
+2012-07-11  Prasun Kapoor <prasun.kapoor@caviumnetworks.com>
+            Chandrakala Chavva  <cchavva@caviumnetworks.com>
+
+	Bug #697
+	Make mmap64() work with 64 bit file offsets for n32 binaries.
+
+	* sysdeps/unix/sysv/linux/mips/mips64/n32/mmap64.c: New file.
+
+2012-07-11  Chandrakala Chavva  <cchavva@caviumnetworks.com>
+
+	* ports/sysdeps/mips/bits/atomic.h (MIPS_SYNC): Set to syncw;syncw for Octeon.
+	* ports/sysdeps/mips/sys/asm.h (MIPS_SYNC): Ditto.
+
+2012-07-11  Chandrakala Chavva  <cchavva@caviumnetworks.com>
+
+	Backported from alpha to fix ltp set{re,res}{g,u}id.c tests.
+	* ports/sysdeps/unix/sysv/linux/mips/setreuid.c: New file.
+	* ports/sysdeps/unix/sysv/linux/mips/setresuid.c: New file.
+	* ports/sysdeps/unix/sysv/linux/mips/setregid.c: New file.
+	* ports/sysdeps/unix/sysv/linux/mips/setresgid.c: New file.
+
+2012-07-11  Adam Nemet  <anemet@caviumnetworks.com>
+
+	* ports/sysdeps/mips/preconfigure: Append octeon2 to the machine variable.
+	* ports/sysdeps/unix/sysv/linux/mips/configure.in: Use it to append
+	/octeon2 to libdir and slibdir.
+	* ports/sysdeps/unix/sysv/linux/mips/configure: Regenerate.
+
+2012-07-11  Adam Nemet  <anemet@caviumnetworks.com>
+
+	Bug #1494
+	* sysdeps/unix/sysv/linux/mips/configure.in: Rename libc_cv_slibdir to slibdir.
+	* sysdeps/unix/sysv/linux/mips/configure: Regenerate
