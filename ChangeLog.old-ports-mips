@@ -71,6 +71,10 @@ not here.
 	* sysdeps/unix/sysv/linux/mips/bits/sem.h: Likewise.
 	* sysdeps/unix/sysv/linux/mips/bits/shm.h: Likewise.
 
+2013-11-14  Steve Ellcey  <sellcey@mips.com>
+
+	* sysdeps/mips/strcmp.c: New.
+
 2013-10-30  Mike Frysinger  <vapier@gentoo.org>
 
 	* sysdeps/mips/configure.in: Moved to ...

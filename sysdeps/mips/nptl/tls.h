@@ -42,21 +42,33 @@ typedef union dtv
 # define READ_THREAD_POINTER() (__builtin_thread_pointer ())
 #else
 /* Note: rd must be $v1 to be ABI-conformant.  */
+# ifndef _MIPS_ARCH_OCTEON
 # define READ_THREAD_POINTER() \
     ({ void *__result;							      \
        asm volatile (".set\tpush\n\t.set\tmips32r2\n\t"			      \
 		     "rdhwr\t%0, $29\n\t.set\tpop" : "=v" (__result));	      \
        __result; })
+# else /* OCTEON */
+/* The Kernel stores the value of "rdhwr v1,$29" in k0 ($26) register. And
+   it is the Kernel's responsibility to always have the correct value in
+   k0.  Replacing rdhwr instruction with k0, as this instruction needs to
+   be emulated by the Kernel.  */
+# define READ_THREAD_POINTER() ( { register void *__result asm ("$26"); __result; } )
+# endif /* OCTEON */
 #endif
 
 #else /* __ASSEMBLER__ */
 # include <tcb-offsets.h>
 
+# ifndef _MIPS_ARCH_OCTEON
 # define READ_THREAD_POINTER(rd) \
 	.set	push;							      \
 	.set	mips32r2;						      \
 	rdhwr	rd, $29;						      \
 	.set	pop
+# else /* OCTEON */
+# define READ_THREAD_POINTER(rd) move rd, $26
+# endif /* OCTEON */
 #endif /* __ASSEMBLER__ */
 
 

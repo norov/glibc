@@ -410,12 +410,41 @@ fi
 config_vars="$config_vars
 default-abi = ${libc_mips_abi}_${libc_mips_float}${libc_mips_nan}"
 
+# Make the build system aware of where we install octeon3 libs.
 case $machine in
-mips/mips64/n64/*)
-  test -n "$libc_cv_slibdir" ||
+  mips/mips64/n32/mips64octeon3 )
+  test -n "$slibdir" ||
 case "$prefix" in
 /usr | /usr/)
-  libc_cv_slibdir=/lib64
+  slibdir=/lib32-fp
+  libc_cv_rtlddir=/lib32-fp
+  if test "$libdir" = '${exec_prefix}/lib'; then
+    libdir='${exec_prefix}/lib32-fp';
+    # Locale data can be shared between 32-bit and 64-bit libraries.
+    libc_cv_localedir='${exec_prefix}/lib/locale'
+  fi
+  ;;
+esac
+  ;;
+  mips/mips64/n64/mips64octeon3 )
+  test -n "$slibdir" ||
+case "$prefix" in
+/usr | /usr/)
+  slibdir=/lib64-fp
+  libc_cv_rtlddir=/lib64-fp
+  if test "$libdir" = '${exec_prefix}/lib'; then
+    libdir='${exec_prefix}/lib64-fp';
+    # Locale data can be shared between 32-bit and 64-bit libraries.
+    libc_cv_localedir='${exec_prefix}/lib/locale'
+  fi
+  ;;
+esac
+  ;;
+mips/mips64/n64/*)
+  test -n "$slibdir" ||
+case "$prefix" in
+/usr | /usr/)
+  slibdir=/lib64
   libc_cv_rtlddir=/lib64
   if test "$libdir" = '${exec_prefix}/lib'; then
     libdir='${exec_prefix}/lib64';
@@ -426,10 +455,10 @@ case "$prefix" in
 esac
   ;;
 mips/mips64/n32/*)
-  test -n "$libc_cv_slibdir" ||
+  test -n "$slibdir" ||
 case "$prefix" in
 /usr | /usr/)
-  libc_cv_slibdir=/lib32
+  slibdir=/lib32
   libc_cv_rtlddir=/lib32
   if test "$libdir" = '${exec_prefix}/lib'; then
     libdir='${exec_prefix}/lib32';
