@@ -111,7 +111,14 @@ fi
 LIBC_CONFIG_VAR([default-abi],
   [${libc_mips_abi}_${libc_mips_float}${libc_mips_nan}])
 
+# Make the build system aware of where we install octeon3 libs.
 case $machine in
+  mips/mips64/n32/mips64octeon3 )
+  LIBC_SLIBDIR_RTLDDIR([lib32-fp], [lib32-fp])
+  ;;
+  mips/mips64/n64/mips64octeon3 )
+  LIBC_SLIBDIR_RTLDDIR([lib64-fp], [lib64-fp])
+  ;;
 mips/mips64/n64/*)
   LIBC_SLIBDIR_RTLDDIR([lib64], [lib64])
   ;;

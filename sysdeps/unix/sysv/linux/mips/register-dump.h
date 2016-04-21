@@ -39,13 +39,25 @@
 
 /* We will print the register dump in this format:
 
+[_ABIO32]
  R0   XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
  R8   XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
  R16  XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
  R24  XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
             pc       lo       hi
       XXXXXXXX XXXXXXXX XXXXXXXX
- The FPU registers will not be printed.
+
+[else]
+ R0   XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+ R4   XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+ R8   XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+ R12  XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+ R16  XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+ R20  XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+ R24  XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+                    pc               lo               hi
+      XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+The FPU registers will not be printed.
 */
 
 static void
@@ -56,6 +68,7 @@ hexvalue (_ITOA_WORD_TYPE value, char *buf, size_t len)
     *--cp = '0';
 }
 
+#if _MIPS_SIM == _ABIO32
 static void
 register_dump (int fd, CTX_TYPE ctx)
 {
@@ -116,6 +129,93 @@ register_dump (int fd, CTX_TYPE ctx)
   /* Write the stuff out.  */
   writev (fd, iov, nr);
 }
+#else
+static void
+register_dump (int fd, ucontext_t *ctx)
+{
+  char regs[38][16];
+  struct iovec iov[38 * 2 + 10];
+  size_t nr = 0;
+  int i;
+  mcontext_t *reg = (mcontext_t *)&(ctx->uc_mcontext);
 
+
+#define ADD_STRING(str) \
+  iov[nr].iov_base = (char *) str;					      \
+  iov[nr].iov_len = strlen (str);					      \
+  ++nr
+#define ADD_MEM(str, len) \
+  iov[nr].iov_base = str;						      \
+  iov[nr].iov_len = len;						      \
+  ++nr
+
+  /* Generate strings of register contents.  */
+  for (i = 0; i < 32; i++)
+    hexvalue (reg->gregs[i], regs[i], 16);
+  hexvalue (reg->pc, regs[32], 16);
+  hexvalue (reg->mdlo, regs[33], 16);
+  hexvalue (reg->mdhi, regs[34], 16);
+
+  /* Generate the output.  */
+  ADD_STRING ("Register dump:\n\n R0   ");
+  for (i = 0; i < 4; i++)
+    {
+      ADD_MEM (regs[i], 16);
+      ADD_STRING (" ");
+    }
+  ADD_STRING ("\n R4   ");
+  for (i = 4; i < 8; i++)
+    {
+      ADD_MEM (regs[i], 16);
+      ADD_STRING (" ");
+    }
+  ADD_STRING ("\n R8   ");
+  for (i = 8; i < 12; i++)
+    {
+      ADD_MEM (regs[i], 16);
+      ADD_STRING (" ");
+    }
+  ADD_STRING ("\n R12  ");
+  for (i = 12; i < 16; i++)
+    {
+      ADD_MEM (regs[i], 16);
+      ADD_STRING (" ");
+    }
+  ADD_STRING ("\n R16  ");
+  for (i = 16; i < 20; i++)
+    {
+      ADD_MEM (regs[i], 16);
+      ADD_STRING (" ");
+    }
+  ADD_STRING ("\n R20  ");
+  for (i = 20; i < 24; i++)
+    {
+      ADD_MEM (regs[i], 16);
+      ADD_STRING (" ");
+    }
+  ADD_STRING ("\n R24  ");
+  for (i = 24; i < 28; i++)
+    {
+      ADD_MEM (regs[i], 16);
+      ADD_STRING (" ");
+    }
+  ADD_STRING ("\n R28  ");
+  for (i = 28; i < 32; i++)
+    {
+      ADD_MEM (regs[i], 16);
+      ADD_STRING (" ");
+    }
+  ADD_STRING ("\n                    pc               lo               hi\n      ");
+  for (i = 32; i < 35; i++)
+    {
+      ADD_MEM (regs[i], 16);
+      ADD_STRING (" ");
+    }
+  ADD_STRING ("\n");
+
+  /* Write the stuff out.  */
+  writev (fd, iov, nr);
+}
+#endif
 
 #define REGISTER_DUMP register_dump (fd, ctx)

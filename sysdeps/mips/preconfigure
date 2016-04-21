@@ -1,5 +1,11 @@
 case "$machine" in
 mips*)
+	# Add octeon3 so that we set libdir and slibdir to the
+	# octeon3 directories.
+	case "$CC $CFLAGS $CPPFLAGS " in
+	*" -march=octeon3 "*) mips_arch=mips64octeon3 ;;
+	*) mips_arch=$config_machine;;
+	esac
 	abiflag=`$CC $CFLAGS $CPPFLAGS -E -dM -xc /dev/null | sed -n 's/^#define _MIPS_SIM \(.*\)/\1/p'`
 	mips16flag=`$CC $CFLAGS $CPPFLAGS -E -dM -xc /dev/null | sed -n 's/^#define __mips16 \(.*\)/\1/p'`
 
@@ -20,10 +26,12 @@ mips*)
 	# $config_machine is not really needed here but the slash after
 	# $machine is needed by the case statement in
 	# sysdeps/unix/sysv/linux/mips/configure.ac.
-	machine=$machine/$config_machine
+	machine=$machine/$mips_arch
 
 	if test "$abiflag" != "_ABIO32" -a "$mips16flag" = "1"; then
 		as_fn_error $? "MIPS16 is only supported with the o32 ABI." "$LINENO" 5
 	fi
+	#64k pages
+	libc_commonpagesize=0x10000
 	;;
 esac
