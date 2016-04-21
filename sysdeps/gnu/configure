@@ -6,10 +6,10 @@
 # files.  I.e., when the installation prefix is "/usr" we have to place
 # shared library objects and the configuration files on the root partition
 # in /lib and /etc.
-test -n "$libc_cv_slibdir" ||
+test -n "$slibdir" ||
 case "$prefix" in
 /usr | /usr/)
-  libc_cv_slibdir=/lib
+  slibdir=/lib
   libc_cv_rtlddir=/lib
   if test "$libdir" = '${exec_prefix}/lib'; then
     libdir='${exec_prefix}/lib';
