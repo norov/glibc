@@ -607,7 +607,7 @@ libc_cv_localstatedir
 libc_cv_sysconfdir
 libc_cv_localedir
 libc_cv_rtlddir
-libc_cv_slibdir
+slibdir
 old_glibc_headers
 use_nscd
 libc_cv_gcc_unwind_find_fde
