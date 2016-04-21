@@ -210,13 +210,13 @@ _dl_start_user:								\n\
 	br      x21							\n\
 ");
 
-#define elf_machine_type_class(type)					\
-  ((((type) == R_AARCH64_JUMP_SLOT ||					\
-     (type) == R_AARCH64_TLS_DTPMOD ||					\
-     (type) == R_AARCH64_TLS_DTPREL ||					\
-     (type) == R_AARCH64_TLS_TPREL ||					\
-     (type) == R_AARCH64_TLSDESC) * ELF_RTYPE_CLASS_PLT)		\
-   | (((type) == R_AARCH64_COPY) * ELF_RTYPE_CLASS_COPY))
+#define elf_machine_type_class(type)				\
+  ((((type) == AARCH64_R(JUMP_SLOT) ||				\
+     (type) == AARCH64_R(TLS_DTPMOD) ||				\
+     (type) == AARCH64_R(TLS_DTPREL) ||				\
+     (type) == AARCH64_R(TLS_TPREL) ||				\
+     (type) == AARCH64_R(TLSDESC)) * ELF_RTYPE_CLASS_PLT)	\
+   | (((type) == AARCH64_R(COPY)) * ELF_RTYPE_CLASS_COPY))
 
 #define ELF_MACHINE_JMP_SLOT	AARCH64_R(JUMP_SLOT)
 
