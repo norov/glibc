@@ -22,7 +22,7 @@ subdir	:= socket
 
 include ../Makeconfig
 
-headers	:= sys/socket.h sys/un.h bits/sockaddr.h bits/socket.h \
+headers	:= sys/bus.h sys/socket.h sys/un.h bits/sockaddr.h bits/socket.h \
 	   bits/socket2.h sys/socketvar.h net/if.h
 
 routines := accept bind connect getpeername getsockname getsockopt	\

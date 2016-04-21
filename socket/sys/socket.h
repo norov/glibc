@@ -84,7 +84,8 @@ enum
   __SOCKADDR_ONETYPE (sockaddr_iso) \
   __SOCKADDR_ONETYPE (sockaddr_ns) \
   __SOCKADDR_ONETYPE (sockaddr_un) \
-  __SOCKADDR_ONETYPE (sockaddr_x25)
+  __SOCKADDR_ONETYPE (sockaddr_x25) \
+  __SOCKADDR_ONETYPE (sockaddr_bus)
 
 # define __SOCKADDR_ONETYPE(type) struct type *__restrict __##type##__;
 typedef union { __SOCKADDR_ALLTYPES
