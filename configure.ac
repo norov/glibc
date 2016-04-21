@@ -2045,7 +2045,7 @@ if test ${old_glibc_headers} = yes; then
 fi
 AC_SUBST(old_glibc_headers)
 
-AC_SUBST(libc_cv_slibdir)
+AC_SUBST(slibdir)
 AC_SUBST(libc_cv_rtlddir)
 AC_SUBST(libc_cv_localedir)
 AC_SUBST(libc_cv_sysconfdir)
