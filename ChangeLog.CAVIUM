@@ -65,16 +65,6 @@
 
 2015-01-09  Andrew Pinski  <apinski@cavium.com>
 
-	* sysdeps/unix/sysv/linux/sigset-cvt-mask.h (sigset_set_old_mask):
-	Use __sigset_inner_t instead of unsigned long.
-
-2015-01-09  Andrew Pinski  <apinski@cavium.com>
-
-	* sysdeps/unix/sysv/linux/generic/brk.c (__brk):
-	Add a cast before the cast to the pointer.
-
-2015-01-09  Andrew Pinski  <apinski@cavium.com>
-
 	* sysdeps/aarch64/jmpbuf-unwind.h (_JMPBUF_CFA_UNWINDS_ADJ): Fix ILP32 warning.
 	* sysdeps/unix/sysv/linux/aarch64/sigcontextinfo.h (GET_PC): Likewise.
 
