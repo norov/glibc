@@ -217,7 +217,7 @@ _dl_start_user:								\n\
      (type) == AARCH64_R(TLS_TPREL) ||				\
      (type) == AARCH64_R(TLSDESC)) * ELF_RTYPE_CLASS_PLT)	\
    | (((type) == AARCH64_R(COPY)) * ELF_RTYPE_CLASS_COPY))	\
-   | (((type) == AARCH64_R(GLOB_DAT)) * ELF_RTYPE_CLASS_EXTERN_PROTECTED_DATA))
+   | (((type) == AARCH64_R(GLOB_DAT) * ELF_RTYPE_CLASS_EXTERN_PROTECTED_DATA))
 
 #define ELF_MACHINE_JMP_SLOT	AARCH64_R(JUMP_SLOT)
 
