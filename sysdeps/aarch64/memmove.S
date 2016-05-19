@@ -46,6 +46,9 @@
 #define D_h	x14
 
 ENTRY_ALIGN (memmove, 6)
+	DELOUSE(0)
+	DELOUSE(1)
+	DELOUSE(2)
 
 	cmp	dstin, src
 	b.lo	L(downwards)

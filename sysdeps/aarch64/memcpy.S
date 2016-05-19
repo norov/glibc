@@ -46,7 +46,9 @@
 #include <sysdep.h>
 
 ENTRY_ALIGN (memcpy, 6)
-
+	DELOUSE(0)
+	DELOUSE(1)
+	DELOUSE(2)
 	mov	dst, dstin
 	cmp	count, #64
 	b.ge	L(cpy_not_short)
