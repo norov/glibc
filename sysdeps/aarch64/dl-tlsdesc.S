@@ -74,6 +74,7 @@
 	cfi_startproc
 	.align 2
 _dl_tlsdesc_return:
+	DELOUSE(0)
 	ldr	PTR_REG (0), [x0, #PTR_SIZE]
 	RET
 	cfi_endproc
@@ -96,6 +97,7 @@ _dl_tlsdesc_return_lazy:
 	   td->entry) and thus it synchronizes with the release store to
 	   td->entry in _dl_tlsdesc_resolve_rela_fixup ensuring that the load
 	   from [x0,#PTR_SIZE] here happens after the initialization of td->arg. */
+	DELOUSE(0)
 	ldar	PTR_REG (zr), [x0]
 	ldr	PTR_REG (0), [x0, #PTR_SIZE]
 	RET
@@ -125,6 +127,7 @@ _dl_tlsdesc_undefweak:
 	   td->entry) and thus it synchronizes with the release store to
 	   td->entry in _dl_tlsdesc_resolve_rela_fixup ensuring that the load
 	   from [x0,#8] here happens after the initialization of td->arg.  */
+	DELOUSE(0)
 	ldar	PTR_REG (zr), [x0]
 	ldr	PTR_REG (0), [x0, #PTR_SIZE]
 	mrs	x1, tpidr_el0
@@ -174,6 +177,7 @@ _dl_tlsdesc_dynamic:
 	stp	x29, x30, [sp,#-(32+16*NSAVEXREGPAIRS)]!
 	cfi_adjust_cfa_offset (32+16*NSAVEXREGPAIRS)
 	mov	x29, sp
+	DELOUSE(0)
 
 	/* Save just enough registers to support fast path, if we fall
 	   into slow path we will save additional registers.  */
@@ -188,6 +192,7 @@ _dl_tlsdesc_dynamic:
 	   td->entry) and thus it synchronizes with the release store to
 	   td->entry in _dl_tlsdesc_resolve_rela_fixup ensuring that the load
 	   from [x0,#PTR_SIZE] here happens after the initialization of td->arg.  */
+	DELOUSE(0)
 	ldar	PTR_REG (zr), [x0]
 	ldr	PTR_REG (1), [x0,#PTR_SIZE]
 	ldr	PTR_REG (0), [x4]
@@ -279,12 +284,14 @@ _dl_tlsdesc_resolve_rela:
 
 	SAVE_Q_REGISTERS
 
+	DELOUSE(3)
 	ldr	PTR_REG (1), [x3, #PTR_SIZE]
 	bl	_dl_tlsdesc_resolve_rela_fixup
 
 	RESTORE_Q_REGISTERS
 
 	ldr	x0, [sp, #32+16*8]
+	DELOUSE(0)
 	ldr	PTR_REG (1), [x0]
 	blr	x1
 
@@ -346,6 +353,7 @@ _dl_tlsdesc_resolve_hold:
 	RESTORE_Q_REGISTERS
 
 	ldr	x0, [sp, #32+16*9]
+	DELOUSE(0)
 	ldr	PTR_REG (1), [x0]
 	blr	x1
 
