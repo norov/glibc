@@ -91,6 +91,11 @@
 #define MIN_PAGE_SIZE (1 << MIN_PAGE_P2)
 
 ENTRY_ALIGN (STRCPY, 6)
+#ifdef __ILP32__
+	/* Zero extend the pointers that is passed in w0 and w1. */
+	mov	w0, w0
+	mov	w1, w1
+#endif
 	/* For moderately short strings, the fastest way to do the copy is to
 	   calculate the length of the string in the same way as strlen, then
 	   essentially do a memcpy of the result.  This avoids the need for

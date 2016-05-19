@@ -46,6 +46,13 @@
 #define D_h	x14
 
 ENTRY_ALIGN (memmove, 6)
+#ifdef __ILP32__
+	/* Zero extend the pointers that is passed in w0 and w1. */
+	/* Zero extend the size_t that was passed in w2 */
+	mov	w0, w0
+	mov	w1, w1
+	mov	w2, w2
+#endif
 
 	cmp	dstin, src
 	b.lo	L(downwards)
