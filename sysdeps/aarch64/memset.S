@@ -52,7 +52,8 @@
 #define tmp3w		w9
 
 ENTRY_ALIGN (__memset, 6)
-
+	DELOUSE(0)
+	DELOUSE(2)
 	mov	dst, dstin		/* Preserve return value.  */
 	ands	A_lw, val, #255
 #ifndef DONT_USE_DC
