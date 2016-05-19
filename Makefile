@@ -296,7 +296,7 @@ installed-headers = argp/argp.h assert/assert.h catgets/nl_types.h \
 		    resource/sys/vtimes.h resource/ulimit.h rt/aio.h \
 		    rt/mqueue.h setjmp/setjmp.h shadow/shadow.h \
 		    signal/signal.h signal/sys/signal.h socket/sys/socket.h \
-		    socket/sys/un.h stdio-common/printf.h \
+		    socket/sys/un.h socket/sys/bus.h stdio-common/printf.h \
 		    stdio-common/stdio_ext.h stdlib/stdlib.h stdlib/alloca.h \
 		    stdlib/monetary.h stdlib/fmtmsg.h stdlib/ucontext.h \
 		    sysdeps/generic/inttypes.h sysdeps/generic/stdint.h \

@@ -22,6 +22,6 @@
 ENTRY(__bzero)
 	mov	x2, x1
 	mov	x1, xzr
-	b	__memset
+	b	memset
 END(__bzero)
 weak_alias (__bzero, bzero)

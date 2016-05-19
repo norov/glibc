@@ -58,7 +58,7 @@ ENTRY_ALIGN (memmove, 6)
 	b.lo	L(downwards)
 	add	tmp1, src, count
 	cmp	dstin, tmp1
-	b.hs	memcpy		/* No overlap.  */
+	b.hs	L(domemcpy)		/* No overlap.  */
 
 	/* Upwards move with potential overlap.
 	 * Need to move from the tail backwards.  SRC and DST point one
@@ -188,7 +188,7 @@ L(downwards):
 	 * DST is more than 16 bytes away from SRC.  */
 	sub	tmp1, src, #16
 	cmp	dstin, tmp1
-	b.ls	memcpy		/* May overlap, but not critically.  */
+	b.ls	L(domemcpy)	/* May overlap, but not critically.  */
 
 	mov	dst, dstin	/* Preserve DSTIN for return value.  */
 	cmp	count, #64
@@ -314,6 +314,9 @@ L(mov_body_large_down):
 	tst	count, #0x3f
 	b.ne	L(tail63down)
 	RET
+/* To avoid a crash in the linker do not sibcall using a branch. */
+L(domemcpy):
+	b memcpy
 END (memmove)
 
 libc_hidden_builtin_def (memmove)
