@@ -46,6 +46,8 @@ ENTRY (__longjmp)
 	cfi_offset(d14, JB_D14<<3)
 	cfi_offset(d15, JB_D15<<3)
 
+	DELOUSE (0)
+
 	ldp	x19, x20, [x0, #JB_X19<<3]
 	ldp	x21, x22, [x0, #JB_X21<<3]
 	ldp	x23, x24, [x0, #JB_X23<<3]
