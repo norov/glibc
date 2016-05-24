@@ -19,12 +19,10 @@
 # define __WORDSIZE	64
 #else
 # define __WORDSIZE	32
+# define __WORDSIZE32_SIZE_ULONG       1
+# define __WORDSIZE32_PTRDIFF_LONG 1
 #endif
 
-/* LP64 and ILP32s ABI uses a 64bit time_t.
-   This allows aarch32 and AARCH64 applications
+/* This allows ILP32 and AARCH64 applications
    both access utmp. */
 #define __WORDSIZE_TIME64_COMPAT32	1
-
-/* LP64 and ILP32 use the 64bit system call interface. */
-#define __SYSCALL_WORDSIZE 64
