@@ -54,14 +54,7 @@ struct stat
     __gid_t st_gid;			/* Group ID of the file's group.*/
     __dev_t st_rdev;			/* Device number, if device.  */
     __dev_t __pad1;
-#ifndef __USE_FILE_OFFSET64
     __off_t st_size;			/* Size of file, in bytes.  */
-# ifdef __ILP32__
-    int __st_size_pad;
-# endif
-#else
-    __off64_t st_size;			/* Size of file, in bytes.  */
-#endif
     __blksize_t st_blksize;		/* Optimal block size for I/O.  */
     int __pad2;
 

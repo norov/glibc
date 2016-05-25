@@ -62,12 +62,12 @@
 #define __SYSCALL_ULONG_TYPE	__ULONGWORD_TYPE
 #define __CPU_MASK_TYPE         __ULONGWORD_TYPE
 
-#ifdef __LP64__
 /* Tell the libc code that off_t and off64_t are actually the same type
    for all ABI purposes, even if possibly expressed as different base types
    for C type-checking purposes.  */
 # define __OFF_T_MATCHES_OFF64_T	1
 
+#ifdef __LP64__
 /* Same for ino_t and ino64_t.  */
 # define __INO_T_MATCHES_INO64_T	1
 #endif

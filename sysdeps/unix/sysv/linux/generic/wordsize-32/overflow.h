@@ -36,8 +36,11 @@ static inline off_t lseek_overflow (loff_t res)
 
 static inline int stat_overflow (struct stat *buf)
 {
-  if (buf->__st_ino_pad == 0 && buf->__st_size_pad == 0 &&
-      buf->__st_blocks_pad == 0)
+  if (buf->__st_ino_pad == 0
+#ifndef __OFF_T_MATCHES_OFF64_T
+	&& buf->__st_size_pad == 0
+#endif
+	&& buf->__st_blocks_pad == 0)
     return 0;
 
   __set_errno (EOVERFLOW);
