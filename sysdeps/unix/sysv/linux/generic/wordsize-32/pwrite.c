@@ -28,9 +28,13 @@
 ssize_t
 __libc_pwrite (int fd, const void *buf, size_t count, off_t offset)
 {
+#ifdef __OFF_T_MATCHES_OFF64_T
+  return SYSCALL_CANCEL (pwrite64, fd, buf, count, offset);
+#else
   assert (sizeof (offset) == 4);
   return SYSCALL_CANCEL (pwrite64, fd, buf, count, __ALIGNMENT_ARG
                          __LONG_LONG_PAIR (offset >> 31, offset));
+#endif
 }
 strong_alias (__libc_pwrite, __pwrite)
 weak_alias (__libc_pwrite, pwrite)
