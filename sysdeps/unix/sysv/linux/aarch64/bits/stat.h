@@ -34,20 +34,7 @@
 struct stat
   {
     __dev_t st_dev;			/* Device.  */
-#ifdef __ILP32__
-    unsigned int __st_ino_pad;
-# ifndef __USE_FILE_OFFSET64
     __ino_t st_ino;			/* File serial number.	*/
-# else
-    __ino_t __st_ino;			/* 32bit file serial number.	*/
-# endif
-#else
-# ifndef __USE_FILE_OFFSET64
-    __ino_t st_ino;			/* File serial number.	*/
-# else
-    __ino64_t st_ino;			/* File serial number.	*/
-# endif
-#endif
     __mode_t st_mode;			/* File mode.  */
     __nlink_t st_nlink;			/* Link count.  */
     __uid_t st_uid;			/* User ID of the file's owner.	*/
@@ -58,14 +45,7 @@ struct stat
     __blksize_t st_blksize;		/* Optimal block size for I/O.  */
     int __pad2;
 
-#ifndef __USE_FILE_OFFSET64
     __blkcnt_t st_blocks;		/* Number 512-byte blocks allocated. */
-# ifdef __ILP32__
-    int __st_blocks_pad;
-# endif
-#else
-    __blkcnt64_t st_blocks;		/* Number 512-byte blocks allocated. */
-#endif
 #ifdef __USE_XOPEN2K8
     /* Nanosecond resolution timestamps are stored in a format
        equivalent to 'struct timespec'.  This is the type used
@@ -87,11 +67,7 @@ struct stat
     __time_t st_ctime;			/* Time of last status change.  */
     unsigned long int st_ctimensec;	/* Nsecs of last status change.  */
 #endif
-#if !defined __ILP32__ || !defined __USE_FILE_OFFSET64
     int __glibc_reserved[2];
-#else
-    __ino64_t st_ino;			/* File serial number.	*/
-#endif
   };
 
 #ifdef __USE_LARGEFILE64

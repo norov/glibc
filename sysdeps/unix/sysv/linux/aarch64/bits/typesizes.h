@@ -29,7 +29,7 @@
 #define __DEV_T_TYPE		__UQUAD_TYPE
 #define __UID_T_TYPE		__U32_TYPE
 #define __GID_T_TYPE		__U32_TYPE
-#define __INO_T_TYPE		__ULONGWORD_TYPE
+#define __INO_T_TYPE		__UQUAD_TYPE
 #define __INO64_T_TYPE		__UQUAD_TYPE
 #define __MODE_T_TYPE		__U32_TYPE
 #define __NLINK_T_TYPE		__U32_TYPE
@@ -38,7 +38,7 @@
 #define __PID_T_TYPE		__S32_TYPE
 #define __RLIM_T_TYPE		__ULONGWORD_TYPE
 #define __RLIM64_T_TYPE		__UQUAD_TYPE
-#define	__BLKCNT_T_TYPE		__SLONGWORD_TYPE
+#define	__BLKCNT_T_TYPE		__SQUAD_TYPE
 #define	__BLKCNT64_T_TYPE	__SQUAD_TYPE
 #define	__FSBLKCNT_T_TYPE	__ULONGWORD_TYPE
 #define	__FSBLKCNT64_T_TYPE	__UQUAD_TYPE
@@ -67,10 +67,11 @@
    for C type-checking purposes.  */
 # define __OFF_T_MATCHES_OFF64_T	1
 
-#ifdef __LP64__
 /* Same for ino_t and ino64_t.  */
 # define __INO_T_MATCHES_INO64_T	1
-#endif
+
+/* And for __blkcnt_t and __blkcnt64_t.  */
+# define __BLKCNT_T_MATCHES_BLKCNT64_T	1
 
 /* Number of descriptors that can fit in an `fd_set'.  */
 #define	__FD_SETSIZE		1024
