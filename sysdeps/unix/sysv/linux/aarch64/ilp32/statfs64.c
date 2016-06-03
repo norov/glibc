@@ -37,7 +37,7 @@ __statfs64 (const char *file, struct statfs64 *buf)
   if (! __no_statfs64)
 # endif
     {
-      int result = INLINE_SYSCALL (statfs64, 3, file, 84, buf);
+      int result = INLINE_SYSCALL (statfs64, 2, file, buf);
 
 # if __ASSUME_STATFS64 == 0
       if (result == 0 || errno != ENOSYS)

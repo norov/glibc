@@ -122,7 +122,6 @@ struct timespec
     __time_t tv_sec;		/* Seconds.  */
     __syscall_slong_t tv_nsec;	/* Nanoseconds.  */
   };
-
 #endif /* timespec not defined and <time.h> or need timespec.  */
 #undef	__need_timespec
 

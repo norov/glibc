@@ -40,9 +40,9 @@
 #define __RLIM64_T_TYPE		__UQUAD_TYPE
 #define	__BLKCNT_T_TYPE		__SQUAD_TYPE
 #define	__BLKCNT64_T_TYPE	__SQUAD_TYPE
-#define	__FSBLKCNT_T_TYPE	__ULONGWORD_TYPE
+#define	__FSBLKCNT_T_TYPE	__UQUAD_TYPE
 #define	__FSBLKCNT64_T_TYPE	__UQUAD_TYPE
-#define	__FSFILCNT_T_TYPE	__ULONGWORD_TYPE
+#define	__FSFILCNT_T_TYPE	__UQUAD_TYPE
 #define	__FSFILCNT64_T_TYPE	__UQUAD_TYPE
 #define	__FSWORD_T_TYPE		__SWORD_TYPE
 #define	__ID_T_TYPE		__U32_TYPE
@@ -65,13 +65,24 @@
 /* Tell the libc code that off_t and off64_t are actually the same type
    for all ABI purposes, even if possibly expressed as different base types
    for C type-checking purposes.  */
-# define __OFF_T_MATCHES_OFF64_T	1
+# define __OFF_T_MATCHES_OFF64_T			1
 
 /* Same for ino_t and ino64_t.  */
-# define __INO_T_MATCHES_INO64_T	1
+# define __INO_T_MATCHES_INO64_T			1
 
 /* And for __blkcnt_t and __blkcnt64_t.  */
-# define __BLKCNT_T_MATCHES_BLKCNT64_T	1
+# define __BLKCNT_T_TYPE_MATCHES_BLKCNT64_T_TYPE	1
+
+/* And for __fsblkcnt_t and __fsblkcnt64_t.  */
+# define __FSBLKCNT_T_TYPE_MATCHES_FSBLKCNT64_T_TYPE	1
+
+/* And for __fsbilcnt_t and __fsbilcnt64_t.  */
+# define __FSFILCNT_T_TYPE_MATCHES_FSFILCNT64_T_TYPE	1
+
+#if __WORDSIZE == 32
+/* And struct timespec needs pads.  */
+# define timespec_needs_pads	1
+#endif
 
 /* Number of descriptors that can fit in an `fd_set'.  */
 #define	__FD_SETSIZE		1024

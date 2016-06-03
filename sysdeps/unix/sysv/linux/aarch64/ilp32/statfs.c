@@ -26,7 +26,7 @@
 int
 __statfs (const char *file, struct statfs *buf)
 {
-  int rc = INLINE_SYSCALL (statfs64, 3, file, 84, buf);
+  int rc = INLINE_SYSCALL (statfs64, 2, file, buf);
   return rc ?: statfs_overflow (buf);
 }
 libc_hidden_def (__statfs)

@@ -43,7 +43,7 @@ static inline int stat_overflow (struct stat *buf)
 #ifndef __OFF_T_MATCHES_OFF64_T
 	&& buf->__st_size_pad == 0
 #endif
-#ifndef __BLKCNT_T_MATCHES_BLKCNT64_T
+#ifndef __BLKCNT_T_TYPE_MATCHES_BLKCNT64_T_TYPE
 	&& buf->__st_blocks_pad == 0
 #endif
      )
@@ -56,6 +56,10 @@ static inline int stat_overflow (struct stat *buf)
 /* Note that f_files and f_ffree may validly be a sign-extended -1.  */
 static inline int statfs_overflow (struct statfs *buf)
 {
+#if (defined (__FSBLKCNT_T_TYPE_MATCHES_FSBLKCNT64_T_TYPE) &&	\
+		defined (__FSFILCNT_T_TYPE_MATCHES_FSFILCNT64_T_TYPE))
+	return 0;
+#else
   if (buf->__f_blocks_pad == 0 && buf->__f_bfree_pad == 0 &&
       buf->__f_bavail_pad == 0 &&
       (buf->__f_files_pad == 0 ||
@@ -66,4 +70,5 @@ static inline int statfs_overflow (struct statfs *buf)
 
   __set_errno (EOVERFLOW);
   return -1;
+#endif
 }
