@@ -51,18 +51,18 @@ struct statfs
 #ifdef __USE_LARGEFILE64
 struct statfs64
   {
-    __SWORD_TYPE f_type;
-    __SWORD_TYPE f_bsize;
-    __fsblkcnt64_t f_blocks;
-    __fsblkcnt64_t f_bfree;
-    __fsblkcnt64_t f_bavail;
-    __fsfilcnt64_t f_files;
-    __fsfilcnt64_t f_ffree;
+    unsigned long long f_type;
+    unsigned long long f_bsize;
+    __fsblkcnt_t f_blocks;
+    __fsblkcnt_t f_bfree;
+    __fsblkcnt_t f_bavail;
+    __fsfilcnt_t f_files;
+    __fsfilcnt_t f_ffree;
     __fsid_t f_fsid;
-    __SWORD_TYPE f_namelen;
-    __SWORD_TYPE f_frsize;
-    __SWORD_TYPE f_flags;
-    __SWORD_TYPE f_spare[4];
+    unsigned long long f_namelen;
+    unsigned long long f_frsize;
+    unsigned long long f_flags;
+    unsigned long long f_spare[4];
   };
 #endif
 
