@@ -1,5 +1,5 @@
-//#include <sysdeps/unix/sysv/linux/fxstatat64.c>
-/* Copyright (C) 2005-2016 Free Software Foundation, Inc.
+/* fxstat64 using Linux fstat64 system call.
+   Copyright (C) 1997-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,36 +17,38 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <errno.h>
-#include <fcntl.h>
 #include <stddef.h>
-#include <stdio.h>
-#include <string.h>
 #include <sys/stat.h>
 #include <kernel_stat.h>
 
 #include <sysdep.h>
 #include <sys/syscall.h>
 
-/* Get information about the file NAME in BUF.  */
+#include <kernel-features.h>
+
+/* Get information about the file FD in BUF.  */
 
 int
-__fxstatat64 (int vers, int fd, const char *file, struct stat64 *st, int flag)
+___fxstat64 (int vers, int fd, struct stat64 *buf)
 {
-  if (__glibc_unlikely (vers != _STAT_VER_LINUX))
-    return INLINE_SYSCALL_ERROR_RETURN_VALUE (EINVAL);
-
   int result;
-  INTERNAL_SYSCALL_DECL (err);
-
-  result = INTERNAL_SYSCALL (fstatat64, err, 4, fd, file, st, flag);
-  if (!__builtin_expect (INTERNAL_SYSCALL_ERROR_P (result, err), 1)) {
-      conv_timespec(&st->st_atim, &st->__st_atim);
-      conv_timespec(&st->st_mtim, &st->__st_mtim);
-      conv_timespec(&st->st_ctim, &st->__st_ctim);
-      return 0;
+  result = INLINE_SYSCALL (fstat64, 2, fd, buf);
+  if (!result) {
+	  conv_timespec(&buf->st_atim, &buf->__st_atim);
+	  conv_timespec(&buf->st_mtim, &buf->__st_mtim);
+	  conv_timespec(&buf->st_ctim, &buf->__st_ctim);
   }
-  else
-    return INLINE_SYSCALL_ERROR_RETURN_VALUE (INTERNAL_SYSCALL_ERRNO (result,
-								      err));
+  return result;
 }
-libc_hidden_def (__fxstatat64)
+
+#include <shlib-compat.h>
+
+#if SHLIB_COMPAT(libc, GLIBC_2_1, GLIBC_2_2)
+versioned_symbol (libc, ___fxstat64, __fxstat64, GLIBC_2_2);
+strong_alias (___fxstat64, __old__fxstat64)
+compat_symbol (libc, __old__fxstat64, __fxstat64, GLIBC_2_1);
+hidden_ver (___fxstat64, __fxstat64)
+#else
+strong_alias (___fxstat64, __fxstat64)
+hidden_def (__fxstat64)
+#endif

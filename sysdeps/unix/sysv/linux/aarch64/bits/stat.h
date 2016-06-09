@@ -30,6 +30,34 @@
 /* Versions of the `xmknod' interface.  */
 #define _MKNOD_VER_LINUX	0
 
+#ifdef __ILP32__
+# if  __BYTE_ORDER == __LITTLE_ENDIAN
+struct __kernel_timespec
+  {
+    __time_t tv_sec;           /* Seconds.  */
+    int sec_pad;
+    __syscall_slong_t tv_nsec; /* Nanoseconds.  */
+    int nsec_pad;
+  };
+# else
+struct __kernel_timespec
+  {
+    int sec_pad;
+    __time_t tv_sec;           /* Seconds.  */
+    int nsec_pad;
+    __syscall_slong_t tv_nsec; /* Nanoseconds.  */
+  };
+# endif
+
+#define conv_timespec(u, k) do {	\
+	(u)->tv_sec = (k)->tv_sec;		\
+	(u)->tv_nsec = (k)->tv_nsec;	\
+} while (0)
+
+#else
+#define __kernel_timespec timespec
+#define conv_timespec(u, k)
+#endif /* __ILP32__ */
 
 struct stat
   {
@@ -53,9 +81,18 @@ struct stat
        identifier 'timespec' to appear in the <sys/stat.h> header.
        Therefore we have to handle the use of this header in strictly
        standard-compliant sources special.  */
-    struct timespec st_atim;		/* Time of last access.  */
-    struct timespec st_mtim;		/* Time of last modification.  */
-    struct timespec st_ctim;		/* Time of last status change.  */
+    union {
+	    struct timespec st_atim;		/* Time of last access.  */
+	    struct __kernel_timespec __st_atim;
+    };
+    union {
+	    struct timespec st_mtim;		/* Time of last modification.  */
+	    struct __kernel_timespec __st_mtim;
+    };
+    union {
+	    struct timespec st_ctim;		/* Time of last status change.  */
+	    struct __kernel_timespec __st_ctim;
+    };
 # define st_atime st_atim.tv_sec	/* Backward compatibility.  */
 # define st_mtime st_mtim.tv_sec
 # define st_ctime st_ctim.tv_sec
@@ -93,9 +130,18 @@ struct stat64
        identifier 'timespec' to appear in the <sys/stat.h> header.
        Therefore we have to handle the use of this header in strictly
        standard-compliant sources special.  */
-    struct timespec st_atim;		/* Time of last access.  */
-    struct timespec st_mtim;		/* Time of last modification.  */
-    struct timespec st_ctim;		/* Time of last status change.  */
+    union {
+	    struct timespec st_atim;		/* Time of last access.  */
+	    struct __kernel_timespec __st_atim;
+    };
+    union {
+	    struct timespec st_mtim;		/* Time of last modification.  */
+	    struct __kernel_timespec __st_mtim;
+    };
+    union {
+	    struct timespec st_ctim;		/* Time of last status.  */
+	    struct __kernel_timespec __st_ctim;
+    };
 # define st_atime st_atim.tv_sec	/* Backward compatibility.  */
 # define st_mtime st_mtim.tv_sec
 # define st_ctime st_ctim.tv_sec
