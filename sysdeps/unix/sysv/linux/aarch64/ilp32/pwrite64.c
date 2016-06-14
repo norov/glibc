@@ -1,0 +1,1 @@
+/* Defined in pwrite.c */
