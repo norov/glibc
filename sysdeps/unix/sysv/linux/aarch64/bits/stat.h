@@ -31,32 +31,27 @@
 #define _MKNOD_VER_LINUX	0
 
 #ifdef __ILP32__
-# if  __BYTE_ORDER == __LITTLE_ENDIAN
 struct __kernel_timespec
   {
-    __time_t tv_sec;           /* Seconds.  */
-    int sec_pad;
-    __syscall_slong_t tv_nsec; /* Nanoseconds.  */
-    int nsec_pad;
+    unsigned long long tv_sec;		/* Seconds.  */
+    long long tv_nsec;			/* Nanoseconds.  */
   };
-# else
-struct __kernel_timespec
-  {
-    int sec_pad;
-    __time_t tv_sec;           /* Seconds.  */
-    int nsec_pad;
-    __syscall_slong_t tv_nsec; /* Nanoseconds.  */
-  };
-# endif
-
 #define conv_timespec(u, k) do {	\
-	(u)->tv_sec = (k)->tv_sec;		\
+	(u)->tv_sec = (k)->tv_sec;	\
 	(u)->tv_nsec = (k)->tv_nsec;	\
 } while (0)
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+#define __type3264(type, name)	\
+	type (name); type name##_pad
+#else
+#define __type3264(type, name)	\
+	type name##_pad; type name
+#endif
 
 #else
 #define __kernel_timespec timespec
 #define conv_timespec(u, k)
+#define __type3264(type, name) type name
 #endif /* __ILP32__ */
 
 struct stat
@@ -97,12 +92,12 @@ struct stat
 # define st_mtime st_mtim.tv_sec
 # define st_ctime st_ctim.tv_sec
 #else
-    __time_t st_atime;			/* Time of last access.  */
-    unsigned long int st_atimensec;	/* Nscecs of last access.  */
-    __time_t st_mtime;			/* Time of last modification.  */
-    unsigned long int st_mtimensec;	/* Nsecs of last modification.  */
-    __time_t st_ctime;			/* Time of last status change.  */
-    unsigned long int st_ctimensec;	/* Nsecs of last status change.  */
+    __type3264(__time_t, st_atime);			/* Time of last access.  */
+    __type3264(unsigned long int, st_atimensec);	/* Nsecs of last access.  */
+    __type3264(__time_t, st_mtime);			/* Time of last modification.  */
+    __type3264(unsigned long int, st_mtimensec);	/* Nsecs of last modification.  */
+    __type3264(__time_t, st_ctime);			/* Time of last status change.  */
+    __type3264(unsigned long int, st_ctimensec);	/* Nsecs of last status change.  */
 #endif
     int __glibc_reserved[2];
   };
@@ -146,12 +141,12 @@ struct stat64
 # define st_mtime st_mtim.tv_sec
 # define st_ctime st_ctim.tv_sec
 #else
-    __time_t st_atime;			/* Time of last access.  */
-    unsigned long int st_atimensec;	/* Nscecs of last access.  */
-    __time_t st_mtime;			/* Time of last modification.  */
-    unsigned long int st_mtimensec;	/* Nsecs of last modification.  */
-    __time_t st_ctime;			/* Time of last status change.  */
-    unsigned long int st_ctimensec;	/* Nsecs of last status change.  */
+    __type3264(__time_t, st_atime);			/* Time of last access.  */
+    __type3264(unsigned long int, st_atimensec);	/* Nsecs of last access.  */
+    __type3264(__time_t, st_mtime);			/* Time of last modification.  */
+    __type3264(unsigned long int, st_mtimensec);	/* Nsecs of last modification.  */
+    __type3264(__time_t, st_ctime);			/* Time of last status change.  */
+    __type3264(unsigned long int, st_ctimensec);	/* Nsecs of last status change.  */
 #endif
     int __glibc_reserved[2];
   };
