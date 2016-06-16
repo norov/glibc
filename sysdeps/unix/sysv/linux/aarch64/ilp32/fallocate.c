@@ -1,6 +1,5 @@
-/* Copyright (C) 2011-2016 Free Software Foundation, Inc.
+/* Copyright (C) 2007-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Chris Metcalf <cmetcalf@tilera.com>, 2011.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -13,26 +12,20 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library.  If not, see
+   License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
 #include <errno.h>
-#include <unistd.h>
-#include <sys/types.h>
+#include <fcntl.h>
+#include <sysdep-cancel.h>
 
-#include <sysdep.h>
-#include <sys/syscall.h>
 
-#include "overflow.h"
-
-off_t
-__lseek (int fd, off_t offset, int whence)
+/* Reserve storage for the data of the file associated with FD.  */
+int
+fallocate (int fd, int mode, __off_t offset, __off_t len)
 {
-  loff_t res;
-  int rc = INLINE_SYSCALL (_llseek, 5, fd, (off_t) (offset >> 32),
-                           (off_t) offset, &res, whence);
-  return rc ?: lseek_overflow (res);
+  return SYSCALL_CANCEL (fallocate, fd, mode,
+			 __LONG_LONG_PAIR (offset >> 32, offset),
+			 __LONG_LONG_PAIR (len >> 32, len));
 }
-libc_hidden_def (__lseek)
-weak_alias (__lseek, lseek)
-strong_alias (__lseek, __libc_lseek)
+weak_alias (fallocate, fallocate64)
