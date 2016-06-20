@@ -32,26 +32,32 @@
    using __USE_FILE_OFFSET64 only see the low 32 bits of some
    of the fields (the __fsblkcnt_t and __fsfilcnt_t fields).  */
 
-#if defined __USE_FILE_OFFSET64
+#if defined (__USE_FILE_OFFSET64) || defined (__STAT_MATCHES_STAT64)
 # define __field64(type, type64, name) type64 name
 #else
 # define __field64(type, type64, name) __type3264 (type, name)
 #endif
 
+#ifdef __STAT_MATCHES_STAT64
+# define __statfs_word_t long long
+#else
+# define __statfs_word_t __SWORD_TYPE
+#endif
+
 struct statfs
   {
-    __SWORD_TYPE f_type;
-    __SWORD_TYPE f_bsize;
+    __statfs_word_t f_type;
+    __statfs_word_t f_bsize;
     __field64(__fsblkcnt_t, __fsblkcnt64_t, f_blocks);
     __field64(__fsblkcnt_t, __fsblkcnt64_t, f_bfree);
     __field64(__fsblkcnt_t, __fsblkcnt64_t, f_bavail);
     __field64(__fsfilcnt_t, __fsfilcnt64_t, f_files);
     __field64(__fsfilcnt_t, __fsfilcnt64_t, f_ffree);
     __fsid_t f_fsid;
-    __SWORD_TYPE f_namelen;
-    __SWORD_TYPE f_frsize;
-    __SWORD_TYPE f_flags;
-    __SWORD_TYPE f_spare[4];
+    __statfs_word_t f_namelen;
+    __statfs_word_t f_frsize;
+    __statfs_word_t f_flags;
+    __statfs_word_t f_spare[4];
   };
 
 #undef __field64
@@ -59,18 +65,18 @@ struct statfs
 #ifdef __USE_LARGEFILE64
 struct statfs64
   {
-    __SWORD_TYPE f_type;
-    __SWORD_TYPE f_bsize;
+    __statfs_word_t f_type;
+    __statfs_word_t f_bsize;
     __fsblkcnt64_t f_blocks;
     __fsblkcnt64_t f_bfree;
     __fsblkcnt64_t f_bavail;
     __fsfilcnt64_t f_files;
     __fsfilcnt64_t f_ffree;
     __fsid_t f_fsid;
-    __SWORD_TYPE f_namelen;
-    __SWORD_TYPE f_frsize;
-    __SWORD_TYPE f_flags;
-    __SWORD_TYPE f_spare[4];
+    __statfs_word_t f_namelen;
+    __statfs_word_t f_frsize;
+    __statfs_word_t f_flags;
+    __statfs_word_t f_spare[4];
   };
 #endif
 

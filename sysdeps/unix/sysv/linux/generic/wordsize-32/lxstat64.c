@@ -15,6 +15,7 @@
    You should have received a copy of the GNU Lesser General Public
    License along with the GNU C Library.  If not, see
    <http://www.gnu.org/licenses/>.  */
+#define __lxstat __lxstat_disable
 
 #include <errno.h>
 #include <stddef.h>
@@ -25,14 +26,29 @@
 #include <sysdep.h>
 #include <sys/syscall.h>
 
+#include <kernel-time.h>
+
 /* Get information about the file NAME in BUF.  */
 int
 __lxstat64 (int vers, const char *name, struct stat64 *buf)
 {
   if (vers == _STAT_VER_KERNEL)
-    return INLINE_SYSCALL (fstatat64, 4, AT_FDCWD, name, buf,
-                           AT_SYMLINK_NOFOLLOW);
+    {
+      int rc = INLINE_SYSCALL (fstatat64, 4, AT_FDCWD, name, buf,
+			       AT_SYMLINK_NOFOLLOW);
+      if (!rc)
+	stat_conv_timespecs (buf);
+
+      return rc;
+    }
+
   errno = EINVAL;
   return -1;
 }
 hidden_def (__lxstat64)
+
+#undef __lxstat
+#ifdef __STAT_MATCHES_STAT64
+strong_alias (__lxstat64, __lxstat)
+hidden_ver (__lxstat64, __lxstat)
+#endif

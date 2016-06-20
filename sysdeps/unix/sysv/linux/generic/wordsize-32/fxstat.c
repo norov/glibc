@@ -25,6 +25,7 @@
 #include <sysdep.h>
 #include <sys/syscall.h>
 
+#ifndef __STAT_MATCHES_STAT64
 #include "overflow.h"
 
 /* Get information about the file FD in BUF.  */
@@ -43,3 +44,5 @@ __fxstat (int vers, int fd, struct stat *buf)
 
 hidden_def (__fxstat)
 weak_alias (__fxstat, _fxstat);
+#endif
+

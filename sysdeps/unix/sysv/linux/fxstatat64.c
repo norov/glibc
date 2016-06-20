@@ -14,6 +14,7 @@
    You should have received a copy of the GNU Lesser General Public
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
+#define __fxstatat __fxstatat_disable
 
 #include <errno.h>
 #include <fcntl.h>
@@ -25,6 +26,8 @@
 
 #include <sysdep.h>
 #include <sys/syscall.h>
+
+#include <kernel-time.h>
 
 /* Get information about the file NAME in BUF.  */
 
@@ -39,9 +42,19 @@ __fxstatat64 (int vers, int fd, const char *file, struct stat64 *st, int flag)
 
   result = INTERNAL_SYSCALL (fstatat64, err, 4, fd, file, st, flag);
   if (!__builtin_expect (INTERNAL_SYSCALL_ERROR_P (result, err), 1))
-    return 0;
+    {
+      stat_conv_timespecs (st);
+      return 0;
+    }
   else
     return INLINE_SYSCALL_ERROR_RETURN_VALUE (INTERNAL_SYSCALL_ERRNO (result,
 								      err));
 }
 libc_hidden_def (__fxstatat64)
+
+#undef __fxstatat
+#ifdef __STAT_MATCHES_STAT64
+strong_alias (__fxstatat64, __fxstatat)
+libc_hidden_ver (__fxstatat64, __fxstatat)
+#endif
+

@@ -15,6 +15,8 @@
    You should have received a copy of the GNU Lesser General Public
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
+#define __statfs __statfs_disable
+#define statfs statfs_disable
 
 #include <errno.h>
 #include <string.h>
@@ -72,3 +74,9 @@ __statfs64 (const char *file, struct statfs64 *buf)
 #endif
 }
 weak_alias (__statfs64, statfs64)
+
+#ifdef __STAT_MATCHES_STAT64
+strong_alias (__statfs64, __statfs)
+libc_hidden_ver (__statfs64, __statfs)
+weak_alias (__statfs64, statfs)
+#endif

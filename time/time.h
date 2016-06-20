@@ -65,6 +65,17 @@ __USING_NAMESPACE_STD(clock_t)
 #endif /* clock_t not defined and <time.h> or need clock_t.  */
 #undef	__need_clock_t
 
+#ifndef __SUPPORT_64BIT_TIME_TYPES
+# ifdef __ASSUME_SUPPORT_64_BIT_TIME_TYPES
+#  if __WORDSIZE != 32
+#   error "__ASSUME_SUPPORT_64_BIT_TIME_TYPES is 32-bit only option"
+#  endif
+#  define __SUPPORT_64BIT_TIME_TYPES	1
+# else
+#  define __SUPPORT_64BIT_TIME_TYPES	0
+# endif
+#endif
+
 #if !defined __time_t_defined && (defined _TIME_H || defined __need_time_t)
 # define __time_t_defined	1
 
@@ -104,7 +115,6 @@ typedef __timer_t timer_t;
 
 #endif /* timer_t not defined and <time.h> or need timer_t.  */
 #undef	__need_timer_t
-
 
 #if (!defined __timespec_defined					\
      && ((defined _TIME_H						\
