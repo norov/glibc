@@ -42,7 +42,7 @@
 
 #if defined __USE_FILE_OFFSET64
 # define __field64(type, type64, name) type64 name
-#elif __WORDSIZE == 64
+#elif __WORDSIZE == 64 || defined (XSTAT_IS_XSTAT64)
 # define __field64(type, type64, name) type name
 #elif __BYTE_ORDER == __LITTLE_ENDIAN
 # define __field64(type, type64, name) \
@@ -73,19 +73,28 @@ struct stat
        identifier 'timespec' to appear in the <sys/stat.h> header.
        Therefore we have to handle the use of this header in strictly
        standard-compliant sources special.  */
-    struct timespec st_atim;		/* Time of last access.  */
-    struct timespec st_mtim;		/* Time of last modification.  */
-    struct timespec st_ctim;		/* Time of last status change.  */
+    DECLARE_TIMESPEC (st_atim);		/* Time of last access.  */
+    DECLARE_TIMESPEC (st_mtim);		/* Time of last modification.  */
+    DECLARE_TIMESPEC (st_ctim);		/* Time of last status change.  */
 # define st_atime st_atim.tv_sec	/* Backward compatibility.  */
 # define st_mtime st_mtim.tv_sec
 # define st_ctime st_ctim.tv_sec
 #else
+# if SUPPORT_64BIT_TIME_TYPES
+    __type3264 (__time_t, st_atime);			/* Time of last access.  */
+    __type3264 (unsigned long int, st_atimensec);	/* Nscecs of last access.  */
+    __type3264 (__time_t, st_mtime);			/* Time of last modification.  */
+    __type3264 (unsigned long int, st_mtimensec);	/* Nsecs of last modification.  */
+    __type3264 (__time_t, st_ctime);			/* Time of last status change.  */
+    __type3264 (unsigned long int, st_ctimensec);	/* Nsecs of last status change.  */
+# else
     __time_t st_atime;			/* Time of last access.  */
     unsigned long int st_atimensec;	/* Nscecs of last access.  */
     __time_t st_mtime;			/* Time of last modification.  */
     unsigned long int st_mtimensec;	/* Nsecs of last modification.  */
     __time_t st_ctime;			/* Time of last status change.  */
     unsigned long int st_ctimensec;	/* Nsecs of last status change.  */
+# endif
 #endif
     int __glibc_reserved[2];
   };
@@ -114,16 +123,28 @@ struct stat64
        identifier 'timespec' to appear in the <sys/stat.h> header.
        Therefore we have to handle the use of this header in strictly
        standard-compliant sources special.  */
-    struct timespec st_atim;		/* Time of last access.  */
-    struct timespec st_mtim;		/* Time of last modification.  */
-    struct timespec st_ctim;		/* Time of last status change.  */
+    DECLARE_TIMESPEC (st_atim);		/* Time of last access.  */
+    DECLARE_TIMESPEC (st_mtim);		/* Time of last modification.  */
+    DECLARE_TIMESPEC (st_ctim);		/* Time of last status change.  */
+# define st_atime st_atim.tv_sec	/* Backward compatibility.  */
+# define st_mtime st_mtim.tv_sec
+# define st_ctime st_ctim.tv_sec
 #else
+# if SUPPORT_64BIT_TIME_TYPES
+    __type3264 (__time_t, st_atime);			/* Time of last access.  */
+    __type3264 (unsigned long int, st_atimensec);	/* Nscecs of last access.  */
+    __type3264 (__time_t, st_mtime);			/* Time of last modification.  */
+    __type3264 (unsigned long int, st_mtimensec);	/* Nsecs of last modification.  */
+    __type3264 (__time_t, st_ctime);			/* Time of last status change.  */
+    __type3264 (unsigned long int, st_ctimensec);	/* Nsecs of last status change.  */
+# else
     __time_t st_atime;			/* Time of last access.  */
     unsigned long int st_atimensec;	/* Nscecs of last access.  */
     __time_t st_mtime;			/* Time of last modification.  */
     unsigned long int st_mtimensec;	/* Nsecs of last modification.  */
     __time_t st_ctime;			/* Time of last status change.  */
     unsigned long int st_ctimensec;	/* Nsecs of last status change.  */
+# endif
 #endif
     int __glibc_reserved[2];
   };

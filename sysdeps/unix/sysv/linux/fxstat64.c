@@ -15,6 +15,7 @@
    You should have received a copy of the GNU Lesser General Public
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
+#define __fxstat __fxstat_disable
 
 #include <errno.h>
 #include <stddef.h>
@@ -25,6 +26,7 @@
 #include <sys/syscall.h>
 
 #include <kernel-features.h>
+#include <kernel-time.h>
 
 /* Get information about the file FD in BUF.  */
 
@@ -36,12 +38,16 @@ ___fxstat64 (int vers, int fd, struct stat64 *buf)
 #if defined _HAVE_STAT64___ST_INO && !defined __ASSUME_ST_INO_64_BIT
   if (__builtin_expect (!result, 1) && buf->__st_ino != (__ino_t) buf->st_ino)
     buf->st_ino = buf->__st_ino;
+  return result;
 #endif
+  if (!result)
+    stat_conv_timespecs (buf);
   return result;
 }
 
 #include <shlib-compat.h>
 
+#undef __fxstat
 #if SHLIB_COMPAT(libc, GLIBC_2_1, GLIBC_2_2)
 versioned_symbol (libc, ___fxstat64, __fxstat64, GLIBC_2_2);
 strong_alias (___fxstat64, __old__fxstat64)
@@ -51,3 +57,9 @@ hidden_ver (___fxstat64, __fxstat64)
 strong_alias (___fxstat64, __fxstat64)
 hidden_def (__fxstat64)
 #endif
+
+#ifdef XSTAT_IS_XSTAT64
+strong_alias (__fxstat64, __fxstat)
+libc_hidden_ver (__fxstat64, __fxstat)
+#endif
+

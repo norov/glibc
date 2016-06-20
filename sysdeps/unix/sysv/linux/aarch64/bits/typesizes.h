@@ -62,6 +62,12 @@
 #define __SYSCALL_ULONG_TYPE	__ULONGWORD_TYPE
 #define __CPU_MASK_TYPE         __ULONGWORD_TYPE
 
+
+#ifdef __ILP32__
+# define __ASSUME_SUPPORT_64_BIT_TIME_TYPES
+# define XSTAT_IS_XSTAT64
+#endif
+
 /* Tell the libc code that off_t and off64_t are actually the same type
    for all ABI purposes, even if possibly expressed as different base types
    for C type-checking purposes.  */

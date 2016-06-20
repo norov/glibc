@@ -1,4 +1,6 @@
-/* Copyright (C) 2011-2016 Free Software Foundation, Inc.
+/* Return information about the filesystem on which FILE resides.
+
+   Copyright (C) 2011-2015 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Chris Metcalf <cmetcalf@tilera.com>, 2011.
 
@@ -15,41 +17,23 @@
    You should have received a copy of the GNU Lesser General Public
    License along with the GNU C Library.  If not, see
    <http://www.gnu.org/licenses/>.  */
-#define __lxstat __lxstat_disable
+#define __statfs __statfs_disable
+#define statfs statfs_disable
 
 #include <errno.h>
+#include <sys/statfs.h>
 #include <stddef.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <kernel_stat.h>
 
-#include <sysdep.h>
-#include <sys/syscall.h>
-
-#include <kernel-time.h>
-
-/* Get information about the file NAME in BUF.  */
 int
-__lxstat64 (int vers, const char *name, struct stat64 *buf)
+__statfs64 (const char *file, struct statfs64 *buf)
 {
-  if (vers == _STAT_VER_KERNEL)
-    {
-      int rc = INLINE_SYSCALL (fstatat64, 4, AT_FDCWD, name, buf,
-			       AT_SYMLINK_NOFOLLOW);
-      if (!rc)
-	stat_conv_timespecs (buf);
-
-      return rc;
-    }
-
-  errno = EINVAL;
-  return -1;
+  return INLINE_SYSCALL (statfs64, 2, file, buf);
 }
-hidden_def (__lxstat64)
 
-#undef __lxstat
-#ifdef XSTAT_IS_XSTAT64
-strong_alias (__lxstat64, __lxstat)
-hidden_ver (__lxstat64, __lxstat)
-#endif
+#undef __statfs
+#undef statfs
+weak_alias (__statfs64, statfs64)
+strong_alias (__statfs64, __statfs)
+libc_hidden_ver (__statfs64, __statfs)
+weak_alias (__statfs64, statfs)
 

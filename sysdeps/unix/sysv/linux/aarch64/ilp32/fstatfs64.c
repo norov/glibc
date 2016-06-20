@@ -1,6 +1,6 @@
-/* Copyright (C) 2011-2016 Free Software Foundation, Inc.
+/* Return information about the filesystem on which FD resides.
+   Copyright (C) 1996-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Chris Metcalf <cmetcalf@tilera.com>, 2011.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -13,34 +13,24 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library.  If not, see
+   License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
+#define __fstatfs __statfs_disable
+#define fstatfs statfs_disable
 
 #include <errno.h>
+#include <sys/statfs.h>
 #include <stddef.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <kernel_stat.h>
 
-#include <sysdep.h>
-#include <sys/syscall.h>
-
-#ifndef XSTAT_IS_XSTAT64
-#include "overflow.h"
-
-/* Get information about the file NAME in BUF.  */
 int
-__lxstat (int vers, const char *name, struct stat *buf)
+__fstatfs64 (int fd, struct statfs64 *buf)
 {
-  if (vers == _STAT_VER_KERNEL)
-    {
-      int rc = INLINE_SYSCALL (fstatat64, 4, AT_FDCWD, name, buf,
-                               AT_SYMLINK_NOFOLLOW);
-      return rc ?: stat_overflow (buf);
-    }
-  errno = EINVAL;
-  return -1;
+  return INLINE_SYSCALL (fstatfs64, 2, fd, buf);
 }
-hidden_def (__lxstat)
-#endif
+
+#undef __fstatfs
+#undef fstatfs
+strong_alias (__fstatfs64, __fstatfs)
+weak_alias (__fstatfs64, fstatfs64)
+weak_alias (__fstatfs64, fstatfs)
 
