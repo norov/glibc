@@ -1,0 +1,64 @@
+/* Copyright (C) 2011-2016 Free Software Foundation, Inc.
+   This file is part of the GNU C Library.
+   Contributed by Chris Metcalf <cmetcalf@tilera.com>, 2011.
+
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
+
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library.  If not, see
+   <http://www.gnu.org/licenses/>.  */
+
+#ifndef _SYS_STATFS_H
+# error "Never include <bits/statfs.h> directly; use <sys/statfs.h> instead."
+#endif
+
+#include <endian.h>
+#include <bits/types.h>
+#include <bits/wordsize.h>
+
+struct statfs
+  {
+    unsigned long long f_type;
+    unsigned long long f_bsize;
+    __fsblkcnt_t f_blocks;
+    __fsblkcnt_t f_bfree;
+    __fsblkcnt_t f_bavail;
+    __fsfilcnt_t f_files;
+    __fsfilcnt_t f_ffree;
+    __fsid_t f_fsid;
+    unsigned long long f_namelen;
+    unsigned long long f_frsize;
+    unsigned long long f_flags;
+    unsigned long long f_spare[4];
+  };
+
+#ifdef __USE_LARGEFILE64
+struct statfs64
+  {
+    unsigned long long f_type;
+    unsigned long long f_bsize;
+    __fsblkcnt_t f_blocks;
+    __fsblkcnt_t f_bfree;
+    __fsblkcnt_t f_bavail;
+    __fsfilcnt_t f_files;
+    __fsfilcnt_t f_ffree;
+    __fsid_t f_fsid;
+    unsigned long long f_namelen;
+    unsigned long long f_frsize;
+    unsigned long long f_flags;
+    unsigned long long f_spare[4];
+  };
+#endif
+
+/* Tell code we have these members.  */
+#define _STATFS_F_NAMELEN
+#define _STATFS_F_FRSIZE
+#define _STATFS_F_FLAGS
