@@ -15,6 +15,7 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
+#ifndef	__OFF_T_MATCHES_OFF64_T
 #include <errno.h>
 #include <fcntl.h>
 #include <sysdep-cancel.h>
@@ -33,3 +34,5 @@ fallocate (int fd, int mode, __off_t offset, __off_t len)
   return -1;
 #endif
 }
+
+#endif /* __OFF_T_MATCHES_OFF64_T */
