@@ -56,3 +56,7 @@ compat_symbol (libc, __posix_fadvise64_l32, posix_fadvise64, GLIBC_2_2);
 #else
 strong_alias (__posix_fadvise64_l64, posix_fadvise64);
 #endif
+
+#ifdef	__OFF_T_MATCHES_OFF64_T
+weak_alias(__posix_fadvise64_l64, __posix_fadvise)
+#endif /* __OFF_T_MATCHES_OFF64_T */
