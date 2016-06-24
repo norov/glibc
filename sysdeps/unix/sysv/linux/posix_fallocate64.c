@@ -40,3 +40,7 @@ __posix_fallocate64_l64 (int fd, __off64_t offset, __off64_t len)
     return INTERNAL_SYSCALL_ERRNO (res, err);
   return internal_fallocate64 (fd, offset, len);
 }
+
+#ifdef	__OFF_T_MATCHES_OFF64_T
+weak_alias(__posix_fallocate64_l64, posix_fallocate)
+#endif

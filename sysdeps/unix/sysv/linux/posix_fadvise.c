@@ -19,6 +19,8 @@
 #include <fcntl.h>
 #include <sysdep.h>
 
+#ifndef	__OFF_T_MATCHES_OFF64_T
+
 /* Advice the system about the expected behaviour of the application with
    respect to the file associated with FD.  */
 
@@ -46,3 +48,5 @@ posix_fadvise (int fd, off_t offset, off_t len, int advise)
   return ENOSYS;
 #endif
 }
+
+#endif /* __OFF_T_MATCHES_OFF64_T */

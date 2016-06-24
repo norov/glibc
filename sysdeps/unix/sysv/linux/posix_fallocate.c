@@ -18,6 +18,8 @@
 #include <fcntl.h>
 #include <sysdep.h>
 
+#ifndef	__OFF_T_MATCHES_OFF64_T
+
 #define posix_fallocate static internal_fallocate
 #include <sysdeps/posix/posix_fallocate.c>
 #undef posix_fallocate
@@ -37,3 +39,5 @@ posix_fallocate (int fd, __off_t offset, __off_t len)
     return INTERNAL_SYSCALL_ERRNO (res, err);
   return internal_fallocate (fd, offset, len);
 }
+
+#endif /* __OFF_T_MATCHES_OFF64_T */

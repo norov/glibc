@@ -35,3 +35,7 @@ fallocate64 (int fd, int mode, __off64_t offset, __off64_t len)
   return -1;
 #endif
 }
+
+#ifdef __OFF_T_MATCHES_OFF64_T
+weak_alias(fallocate64, fallocate)
+#endif
