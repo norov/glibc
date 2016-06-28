@@ -29,9 +29,13 @@ int
 posix_fallocate (int fd, __off_t offset, __off_t len)
 {
   INTERNAL_SYSCALL_DECL (err);
+#if __WORDSIZE == 64 || defined __ASSUME_WORDSIZE64_ILP32
+  int res = INTERNAL_SYSCALL (fallocate, err, 4, fd, 0,
+			      SYSCALL_LL (offset), SYSCALL_LL (len));
+# else
   int res = INTERNAL_SYSCALL (fallocate, err, 6, fd, 0,
-			      __LONG_LONG_PAIR (offset >> 31, offset),
-			      __LONG_LONG_PAIR (len >> 31, len));
+			      SYSCALL_LL (offset), SYSCALL_LL (len));
+# endif
 
   if (! INTERNAL_SYSCALL_ERROR_P (res, err))
     return 0;
