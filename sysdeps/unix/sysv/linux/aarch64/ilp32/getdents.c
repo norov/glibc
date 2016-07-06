@@ -46,7 +46,7 @@ static size_t conv (char *buf, size_t nbytes)
 
     while ((char*) k < end)
     {
-      struct kernel_dirent64 *nk = (char *) k + k->d_reclen;
+      struct kernel_dirent64 *nk = (void *) ((size_t) k + k->d_reclen);
       size_t name_len = k->d_reclen - offsetof(struct kernel_dirent64, d_name);
 
       u->d_ino = k->d_ino;
@@ -55,7 +55,7 @@ static size_t conv (char *buf, size_t nbytes)
       u->d_type = k->d_type;
       memcpy (u->d_name, k->d_name, name_len);
 
-      u = (char *) u + u->d_reclen;
+      u = (void *) ((size_t) u + u->d_reclen);
       k = nk;
 }
 
