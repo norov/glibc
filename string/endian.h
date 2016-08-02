@@ -54,6 +54,18 @@
 # define __LONG_LONG_PAIR(HI, LO) HI, LO
 #endif
 
+/* Declare structure field that has different size
+   in 32- and 64-bit ABIs with paddings where needed,
+   so final layout becomes identical.  */
+#if __WORDSIZE == 32
+# if __BYTE_ORDER == __LITTLE_ENDIAN
+#  define __type3264(type, name) type name __attribute__((__aligned__ (__alignof__ (long long)))); type __##name##_pad
+# else
+#  define __type3264(type, name) type __##name##_pad __attribute__((__aligned__ (__alignof__ (long long)))); type name
+# endif
+#else /* __WORDSIZE == 64.  */
+# define __type3264(type, name) type name
+#endif
 
 #if defined __USE_MISC && !defined __ASSEMBLER__
 /* Conversion interfaces.  */

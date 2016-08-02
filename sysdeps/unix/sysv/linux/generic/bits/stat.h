@@ -24,6 +24,7 @@
 #define _BITS_STAT_H	1
 
 #include <endian.h>
+#include <bits/types.h>
 #include <bits/wordsize.h>
 
 /* 64-bit libc uses the kernel's 'struct stat', accessed via the
@@ -42,14 +43,8 @@
 
 #if defined __USE_FILE_OFFSET64
 # define __field64(type, type64, name) type64 name
-#elif __WORDSIZE == 64
-# define __field64(type, type64, name) type name
-#elif __BYTE_ORDER == __LITTLE_ENDIAN
-# define __field64(type, type64, name) \
-  type name __attribute__((__aligned__ (__alignof__ (type64)))); int __##name##_pad
 #else
-# define __field64(type, type64, name) \
-  int __##name##_pad __attribute__((__aligned__ (__alignof__ (type64)))); type name
+# define __field64(type, type64, name) __type3264 (type, name)
 #endif
 
 struct stat
