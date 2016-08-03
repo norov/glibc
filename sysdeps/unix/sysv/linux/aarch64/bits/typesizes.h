@@ -62,6 +62,19 @@
 #define __SYSCALL_ULONG_TYPE	__ULONGWORD_TYPE
 #define __CPU_MASK_TYPE         __ULONGWORD_TYPE
 
+
+#ifdef __ILP32__
+/* Tell the libc code that aarch64/ilp32 realises that kernel time
+   types are 64-bit, and leave paddings in interface structures where
+   needed to keep identical layouts,  */
+# define __ASSUME_SUPPORT_64_BIT_TIME_TYPES
+
+/* Tell the libc code that aarch64/ilp32 stat and statfs structures
+   are identical to 64-bit versions, so glibc should use 64-bit types
+   where needed to keep identical layouts,  */
+# define __STAT_MATCHES_STAT64
+#endif
+
 /* Tell the libc code that off_t and off64_t are actually the same type
    for all ABI purposes, even if possibly expressed as different base types
    for C type-checking purposes.  */
