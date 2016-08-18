@@ -1,4 +1,6 @@
-/* Copyright (C) 1999-2016 Free Software Foundation, Inc.
+/* Determine the wordsize from the preprocessor defines.
+
+   Copyright (C) 2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -12,20 +14,15 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library.  If not, see
+   License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#define __WORDSIZE	64
+#ifdef __LP64__
+# define __WORDSIZE			64
+#else
+# define __WORDSIZE			32
+# define __WORDSIZE32_SIZE_ULONG	1
+# define __WORDSIZE32_PTRDIFF_LONG	1
+#endif
 
 #define __WORDSIZE_TIME64_COMPAT32	0
-
-#if !defined __NO_LONG_DOUBLE_MATH && !defined __LONG_DOUBLE_MATH_OPTIONAL
-
-/* Signal that we didn't used to have a `long double'. The changes all
-   the `long double' function variants to be redirects to the double
-   functions.  */
-# define __LONG_DOUBLE_MATH_OPTIONAL	1
-# ifndef __LONG_DOUBLE_128__
-#  define __NO_LONG_DOUBLE_MATH		1
-# endif
-#endif
