@@ -72,7 +72,7 @@ tests		:= test-utime test-stat test-stat2 test-lfs tst-getcwd \
 		   tst-symlinkat tst-linkat tst-readlinkat tst-mkdirat \
 		   tst-mknodat tst-mkfifoat tst-ttyname_r bug-ftw5 \
 		   tst-posix_fallocate tst-fts tst-fts-lfs \
-		   tst-open-tmpfile
+		   tst-open-tmpfile tst-posix_fallocate64
 
 ifeq ($(run-built-tests),yes)
 tests-special += $(objpfx)ftwtest.out
