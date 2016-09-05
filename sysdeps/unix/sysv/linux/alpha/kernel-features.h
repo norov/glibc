@@ -20,9 +20,9 @@
 #ifndef _KERNEL_FEATURES_H
 #define _KERNEL_FEATURES_H 1
 
-#include_next <kernel-features.h>
+#define __ASSUME_ST_INO_64_BIT 0
 
-#undef __ASSUME_ST_INO_64_BIT
+#include_next <kernel-features.h>
 
 /* There never has been support for fstat64.  */
 #undef __ASSUME_STATFS64
