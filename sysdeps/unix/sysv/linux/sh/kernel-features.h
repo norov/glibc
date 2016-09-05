@@ -37,10 +37,10 @@
 #define __ASSUME_GETSOCKOPT_SYSCALL	1
 #define __ASSUME_SETSOCKOPT_SYSCALL	1
 
+/* SH does not have a 64-bit inode field.  */
+#define __ASSUME_ST_INO_64_BIT		0
+
 /* The sendmmsg syscall was added for SH in 3.0.  */
 #define __ASSUME_SENDMMSG_SYSCALL_WITH_SOCKETCALL	1
 
 #include_next <kernel-features.h>
-
-/* SH does not have a 64-bit inode field.  */
-#undef __ASSUME_ST_INO_64_BIT
