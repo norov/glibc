@@ -20,6 +20,7 @@
 #include <sys/statfs.h>
 #include <stddef.h>
 
+#if !__STATFS_IS_STATFS64
 #include "overflow.h"
 
 /* Return information about the filesystem on which FILE resides.  */
@@ -31,3 +32,4 @@ __statfs (const char *file, struct statfs *buf)
 }
 libc_hidden_def (__statfs)
 weak_alias (__statfs, statfs)
+#endif
