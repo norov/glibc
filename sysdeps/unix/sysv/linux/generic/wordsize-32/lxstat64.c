@@ -15,6 +15,7 @@
    You should have received a copy of the GNU Lesser General Public
    License along with the GNU C Library.  If not, see
    <http://www.gnu.org/licenses/>.  */
+#define __lxstat __lxstat_disable
 
 #include <errno.h>
 #include <stddef.h>
@@ -36,3 +37,9 @@ __lxstat64 (int vers, const char *name, struct stat64 *buf)
   return -1;
 }
 hidden_def (__lxstat64)
+
+#undef __lxstat
+#ifdef XSTAT_IS_XSTAT64
+strong_alias (__lxstat64, __lxstat)
+hidden_ver (__lxstat64, __lxstat)
+#endif
