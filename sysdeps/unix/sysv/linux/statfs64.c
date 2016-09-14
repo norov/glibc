@@ -15,6 +15,8 @@
    You should have received a copy of the GNU Lesser General Public
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
+#define __statfs __statfs_disabled
+#define statfs statfs_disabled
 
 #include <errno.h>
 #include <string.h>
@@ -22,7 +24,6 @@
 #include <stddef.h>
 #include <sysdep.h>
 #include <kernel-features.h>
-
 
 # if __ASSUME_STATFS64 == 0
 int __no_statfs64 attribute_hidden;
@@ -72,3 +73,11 @@ __statfs64 (const char *file, struct statfs64 *buf)
 #endif
 }
 weak_alias (__statfs64, statfs64)
+
+#undef __statfs
+#undef statfs
+#if __STATFS_IS_STATFS64
+weak_alias (__statfs64, __statfs)
+weak_alias (__statfs64, statfs)
+libc_hidden_ver (__statfs64, __statfs)
+#endif
