@@ -24,6 +24,20 @@
 #include <bits/types.h>
 #include <bits/wordsize.h>
 
+#if ((defined (__FSBLKCNT_T_TYPE_MATCHES_FSBLKCNT64_T_TYPE)		\
+  && !defined (__FSFILCNT_T_TYPE_MATCHES_FSFILCNT64_T_TYPE))) ||	\
+    (!defined (__FSBLKCNT_T_TYPE_MATCHES_FSBLKCNT64_T_TYPE)		\
+   && defined (__FSFILCNT_T_TYPE_MATCHES_FSFILCNT64_T_TYPE))
+# error "__fsblkcnt_t and __fsfilcnt_t should both be 32- or 64-bit."
+#endif
+
+#if (defined (__FSBLKCNT_T_TYPE_MATCHES_FSBLKCNT64_T_TYPE) \
+  && defined (__FSFILCNT_T_TYPE_MATCHES_FSFILCNT64_T_TYPE))
+# define __STATFS_IS_STATFS64	1
+#else
+# define __STATFS_IS_STATFS64	0
+#endif
+
 /* 64-bit libc uses the kernel's 'struct statfs', accessed via the
    statfs() syscall; 32-bit libc uses the kernel's 'struct statfs64'
    and accesses it via the statfs64() syscall.  All the various
@@ -34,7 +48,7 @@
 
 #if defined __USE_FILE_OFFSET64
 # define __field64(type, type64, name) type64 name
-#elif __WORDSIZE == 64
+#elif __WORDSIZE == 64 || __STATFS_IS_STATFS64
 # define __field64(type, type64, name) type name
 #elif __BYTE_ORDER == __LITTLE_ENDIAN
 # define __field64(type, type64, name) \
