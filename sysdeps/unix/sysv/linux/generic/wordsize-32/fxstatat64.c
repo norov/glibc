@@ -1,4 +1,5 @@
-/* Copyright (C) 2011-2016 Free Software Foundation, Inc.
+/* __fxstatat64 () implementation.
+   Copyright (C) 2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Chris Metcalf <cmetcalf@tilera.com>, 2011.
 
@@ -15,33 +16,16 @@
    You should have received a copy of the GNU Lesser General Public
    License along with the GNU C Library.  If not, see
    <http://www.gnu.org/licenses/>.  */
+#define __fxstatat __fxstatat_disable
 
-#include <errno.h>
-#include <stddef.h>
-#include <sys/types.h>
 #include <sys/stat.h>
-#include <kernel_stat.h>
+#undef _STAT_VER_LINUX
+#define _STAT_VER_LINUX _STAT_VER_KERNEL
 
-#include <sysdep.h>
-#include <sys/syscall.h>
+#include <sysdeps/unix/sysv/linux/fxstatat64.c>
 
-#ifndef XSTAT_IS_XSTAT64
-#include "overflow.h"
-
-/* Get information about the file FD in BUF.  */
-int
-__fxstat (int vers, int fd, struct stat *buf)
-{
-  if (vers == _STAT_VER_KERNEL)
-    {
-      int rc = INLINE_SYSCALL (fstat64, 2, fd, buf);
-      return rc ?: stat_overflow (buf);
-    }
-
-  errno = EINVAL;
-  return -1;
-}
-
-hidden_def (__fxstat)
-weak_alias (__fxstat, _fxstat);
+#undef __fxstatat
+#ifdef XSTAT_IS_XSTAT64
+weak_alias (__fxstatat64, __fxstatat)
+libc_hidden_ver (__fxstatat64, __fxstatat)
 #endif
