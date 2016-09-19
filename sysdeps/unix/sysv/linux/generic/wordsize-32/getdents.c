@@ -30,6 +30,7 @@
 #include <sysdep.h>
 #include <sys/syscall.h>
 
+#ifndef _DIRENT_MATCHES_DIRENT64
 /* Pack the dirent64 struct down into 32-bit offset/inode fields, and
    ensure that no overflow occurs.  */
 ssize_t
@@ -113,3 +114,4 @@ __getdents (int fd, char *buf, size_t nbytes)
 
   return outp->b - buf;
 }
+#endif

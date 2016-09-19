@@ -51,7 +51,8 @@ struct dirent64
 #define _DIRENT_HAVE_D_OFF
 #define _DIRENT_HAVE_D_TYPE
 
-#if defined __OFF_T_MATCHES_OFF64_T && defined __INO_T_MATCHES_INO64_T
+#if (defined __OFF_T_MATCHES_OFF64_T && defined __INO_T_MATCHES_INO64_T) \
+  || defined __USE_FILE_OFFSET64
 /* Inform libc code that these two types are effectively identical.  */
 # define _DIRENT_MATCHES_DIRENT64	1
 #endif
