@@ -13,25 +13,14 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library.  If not, see
+   License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <errno.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <endian.h>
-
 #include <sysdep.h>
-#include <sys/syscall.h>
 
+#ifndef _LP64
+# undef __ALIGNMENT_ARG
+# define __ALIGNMENT_ARG
+#endif
 
-ssize_t
-__readahead (int fd, off64_t offset, size_t count)
-{
-  return INLINE_SYSCALL (readahead, 5, fd, 0,
-			 __LONG_LONG_PAIR ((off_t) (offset >> 32),
-					   (off_t) (offset & 0xffffffff)),
-			 count);
-}
-
-weak_alias (__readahead, readahead)
+#include <sysdeps/unix/sysv/linux/readahead.c>
