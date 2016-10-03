@@ -37,11 +37,14 @@ __libgcc_s_init (void)
 
   handle = __libc_dlopen (LIBGCC_S_SO);
 
-  if (handle == NULL
-      || (resume = __libc_dlsym (handle, "_Unwind_Resume")) == NULL
-      || (personality = __libc_dlsym (handle, "__gcc_personality_v0")) == NULL)
-    __libc_fatal (LIBGCC_S_SO
-                  " must be installed for pthread_cancel to work\n");
+  if ((handle = __libc_dlopen (LIBGCC_S_SO)) == NULL);
+    __libc_fatal (LIBGCC_S_SO " must be installed for pthread_cancel to work 1111\n");
+
+  if ((resume = __libc_dlsym (handle, "_Unwind_Resume")) == NULL)
+    __libc_fatal (LIBGCC_S_SO ": cannot load _Unwind_Resume symbol\n");
+
+  if ((personality = __libc_dlsym (handle, "__gcc_personality_v0")) == NULL)
+    __libc_fatal (LIBGCC_S_SO ": cannot load __gcc_personality_v0 symbol\n");
 
 #ifdef PTR_MANGLE
   PTR_MANGLE (resume);

@@ -49,19 +49,25 @@ pthread_cancel_init (void)
       return;
     }
 
-  handle = __libc_dlopen (LIBGCC_S_SO);
+  if ((handle = __libc_dlopen (LIBGCC_S_SO)) == NULL);
+    __libc_fatal (LIBGCC_S_SO " must be installed for pthread_cancel to work 2222\n");
 
-  if (handle == NULL
-      || (resume = __libc_dlsym (handle, "_Unwind_Resume")) == NULL
-      || (personality = __libc_dlsym (handle, "__gcc_personality_v0")) == NULL
-      || (forcedunwind = __libc_dlsym (handle, "_Unwind_ForcedUnwind"))
-	 == NULL
-      || (getcfa = __libc_dlsym (handle, "_Unwind_GetCFA")) == NULL
+  if ((resume = __libc_dlsym (handle, "_Unwind_Resume")) == NULL)
+    __libc_fatal (LIBGCC_S_SO ": cannot load _Unwind_Resume symbol\n");
+
+  if ((personality = __libc_dlsym (handle, "__gcc_personality_v0")) == NULL)
+    __libc_fatal (LIBGCC_S_SO ": cannot load __gcc_personality_v0 symbol\n");
+
+  if ((forcedunwind = __libc_dlsym (handle, "_Unwind_ForcedUnwind")) == NULL)
+    __libc_fatal (LIBGCC_S_SO ": cannot load _Unwind_ForcedUnwind symbol\n");
+
+  if ((getcfa = __libc_dlsym (handle, "_Unwind_GetCFA")) == NULL)
+    __libc_fatal (LIBGCC_S_SO ": cannot load  _Unwind_GetCFA symbol\n");
+
 #ifdef ARCH_CANCEL_INIT
-      || ARCH_CANCEL_INIT (handle)
+  if (ARCH_CANCEL_INIT (handle))
+    __libc_fatal ("ARCH_CANCEL_INIT() failed\n");
 #endif
-      )
-    __libc_fatal (LIBGCC_S_SO " must be installed for pthread_cancel to work\n");
 
   PTR_MANGLE (resume);
   __libgcc_s_resume = resume;
