@@ -1,4 +1,4 @@
-DEFAULT			GLIBC_2.25
+DEFAULT			GLIBC_2.21
 
 %ifdef HAVE_AARCH64_BE
 ld=ld-linux-aarch64_be_ilp32.so.1
