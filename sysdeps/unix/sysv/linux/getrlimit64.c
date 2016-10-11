@@ -15,11 +15,17 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
+#define __getrlimit __getrlimit_undefined
+#define getrlimit getrlimit_undefined
+
 #include <errno.h>
 #include <sys/resource.h>
 #include <sys/types.h>
 #include <sysdep.h>
 #include <kernel-features.h>
+
+#undef __getrlimit
+#undef getrlimit
 
 /* Put the soft and hard limits for RESOURCE in *RLIMITS.
    Returns 0 if successful, -1 if not (and sets errno).  */
@@ -34,11 +40,17 @@ __getrlimit64 (enum __rlimit_resource resource, struct rlimit64 *rlimits)
   if (res == 0 || errno != ENOSYS)
     return res;
 # endif
-  struct rlimit rlimits32;
 
-  if (__getrlimit (resource, &rlimits32) < 0)
+# if __RLIM_MATCHES_RLIM64
+#  define rlimits32 (*rlimits)
+# else
+  struct rlimit rlimits32;
+# endif
+
+  if (INLINE_SYSCALL (getrlimit, 2, resource, &rlimits32) < 0)
     return -1;
 
+# if !__RLIM_MATCHES_RLIM64
   if (rlimits32.rlim_cur == RLIM_INFINITY)
     rlimits->rlim_cur = RLIM64_INFINITY;
   else
@@ -47,12 +59,33 @@ __getrlimit64 (enum __rlimit_resource resource, struct rlimit64 *rlimits)
     rlimits->rlim_max = RLIM64_INFINITY;
   else
     rlimits->rlim_max = rlimits32.rlim_max;
+# endif
 
   return 0;
+
 #endif
 }
 libc_hidden_def (__getrlimit64)
 #ifndef getrlimit64
 weak_alias (__getrlimit64, getrlimit64)
 libc_hidden_weak (getrlimit64)
+#endif
+
+#if __RLIM_MATCHES_RLIM64
+strong_alias (__getrlimit64, __getrlimit)
+
+/* __getrlimit and getrlimit are made undefined to bypass type control,
+   but the side effect of it is that libc_hidden_proto() doesn't work
+   for that symbols correctly, So they are declared manually.  */
+extern __typeof (__getrlimit64) __EI___getrlimit __asm__("__getrlimit");
+extern __typeof (__getrlimit64) __getrlimit __asm__ ("__GI___getrlimit") __attribute__ ((visibility ("hidden")));
+extern __typeof (__getrlimit64) __EI_getrlimit __asm__("getrlimit");
+extern __typeof (__getrlimit64) getrlimit __asm__ ("__GI_getrlimit") __attribute__ ((visibility ("hidden")));
+
+/* libc_hidden_weak (__getrlimit) declares weak symbol which is not global,
+   but we need global one, so do it manually.  */
+extern __typeof (__getrlimit) __EI___getrlimit __asm__("" "__getrlimit");
+extern __typeof (__getrlimit) __EI___getrlimit __attribute__((alias ("__GI___getrlimit")));
+weak_alias (__getrlimit64, getrlimit)
+libc_hidden_weak (getrlimit)
 #endif

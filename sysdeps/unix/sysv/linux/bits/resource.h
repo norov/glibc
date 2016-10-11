@@ -121,6 +121,13 @@ enum __rlimit_resource
 # define RLIM64_INFINITY 0xffffffffffffffffuLL
 #endif
 
+#if (__WORDSIZE == 64)  || defined (__RLIM_T_MATCHES_RLIM64_T) \
+			|| defined (__USE_FILE_OFFSET64)
+# define __RLIM_MATCHES_RLIM64	1
+#else
+# define __RLIM_MATCHES_RLIM64	1
+#endif
+
 /* We can represent all limits.  */
 #define RLIM_SAVED_MAX	RLIM_INFINITY
 #define RLIM_SAVED_CUR	RLIM_INFINITY
