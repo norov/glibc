@@ -1,4 +1,5 @@
-/* Copyright (C) 2011-2016 Free Software Foundation, Inc.
+/* renameat() syscall
+   Copyright (C) 2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Chris Metcalf <cmetcalf@tilera.com>, 2011.
 
@@ -21,9 +22,17 @@
 #include <fcntl.h>
 #include <sysdep.h>
 
+#if !defined (__NR_renameat) && !defined (__NR_renameat2)
+# error "Both renameat and renameat2 not supported"
+#endif
+
 /* Rename the file OLD to NEW.  */
 int
-rename (const char *old, const char *new)
+renameat (int oldfd, const char *old, int newfd, const char *new)
 {
-  return INLINE_SYSCALL (renameat, 4, AT_FDCWD, old, AT_FDCWD, new);
+#ifdef __NR_renameat
+  return INLINE_SYSCALL_CALL (renameat, oldfd, old, newfd, new);
+#else
+  return INLINE_SYSCALL_CALL (renameat2, oldfd, old, newfd, new, 0);
+#endif
 }
