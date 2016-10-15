@@ -1,4 +1,5 @@
-/* Copyright (C) 2011-2016 Free Software Foundation, Inc.
+/* rename() syscall
+   Copyright (C) 2011-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Chris Metcalf <cmetcalf@tilera.com>, 2011.
 
@@ -16,14 +17,11 @@
    License along with the GNU C Library.  If not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include <stdio.h>
-#include <unistd.h>
 #include <fcntl.h>
-#include <sysdep.h>
 
 /* Rename the file OLD to NEW.  */
 int
 rename (const char *old, const char *new)
 {
-  return INLINE_SYSCALL (renameat, 4, AT_FDCWD, old, AT_FDCWD, new);
+  return renameat (AT_FDCWD, old, AT_FDCWD, new);
 }
