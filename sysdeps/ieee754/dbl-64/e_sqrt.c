@@ -53,7 +53,11 @@ __ieee754_sqrt (double x)
     rt2 = 3.75017500867345182581453026130850E-01,
     rt3 = 3.12523626554518656309172508769531E-01;
   static const double big = 134217728.0;
-  double y, t, del, res, res1, hy, z, zz, p, hx, tx, ty, s;
+  double y, t, del, res, res1, hy, z, zz, s;
+#ifndef DLA_FMS
+  double p, hx, tx, ty;
+#endif
+
   mynumber a, c = { { 0, 0 } };
   int4 k;
 
