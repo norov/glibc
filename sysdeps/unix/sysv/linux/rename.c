@@ -18,6 +18,7 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include <fcntl.h>
+#include <stdio.h>
 
 /* Rename the file OLD to NEW.  */
 int
