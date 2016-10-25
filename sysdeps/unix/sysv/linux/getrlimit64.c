@@ -30,7 +30,7 @@
 #undef getrlimit
 #undef __getrlimit
 
-# ifndef __NR_ugetrlimit
+# if !defined (__NR_ugetrlimit) && defined (__NR_getrlimit)
 #  define __NR_ugetrlimit __NR_getrlimit
 # endif
 
@@ -45,16 +45,17 @@ __getrlimit64 (enum __rlimit_resource resource, struct rlimit64 *rlimits)
     return res;
 #endif
 
-#ifdef __RLIM_T_MATCHES_RLIM64_T
-# define rlimits32 (*rlimits)
-#else
+# if defined (__NR_ugetrlimit) || defined (__NR_getrlimit)
+# ifdef __RLIM_T_MATCHES_RLIM64_T
+#  define rlimits32 (*rlimits)
+# else
   struct rlimit rlimits32;
-#endif
+# endif
 
   if (INLINE_SYSCALL_CALL (ugetrlimit, resource, &rlimits32) < 0)
     return -1;
 
-#ifndef __RLIM_T_MATCHES_RLIM64_T
+# ifndef __RLIM_T_MATCHES_RLIM64_T
   if (rlimits32.rlim_cur == RLIM_INFINITY)
     rlimits->rlim_cur = RLIM64_INFINITY;
   else
@@ -63,9 +64,11 @@ __getrlimit64 (enum __rlimit_resource resource, struct rlimit64 *rlimits)
     rlimits->rlim_max = RLIM64_INFINITY;
   else
     rlimits->rlim_max = rlimits32.rlim_max;
-#endif
+# endif
 
   return 0;
+#endif
+  return res;
 }
 libc_hidden_def (__getrlimit64)
 
@@ -89,8 +92,6 @@ int
 attribute_compat_text_section
 __old_getrlimit64 (enum __rlimit_resource resource, struct rlimit64 *rlimits)
 {
-  struct rlimit rlimits32;
-
   if (__new_getrlimit (resource, &rlimits32) < 0)
     return -1;
 
