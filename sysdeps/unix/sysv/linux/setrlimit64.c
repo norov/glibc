@@ -41,6 +41,9 @@ __setrlimit64 (enum __rlimit_resource resource, const struct rlimit64 *rlimits)
   if (res == 0 || errno != ENOSYS)
     return res;
 #endif
+
+#ifdef __NR_setrlimit
+# ifndef __RLIM_T_MATCHES_RLIM64_T
   struct rlimit rlimits32;
 
   if (rlimits->rlim_cur >= RLIM_INFINITY)
@@ -51,8 +54,14 @@ __setrlimit64 (enum __rlimit_resource resource, const struct rlimit64 *rlimits)
     rlimits32.rlim_max = RLIM_INFINITY;
   else
     rlimits32.rlim_max = rlimits->rlim_max;
+# else
+#  define rlimits32 (*rlimits)
+# endif
 
   return INLINE_SYSCALL_CALL (setrlimit, resource, &rlimits32);
+#endif
+
+  return res;
 }
 weak_alias (__setrlimit64, setrlimit64)
 
