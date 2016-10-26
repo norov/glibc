@@ -32,6 +32,9 @@
    The compiler warnings are not useful here.  */
 DIAG_IGNORE_NEEDS_COMMENT (4.9, "-Wformat");
 
+/* Compiler warnings about format lengths should also be ignored.  */
+DIAG_IGNORE_NEEDS_COMMENT (7.0, "-Wformat-length");
+
 static void rfg1 (void);
 static void rfg2 (void);
 static void rfg3 (void);
