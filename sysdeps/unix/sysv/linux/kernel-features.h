@@ -149,3 +149,7 @@
    separate syscalls were only added later.  */
 #define __ASSUME_SENDMSG_SYSCALL	1
 #define __ASSUME_RECVMSG_SYSCALL	1
+
+/* Support for SysV IPC through wired syscalls.  All supported architectures
+   either support ipc syscall and/or all the ipc correspondent syscalls.  */
+#define __ASSUME_SYSVIPC_SYSCALL	1
