@@ -1,4 +1,4 @@
-/* Old SysV permission definition for Linux.  Alpha version.
+/* Old SysV permission definition for Linux.  AArch64 version.
    Copyright (C) 2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
@@ -18,7 +18,7 @@
 
 #include <sys/ipc.h>  /* For __key_t  */
 
-#define __IPC_64	0x100
+#define __IPC_64	0x0
 
 struct __old_ipc_perm
 {
