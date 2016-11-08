@@ -102,6 +102,8 @@ static const char *test_dir;
      exit (value); \
   })
 
+#define FAIL_UNSUPPORTED(...) FAIL_EXIT(77, __VA_ARGS__)
+
 #define FAIL_EXIT1(...) FAIL_EXIT(1, __VA_ARGS__)
 
 static void
