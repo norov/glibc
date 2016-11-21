@@ -18,6 +18,7 @@
 
 #define TLS_LD(x) TLS_GD(x)
 
+#ifdef __LP64__
 #define TLS_GD(x)					\
   ({ register unsigned long __result asm ("x0");	\
      asm ("adrp	%0, :tlsgd:" #x "; "			\
@@ -49,3 +50,36 @@
 	  "add	%0, %0, :tprel_lo12_nc:" #x		\
 	  : "=r" (__result));				\
      (int *) (__result); })
+#else
+#define TLS_GD(x)					\
+  ({ register unsigned long __result asm ("w0");	\
+     asm ("adrp	%0, :tlsgd:" #x "; "			\
+	  "add	%w0, %w0, #:tlsgd_lo12:" #x "; "	\
+	  "bl	__tls_get_addr;"			\
+	  "nop"						\
+	  : "=r" (__result)				\
+	  :						\
+	  : "x1", "x2", "x3", "x4", "x5", "x6",		\
+	    "x7", "x8", "x9", "x10", "x11", "x12",	\
+	    "x13", "x14", "x15", "x16", "x17", "x18",	\
+	    "x30", "memory", "cc");			\
+     (int *) (__result); })
+
+#define TLS_IE(x)					\
+  ({ register unsigned long __result asm ("w0");	\
+     register unsigned long __t;			\
+     asm ("mrs	%1, tpidr_el0; "			\
+	  "adrp	%0, :gottprel:" #x "; "			\
+	  "ldr	%w0, [%0, #:gottprel_lo12:" #x "]; "	\
+	  "add	%w0, %w0, %w1"				\
+	  : "=r" (__result), "=r" (__t));		\
+     (int *) (__result); })
+
+#define TLS_LE(x)					\
+  ({ register unsigned long __result asm ("w0");	\
+     asm ("mrs	%0, tpidr_el0; "			\
+	  "add	%w0, %w0, :tprel_hi12:" #x "; "		\
+	  "add	%w0, %w0, :tprel_lo12_nc:" #x		\
+	  : "=r" (__result));				\
+     (int *) (__result); })
+#endif
