@@ -124,7 +124,7 @@ enum
    has the shared field.  All 64-bit architectures have the shared field
    in pthread_rwlock_t.  */
 #ifndef __PTHREAD_RWLOCK_INT_FLAGS_SHARED
-# if __WORDSIZE == 64
+# if __WORDSIZE == 64 || defined __ILP32__
 #  define __PTHREAD_RWLOCK_INT_FLAGS_SHARED 1
 # endif
 #endif
