@@ -67,6 +67,9 @@
    for C type-checking purposes.  */
 # define __OFF_T_MATCHES_OFF64_T			1
 
+/* And for __rlim_t and __rlim64_t.  */
+# define __RLIM_T_MATCHES_RLIM64_T			1
+
 /* Same for ino_t and ino64_t.  */
 # define __INO_T_MATCHES_INO64_T			1
 
