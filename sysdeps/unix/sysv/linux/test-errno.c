@@ -1,3 +1,22 @@
+/* Test that failing system calls do set errno to the correct value.
+
+   Copyright (C) 2017 Free Software Foundation, Inc.
+   This file is part of the GNU C Library.
+
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
+
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library; if not, see
+   <http://www.gnu.org/licenses/>.  */
+
 #include <errno.h>
 #include <fcntl.h>
 #include <mqueue.h>
@@ -23,9 +42,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-/* Test that failing system calls do set errno to the correct value.
-
-   This is not an exhaustive test: only system calls that can be
+/* This is not an exhaustive test: only system calls that can be
    persuaded to fail with a consistent error code and no side effects
    are included.  Usually these are failures due to invalid arguments,
    with errno code EBADF or EINVAL.  The order of argument checks is
@@ -43,7 +60,7 @@
    tested either.
 
    Also, system calls that take enum or a set of flags as argument is
-   not tested if POSIX doesn't specify exact digital values for all
+   not tested if POSIX doesn't specify exact binary values for all
    flags, and so any value passed to flags may become valid.
 
    Some tests assume "/bin/sh" names a file that exists and is not a
@@ -61,12 +78,12 @@
       {								\
         fail = 1;						\
         if (ret != (rtype) -1)					\
-          printf (#syscall ": didn't fail as expected"		\
+          printf ("FAIL: "#syscall ": didn't fail as expected"	\
                " (return "prtype")\n", ret);			\
         else if (err == 0xdead)					\
-          puts(#syscall ": didn't update errno\n");		\
+          puts("FAIL: "#syscall ": didn't update errno\n");	\
         else if (err != experr)					\
-          printf (#syscall					\
+          printf ("FAIL: "#syscall				\
                ": errno is: %d (%s) expected: %d (%s)\n",	\
                err, strerror (err), experr, strerror (experr));	\
       }								\
@@ -123,4 +140,4 @@ do_test (void)
 }
 
 #define TEST_FUNCTION do_test ()
-#include "test-skeleton.c"
+#include "support/test-driver.c"
