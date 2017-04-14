@@ -91,14 +91,13 @@
 #define SYSCALL_CANCEL(...) \
   ({									     \
     long int sc_ret;							     \
-    if (SINGLE_THREAD_P) 						     \
-      sc_ret = INLINE_SYSCALL_CALL (__VA_ARGS__); 			     \
-    else								     \
-      {									     \
-	int sc_cancel_oldtype = LIBC_CANCEL_ASYNC ();			     \
-	sc_ret = INLINE_SYSCALL_CALL (__VA_ARGS__);			     \
-        LIBC_CANCEL_RESET (sc_cancel_oldtype);				     \
-      }									     \
+    int sc_cancel_oldtype;						     \
+    bool multithread = !SINGLE_THREAD_P;				     \
+    if (multithread)						             \
+      sc_cancel_oldtype = LIBC_CANCEL_ASYNC ();				     \
+    sc_ret = INLINE_SYSCALL_CALL (__VA_ARGS__);				     \
+    if (multithread)						             \
+      LIBC_CANCEL_RESET (sc_cancel_oldtype);				     \
     sc_ret;								     \
   })
 
