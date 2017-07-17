@@ -1,3 +1,7 @@
+2017-07-17  Steve Ellcey  <sellcey@caviumnetworks.com>
+
+	* scripts/build-many-glibcs.py (Context.add_all_configs):
+	Add ilp32 variants of aarch64 architecture.
 2017-07-17  Steve Ellcey  <sellcey@cavium.com>
 
 	* sysdeps/aarch64/fpu/math_private.h (libc_feclearexcept_aarch64):
