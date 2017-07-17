@@ -1,3 +1,26 @@
+2017-07-17  Steve Ellcey  <sellcey@cavium.com>
+
+	* sysdeps/aarch64/fpu/math_private.h (libc_feclearexcept_aarch64):
+	New function.
+	(libc_feclearexcept, libc_feclearexceptf, libc_feclearexceptl):
+	New defines.
+	* sysdeps/aarch64/fpu/s_llrint.c (OREG_SIZE): New macro.
+	* sysdeps/aarch64/fpu/s_llround.c (OREG_SIZE): Likewise.
+	* sysdeps/aarch64/fpu/s_llrintf.c (OREGS, IREGS): Remove.
+	(IREG_SIZE, OREG_SIZE): New macros.
+	* sysdeps/aarch64/fpu/s_llroundf.c: (OREGS, IREGS): Remove.
+	(IREG_SIZE, OREG_SIZE): New macros.
+	* sysdeps/aarch64/fpu/s_lrintf.c (IREGS): Remove.
+	(IREG_SIZE): New macro.
+	* sysdeps/aarch64/fpu/s_lroundf.c (IREGS): Remove.
+	(IREG_SIZE): New macro.
+	* sysdeps/aarch64/fpu/s_lrint.c (math_private.h): New include.
+	(IREG_SIZE, OREG_SIZE): Initialize if not already set.
+	(OREGS, IREGS): Set based on IREG_SIZE and OREG_SIZE.
+	(__CONCATX): Clear INEXACT if INVALID is set.
+	* sysdeps/aarch64/fpu/s_lround.c (IREG_SIZE, OREG_SIZE):
+	Initialize if not already set.
+        (OREGS, IREGS): Set based on IREG_SIZE and OREG_SIZE.
 2017-07-17  Andrew Pinski  <andrew.pinski@caviumnetworks.com>
 	    Yury Norov  <ynorov@caviumnetworks.com>
 	    Steve Ellcey  <sellcey@caviumnetworks.com>

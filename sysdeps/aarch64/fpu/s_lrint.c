@@ -16,7 +16,9 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
+#include <math_private.h>
 #include <math.h>
+#include <fenv.h>
 
 #ifndef FUNC
 # define FUNC lrint
@@ -24,18 +26,37 @@
 
 #ifndef ITYPE
 # define ITYPE double
-# define IREGS "d"
+# define IREG_SIZE 64
 #else
-# ifndef IREGS
-#  error IREGS not defined
+# ifndef IREG_SIZE
+#  error IREG_SIZE not defined
 # endif
 #endif
 
 #ifndef OTYPE
 # define OTYPE long int
+# ifdef __ILP32__
+#  define OREG_SIZE 32
+# else
+#  define OREG_SIZE 64
+# endif
+#else
+# ifndef OREG_SIZE
+#  error OREG_SIZE not defined
+# endif
 #endif
 
-#define OREGS "x"
+#if IREG_SIZE == 32
+# define IREGS "s"
+#else
+# define IREGS "d"
+#endif
+
+#if OREG_SIZE == 32
+# define OREGS "w"
+#else
+# define OREGS "x"
+#endif
 
 #define __CONCATX(a,b) __CONCAT(a,b)
 
@@ -47,6 +68,13 @@ __CONCATX(__,FUNC) (ITYPE x)
   asm ( "frintx" "\t%" IREGS "1, %" IREGS "2\n\t"
         "fcvtzs" "\t%" OREGS "0, %" IREGS "1"
         : "=r" (result), "=w" (temp) : "w" (x) );
+#if OREG_SIZE == 32
+  /* The rounding step may set FE_INEXEXACT and converting to a 32 bit
+     value may set FE_INVALID.  We do not want FE_INEXACT set when
+     FE_INVALID has been set.  */
+  if (libc_fetestexcept_aarch64 (FE_INVALID))
+    libc_feclearexcept_aarch64 (FE_INEXACT);
+#endif
   return result;
 }
 

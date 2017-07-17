@@ -134,6 +134,20 @@ libc_fetestexcept_aarch64 (int ex)
 #define libc_fetestexceptl libc_fetestexcept_aarch64
 
 static __always_inline void
+libc_feclearexcept_aarch64 (int ex)
+{
+  fpu_fpsr_t fpsr;
+
+  _FPU_GETFPSR (fpsr);
+  fpsr &= ~((fpu_fpsr_t) ex);
+  _FPU_SETFPSR (fpsr);
+}
+
+#define libc_feclearexcept  libc_feclearexcept_aarch64
+#define libc_feclearexceptf libc_feclearexcept_aarch64
+#define libc_feclearexceptl libc_feclearexcept_aarch64
+
+static __always_inline void
 libc_fesetenv_aarch64 (const fenv_t *envp)
 {
   fpu_control_t fpcr;
