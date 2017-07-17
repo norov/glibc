@@ -1,3 +1,58 @@
+2017-07-17  Andrew Pinski  <andrew.pinski@caviumnetworks.com>
+	    Yury Norov  <ynorov@caviumnetworks.com>
+	    Steve Ellcey  <sellcey@caviumnetworks.com>
+
+	* elf/cache.c (print_entry): Add FLAG_AARCH64_LIB32.
+	* sysdeps/aarch64/configure.ac (HAVE_AARCH64_ILP32): New define.
+	(default-abi): Allow for ilp32 ABI.
+	* sysdeps/aarch64/configure: Regenerate.
+	* sysdeps/aarch64/Implies: Deleted.
+	* sysdeps/aarch64/ilp32/Implies: New file.
+	* sysdeps/aarch64/ilp32/Implies-after: New file.
+	* sysdeps/aarch64/lp64/Implies: New file.
+	* sysdeps/aarch64/lp64/Implies-after: New file.
+	* sysdeps/aarch64/nptl/bits/pthreadtypes-arch.h
+	(__PTHREAD_RWLOCK_INT_FLAGS_SHARED): Set to 1.
+	* sysdeps/aarch64/preconfigure (machine): Check for ilp32/lp64.
+	* sysdeps/aarch64/tls-macros.h (TLS_IE): Remove register specification
+	for __result and ifdef for ILP32.
+	* sysdeps/generic/ldconfig.h (FLAG_AARCH64_LIB32): New define.
+	* sysdeps/unix/sysv/linux/aarch64/Implies: Remove generic and
+	wordsize-64 entries.
+	* sysdeps/unix/sysv/linux/aarch64/Makefile (abi-variants): Add
+	new variants for ilp32 and ilp32_be.
+	(abi-lp64-options, abi-lp64_be-options): define __LP64__ and
+	undefine __ILP32__.
+	(abi-lp64-condition, abi-lp64_be-condition): Check for __WORDSIZE
+	equal to 64.
+	(abi-ilp32-options, abi-ilp32-condition, abi-ilp32_be-options,
+	abi-ilp32_be-condition): New.
+	* sysdeps/unix/sysv/linux/aarch64/configure.ac (arch_minimum_kernel):
+	Use different value for ILP32.
+	(LIBC_SLIBDIR_RTLDDIR): Modify for ILP32.
+	* sysdeps/unix/sysv/linux/aarch64/configure: Regenerate.
+	* sysdeps/unix/sysv/linux/aarch64/ilp32/Implies: New file.
+	* sysdeps/unix/sysv/linux/aarch64/ilp32/c++-types.data: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/ilp32/kernel_stat.h: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/ilp32/shlib-versions: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/bits/stat.h: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/bits/statfs.h: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/bits/typesizes.h: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/bits/utmp.h: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/bits/utmpx.h: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/kernel-features.h: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/Implies: Add unix/sysv/linux/aarch64.
+	* sysdeps/unix/sysv/linux/aarch64/ioctl.S: Move to lp64 directory.
+	* sysdeps/unix/sysv/linux/aarch64/mmap.c: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/shlib-versions: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/c++-types.data: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/ldd-rewrite.sed: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/ipc_priv.h (__IPC_64): Check __ILP32
+	when setting.
+	* sysdeps/unix/sysv/linux/arm/readelflib.c (process_elf_file):
+	Check for EM_AARCH64 when processing ELFCLASS32 object.
+	* sysdeps/unix/sysv/linux/bits/fcntl-linux.h (F_GETLK, F_SETLCK,
+	F_SETLKW): Check for __OFF_T_MATCHES_OFF64_T when defining.
 2017-07-17  Tulio Magno Quites Machado Filho  <tuliom@linux.vnet.ibm.com>
 
 	[BZ #21707]
