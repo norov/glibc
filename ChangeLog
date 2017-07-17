@@ -2,6 +2,37 @@
 	    Yury Norov  <ynorov@caviumnetworks.com>
 	    Steve Ellcey  <sellcey@caviumnetworks.com>
 
+	* sysdeps/unix/sysv/linux/aarch64/ilp32/ld.abilist: New file.
+	* sysdeps/unix/sysv/linux/aarch64/ilp32/libBrokenLocale.abilist:
+	Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/ilp32/libanl.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/ilp32/libc.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/ilp32/libcrypt.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/ilp32/libdl.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/ilp32/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/ilp32/libnsl.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/ilp32/libpthread.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/ilp32/libresolv.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/ilp32/librt.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/ilp32/libthread_db.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/ilp32/libutil.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/ld.abilist: Moved to lp64 directory.
+	* sysdeps/unix/sysv/linux/aarch64/libBrokenLocale.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/libanl.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/libc.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/libcrypt.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/libdl.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/libnsl.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/libpthread.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/libresolv.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/librt.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/libthread_db.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/aarch64/libutil.abilist: Likewise.
+2017-07-17  Andrew Pinski  <andrew.pinski@caviumnetworks.com>
+	    Yury Norov  <ynorov@caviumnetworks.com>
+	    Steve Ellcey  <sellcey@caviumnetworks.com>
+
 	* elf/cache.c (print_entry): Add FLAG_AARCH64_LIB32.
 	* sysdeps/aarch64/configure.ac (HAVE_AARCH64_ILP32): New define.
 	(default-abi): Allow for ilp32 ABI.
